@@ -2,7 +2,7 @@
  * Palette validation — checks ThemePalette fields and contrast.
  */
 
-import { contrastFg, hexToRgb } from "./color.js"
+import { hexToRgb } from "./color.js"
 import type { ThemePalette } from "./types.js"
 
 /** Validation result from validatePalette(). */
