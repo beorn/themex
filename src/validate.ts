@@ -47,10 +47,10 @@ export function validatePalette(p: ThemePalette): ValidationResult {
     const textRgb = hexToRgb(p.text)
     const baseRgb = hexToRgb(p.base)
     if (textRgb && baseRgb) {
-      // Check that text contrasts against base
-      const expectedFg = contrastFg(p.base)
-      const textIsLight = hexToRgb(p.text)![0]! + hexToRgb(p.text)![1]! + hexToRgb(p.text)![2]! > 384
-      const bgIsLight = hexToRgb(p.base)![0]! + hexToRgb(p.base)![1]! + hexToRgb(p.base)![2]! > 384
+      const textSum = textRgb[0] + textRgb[1] + textRgb[2]
+      const baseSum = baseRgb[0] + baseRgb[1] + baseRgb[2]
+      const textIsLight = textSum > 384
+      const bgIsLight = baseSum > 384
       if (textIsLight === bgIsLight) {
         warnings.push(`Low contrast: text (${p.text}) and base (${p.base}) have similar lightness`)
       }
