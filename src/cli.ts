@@ -3,7 +3,8 @@
  * themex CLI -- Theme exploration and generation tool.
  *
  * Usage:
- *   bun cli                          # List all built-in themes
+ *   bun cli                          # Show help
+ *   bun cli view                     # Interactive fullscreen theme browser
  *   bun cli list                     # List all built-in themes
  *   bun cli show <name>              # Show theme details + color swatches
  *   bun cli colors                   # Show all themes' accent colors in a grid
@@ -542,6 +543,9 @@ function showHelp() {
   console.log(`
 ${bold("themex")} ${dim("--")} Universal color themes
 
+${bold("Interactive")}
+  ${colored("#88C0D0", "view")}                    Fullscreen theme browser ${dim("(bun view)")}
+
 ${bold("Browse")}
   ${colored("#88C0D0", "list")}                    List all ${Object.keys(builtinPalettes).length} built-in themes
   ${colored("#88C0D0", "show")} <name>             Show theme details + color swatches
@@ -569,9 +573,15 @@ ${bold("Options")}
 // ============================================================================
 
 const args = process.argv.slice(2)
-const command = args[0] || "list"
+const command = args[0] || "help"
 
 switch (command) {
+  case "view":
+  case "browse": {
+    // Dynamically import the view TUI (separate file with React/inkx)
+    await import("./view.js")
+    break
+  }
   case "list":
   case "ls":
     listThemes()
