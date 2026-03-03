@@ -17,16 +17,22 @@ import type { ThemePalette } from "./types.js"
 
 // inkx is an optional peer dependency — lazy-import to avoid breaking
 // standalone consumers that don't have inkx installed.
-let _inkx: typeof import("inkx") | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _inkx: any = null
 async function getInkx() {
   if (!_inkx) {
     try {
-      _inkx = await import("inkx")
+      _inkx = await import(/* webpackIgnore: true */ "inkx")
     } catch {
       throw new Error("Terminal palette detection requires 'inkx' to be installed")
     }
   }
-  return _inkx
+  return _inkx as {
+    queryBackgroundColor: (write: (s: string) => void, read: (ms: number) => Promise<string | null>, timeout: number) => Promise<string | null>
+    queryForegroundColor: (write: (s: string) => void, read: (ms: number) => Promise<string | null>, timeout: number) => Promise<string | null>
+    queryMultiplePaletteColors: (indices: number[], write: (s: string) => void) => void
+    parsePaletteResponse: (chunk: string) => { index: number; color: string } | null
+  }
 }
 
 /** Result of terminal palette detection. */
