@@ -33,7 +33,11 @@
       "import": "./src/index.ts"
     }
   },
+  "bin": {
+    "themex": "./src/cli.ts"
+  },
   "scripts": {
+    "cli": "bun src/cli.ts",
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "ci": "bun run typecheck && bun test",
