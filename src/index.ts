@@ -46,6 +46,10 @@ export { importBase16 } from "./import/base16.js"
 export { exportBase16 } from "./export/base16.js"
 export type { Base16Scheme } from "./import/types.js"
 
+// Terminal detection
+export { detectTerminalPalette } from "./detect.js"
+export type { DetectedPalette } from "./detect.js"
+
 // Built-in themes (pre-derived)
 export {
   ansi16DarkTheme,

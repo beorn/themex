@@ -3,8 +3,9 @@
  * themex view — Interactive fullscreen theme browser + generator.
  *
  * Modes (Tab to switch):
- *   Browse   — scroll through 43 built-in themes
+ *   Browse   — scroll through 45 built-in themes (dark/light grouped)
  *   Generate — enter 1-3 hex colors, see live preview
+ *   Detect   — auto-detect terminal palette, generate theme from it
  *
  * Keys: j/k navigate, / search, Tab mode, q quit.
  */
@@ -17,6 +18,7 @@ import { deriveTheme } from "./derive.js"
 import { createTheme } from "./builder.js"
 import type { Theme, ThemePalette } from "./types.js"
 import { resolveThemeColor } from "./resolve.js"
+import { detectTerminalPalette, type DetectedPalette } from "./detect.js"
 
 // ── Types ─────────────────────────────────────────────────────────────
 
@@ -26,7 +28,7 @@ interface ThemeEntry {
   theme: Theme
 }
 
-type Mode = "browse" | "generate"
+type Mode = "browse" | "generate" | "detect"
 
 // ── Data ──────────────────────────────────────────────────────────────
 
@@ -281,7 +283,7 @@ function ThemeListPanel({
       </Box>
 
       <Box paddingX={1}>
-        <Text color="$text3" dimColor>j/k ↕ · / search · Tab gen</Text>
+        <Text color="$text3" dimColor>j/k ↕ · / search · Tab mode</Text>
       </Box>
     </Box>
   )
@@ -296,14 +298,7 @@ interface GenState {
   activeField: "bg" | "fg" | "primary"
 }
 
-function GeneratePanel({
-  state,
-}: {
-  state: GenState
-}) {
-  const r = (token: string) => resolveThemeColor(token, genTheme(state)) ?? ""
-  const theme = genTheme(state)
-
+function GeneratePanel({ state }: { state: GenState }) {
   return (
     <Box flexDirection="column" width={30} borderStyle="single" borderColor="$separator">
       <Box paddingX={1}>
@@ -334,14 +329,14 @@ function GeneratePanel({
       </Box>
 
       <Box flexDirection="column" paddingX={1} marginTop={1}>
-        <Text color="$text3" dimColor>Tab/↑↓ field · type hex</Text>
-        <Text color="$text3" dimColor>Backspace clear · q quit</Text>
+        <Text color="$text3" dimColor>↑↓ field · type hex</Text>
+        <Text color="$text3" dimColor>Backspace clear</Text>
       </Box>
 
       <Box flexDirection="column" paddingX={1} flexGrow={1} />
 
       <Box paddingX={1}>
-        <Text color="$text3" dimColor>Tab browse · Esc back</Text>
+        <Text color="$text3" dimColor>Tab mode · q quit</Text>
       </Box>
     </Box>
   )
@@ -356,9 +351,7 @@ function genTheme(state: GenState): Theme {
 }
 
 function genPalette(state: GenState): ThemePalette {
-  // Build a palette that matches what genTheme produces
   const theme = genTheme(state)
-  // Reconstruct a palette from the theme for display
   return {
     name: "custom",
     dark: theme.dark,
@@ -379,9 +372,149 @@ function genPalette(state: GenState): ThemePalette {
   }
 }
 
+// ── Detect Panel ──────────────────────────────────────────────────────
+
+function DetectPanel({ detected }: { detected: DetectedPalette | null }) {
+  if (!detected) {
+    return (
+      <Box flexDirection="column" width={30} borderStyle="single" borderColor="$separator">
+        <Box paddingX={1}>
+          <Text bold color="$primary">Detect</Text>
+        </Box>
+        <Box flexDirection="column" paddingX={1} marginTop={1}>
+          <Text color="$warning">Terminal detection</Text>
+          <Text color="$warning">not available.</Text>
+          <Text color="$text3" dimColor> </Text>
+          <Text color="$text3" dimColor>OSC queries not</Text>
+          <Text color="$text3" dimColor>supported (tmux,</Text>
+          <Text color="$text3" dimColor>piped output, CI).</Text>
+        </Box>
+        <Box flexDirection="column" paddingX={1} flexGrow={1} />
+        <Box paddingX={1}>
+          <Text color="$text3" dimColor>Tab mode · q quit</Text>
+        </Box>
+      </Box>
+    )
+  }
+
+  const { bg, fg, ansi, dark } = detected
+  const detectedCount = [bg, fg, ...ansi].filter(Boolean).length
+
+  return (
+    <Box flexDirection="column" width={30} borderStyle="single" borderColor="$separator">
+      <Box paddingX={1}>
+        <Text bold color="$primary">Detect</Text>
+        <Text color="$text3"> ({detectedCount} colors)</Text>
+      </Box>
+
+      <Box flexDirection="column" paddingX={1} marginTop={1}>
+        <Text color="$text2">Terminal Colors</Text>
+        <Box>
+          <Text color="$text3">{"  bg "}</Text>
+          {bg ? (
+            <>
+              <Text backgroundColor={bg}>{"  "}</Text>
+              <Text color="$text2">{` ${bg}`}</Text>
+            </>
+          ) : (
+            <Text color="$text4">not detected</Text>
+          )}
+        </Box>
+        <Box>
+          <Text color="$text3">{"  fg "}</Text>
+          {fg ? (
+            <>
+              <Text backgroundColor={fg}>{"  "}</Text>
+              <Text color="$text2">{` ${fg}`}</Text>
+            </>
+          ) : (
+            <Text color="$text4">not detected</Text>
+          )}
+        </Box>
+        <Text color="$text3" dimColor>{` ${dark ? "dark" : "light"} mode`}</Text>
+      </Box>
+
+      {/* ANSI 16 detected colors */}
+      <Box flexDirection="column" paddingX={1} marginTop={1}>
+        <Text color="$text2">ANSI Palette</Text>
+        <Box>
+          <Text>{"  "}</Text>
+          {ansi.slice(0, 8).map((c, i) => (
+            <Text key={i} backgroundColor={c ?? "#333"}>{c ? "  " : "??"}</Text>
+          ))}
+        </Box>
+        <Box>
+          <Text>{"  "}</Text>
+          {ansi.slice(8, 16).map((c, i) => (
+            <Text key={i} backgroundColor={c ?? "#333"}>{c ? "  " : "??"}</Text>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Mapped palette fields */}
+      <Box flexDirection="column" paddingX={1} marginTop={1}>
+        <Text color="$text2">Mapped to Palette</Text>
+        {Object.entries(detected.palette).map(([key, val]) => {
+          if (key === "dark" || key === "name" || !val) return null
+          return (
+            <Box key={key}>
+              <Text color="$text3">{`  ${key.padEnd(8)} `}</Text>
+              <Text backgroundColor={val as string}>{"  "}</Text>
+              <Text color="$text4">{` ${val}`}</Text>
+            </Box>
+          )
+        })}
+      </Box>
+
+      <Box flexDirection="column" paddingX={1} flexGrow={1} />
+      <Box paddingX={1}>
+        <Text color="$text3" dimColor>Tab mode · q quit</Text>
+      </Box>
+    </Box>
+  )
+}
+
+function detectTheme(detected: DetectedPalette | null): Theme {
+  if (!detected) return allThemeEntries[0]!.theme
+  const builder = createTheme()
+  if (detected.bg) builder.bg(detected.bg)
+  if (detected.fg) builder.fg(detected.fg)
+  // Use ANSI colors if available
+  const p = detected.palette
+  if (p.red) builder.color("red", p.red)
+  if (p.green) builder.color("green", p.green)
+  if (p.yellow) builder.color("yellow", p.yellow)
+  if (p.blue) builder.color("blue", p.blue)
+  if (p.purple) builder.color("purple", p.purple)
+  if (p.teal) builder.color("teal", p.teal)
+  return builder.build()
+}
+
+function detectPalette(detected: DetectedPalette | null): ThemePalette {
+  const theme = detectTheme(detected)
+  return {
+    name: "terminal",
+    dark: theme.dark,
+    crust: theme.bg,
+    base: theme.bg,
+    surface: theme.surface,
+    overlay: theme.separator,
+    subtext: theme.text2,
+    text: theme.text,
+    red: theme.error,
+    orange: theme.warning,
+    yellow: theme.primary,
+    green: theme.success,
+    teal: theme.control,
+    blue: theme.link,
+    purple: theme.focusring,
+    pink: theme.primary,
+  }
+}
+
 // ── Main App ──────────────────────────────────────────────────────────
 
-function App() {
+function App({ detected }: { detected: DetectedPalette | null }) {
   const [mode, setMode] = useState<Mode>("browse")
 
   // Browse state
@@ -391,9 +524,14 @@ function App() {
 
   // Generate state
   const [gen, setGen] = useState<GenState>({
-    bg: "", fg: "", primary: "",
-    activeField: "bg",
+    bg: detected?.bg ?? "",
+    fg: detected?.fg ?? "",
+    primary: "",
+    activeField: "primary",
   })
+
+  const modes: Mode[] = ["browse", "generate", "detect"]
+  const nextMode = (m: Mode) => modes[(modes.indexOf(m) + 1) % modes.length]!
 
   // Build list items (grouped dark/light), filtered by search
   const items = useMemo(() => {
@@ -422,9 +560,15 @@ function App() {
   }, [items, cursor])
 
   // Current theme depends on mode
-  const currentTheme = mode === "browse" ? currentEntry.theme : genTheme(gen)
-  const currentPalette = mode === "browse" ? currentEntry.palette : genPalette(gen)
-  const currentLabel = mode === "browse" ? currentEntry.name : "Custom"
+  const currentTheme = mode === "browse" ? currentEntry.theme
+    : mode === "generate" ? genTheme(gen)
+    : detectTheme(detected)
+  const currentPalette = mode === "browse" ? currentEntry.palette
+    : mode === "generate" ? genPalette(gen)
+    : detectPalette(detected)
+  const currentLabel = mode === "browse" ? currentEntry.name
+    : mode === "generate" ? "Custom"
+    : "Terminal"
 
   // Skip headers when navigating
   const moveCursor = useCallback((dir: 1 | -1) => {
@@ -440,7 +584,7 @@ function App() {
   useInput((input: string, key: Key) => {
     // Tab switches mode
     if (key.tab) {
-      setMode((m) => m === "browse" ? "generate" : "browse")
+      setMode((m) => nextMode(m))
       setSearch(null)
       return
     }
@@ -479,7 +623,6 @@ function App() {
       if (input && /^[#0-9a-fA-F]$/.test(input)) {
         setGen((g) => {
           const current = g[g.activeField]
-          // Auto-add # prefix
           if (current.length === 0 && input !== "#") {
             return { ...g, [g.activeField]: "#" + input }
           }
@@ -493,8 +636,12 @@ function App() {
       return
     }
 
-    // Browse mode
-    // Search mode
+    if (mode === "detect") {
+      if (input === "q" || key.escape) return "exit"
+      return
+    }
+
+    // Browse mode — search
     if (search !== null) {
       if (key.escape) { setSearch(null); return }
       if (key.return) { setSearch(null); return }
@@ -511,7 +658,7 @@ function App() {
       return
     }
 
-    // Navigation
+    // Browse mode — navigation
     if (input === "j" || key.downArrow) {
       moveCursor(1)
     } else if (input === "k" || key.upArrow) {
@@ -540,16 +687,14 @@ function App() {
       <Box flexDirection="column" width="100%" height="100%" backgroundColor="$bg">
         {/* Mode tabs */}
         <Box>
-          <Text
-            backgroundColor={mode === "browse" ? "$primary" : "$surface"}
-            color={mode === "browse" ? "$bg" : "$text2"}
-            bold={mode === "browse"}
-          >{" Browse "}</Text>
-          <Text
-            backgroundColor={mode === "generate" ? "$primary" : "$surface"}
-            color={mode === "generate" ? "$bg" : "$text2"}
-            bold={mode === "generate"}
-          >{" Generate "}</Text>
+          {modes.map((m) => (
+            <Text
+              key={m}
+              backgroundColor={mode === m ? "$primary" : "$surface"}
+              color={mode === m ? "$bg" : "$text2"}
+              bold={mode === m}
+            >{` ${m[0]!.toUpperCase()}${m.slice(1)} `}</Text>
+          ))}
           <Text color="$text3">{" "}{currentLabel}</Text>
         </Box>
 
@@ -563,8 +708,10 @@ function App() {
               height={height - 1}
               search={search}
             />
-          ) : (
+          ) : mode === "generate" ? (
             <GeneratePanel state={gen} />
+          ) : (
+            <DetectPanel detected={detected} />
           )}
           <ShowcasePanel theme={currentTheme} palette={currentPalette} label={currentLabel} />
         </Box>
@@ -575,5 +722,8 @@ function App() {
 
 // ── Entry Point ───────────────────────────────────────────────────────
 
-const handle = await run(<App />, { mode: "fullscreen" })
+// Detect terminal palette BEFORE entering fullscreen (OSC needs normal screen)
+const detected = await detectTerminalPalette()
+
+const handle = await run(<App detected={detected} />, { mode: "fullscreen" })
 await handle.waitUntilExit()
