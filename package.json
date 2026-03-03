@@ -47,8 +47,14 @@
     "docs:preview": "vitepress preview docs",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
   },
-  "dependencies": {
-    "inkx": "workspace:*"
+  "dependencies": {},
+  "peerDependencies": {
+    "inkx": "*"
+  },
+  "peerDependenciesMeta": {
+    "inkx": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/bun": "^1.3.0",
