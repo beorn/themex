@@ -3,7 +3,7 @@
  *
  * Exports:
  * - Pre-derived Theme objects (ansi16Dark, ansi16Light, defaultDark, defaultLight)
- * - ThemePalette definitions from popular theme systems
+ * - ThemePalette definitions from popular theme systems (45 palettes)
  * - Registry functions (getThemeByName, getPaletteByName)
  */
 
@@ -19,6 +19,21 @@ export { tokyoNight, tokyoNightStorm, tokyoNightDay } from "./tokyo-night.js"
 export { oneDark } from "./one-dark.js"
 export { gruvboxDark, gruvboxLight } from "./gruvbox.js"
 export { rosePine, rosePineMoon, rosePineDawn } from "./rose-pine.js"
+export { kanagawaWave, kanagawaDragon, kanagawaLotus } from "./kanagawa.js"
+export { everforestDark, everforestLight } from "./everforest.js"
+export { monokai, monokaiPro } from "./monokai.js"
+export { snazzy } from "./snazzy.js"
+export { materialDark, materialLight } from "./material.js"
+export { palenight } from "./palenight.js"
+export { ayuDark, ayuMirage, ayuLight } from "./ayu.js"
+export { nightfox, dawnfox } from "./nightfox.js"
+export { horizon } from "./horizon.js"
+export { moonfly } from "./moonfly.js"
+export { nightfly } from "./nightfly.js"
+export { oxocarbonDark, oxocarbonLight } from "./oxocarbon.js"
+export { sonokai } from "./sonokai.js"
+export { edgeDark, edgeLight } from "./edge.js"
+export { modusVivendi, modusOperandi } from "./modus.js"
 
 // ── Import for registry ────────────────────────────────────────────
 import { catppuccinMocha, catppuccinFrappe, catppuccinMacchiato, catppuccinLatte } from "./catppuccin.js"
@@ -29,6 +44,21 @@ import { tokyoNight, tokyoNightStorm, tokyoNightDay } from "./tokyo-night.js"
 import { oneDark } from "./one-dark.js"
 import { gruvboxDark, gruvboxLight } from "./gruvbox.js"
 import { rosePine, rosePineMoon, rosePineDawn } from "./rose-pine.js"
+import { kanagawaWave, kanagawaDragon, kanagawaLotus } from "./kanagawa.js"
+import { everforestDark, everforestLight } from "./everforest.js"
+import { monokai, monokaiPro } from "./monokai.js"
+import { snazzy } from "./snazzy.js"
+import { materialDark, materialLight } from "./material.js"
+import { palenight } from "./palenight.js"
+import { ayuDark, ayuMirage, ayuLight } from "./ayu.js"
+import { nightfox, dawnfox } from "./nightfox.js"
+import { horizon } from "./horizon.js"
+import { moonfly } from "./moonfly.js"
+import { nightfly } from "./nightfly.js"
+import { oxocarbonDark, oxocarbonLight } from "./oxocarbon.js"
+import { sonokai } from "./sonokai.js"
+import { edgeDark, edgeLight } from "./edge.js"
+import { modusVivendi, modusOperandi } from "./modus.js"
 
 // ============================================================================
 // ANSI 16 Themes (no palette required — hardcoded for any terminal)
@@ -159,25 +189,74 @@ export const defaultLightTheme: Theme = {
 // Registry
 // ============================================================================
 
-/** All built-in ThemePalette definitions. */
+/** All built-in ThemePalette definitions (45 palettes). */
 export const builtinPalettes: Record<string, ThemePalette> = {
+  // Catppuccin
   "catppuccin-mocha": catppuccinMocha,
   "catppuccin-frappe": catppuccinFrappe,
   "catppuccin-macchiato": catppuccinMacchiato,
   "catppuccin-latte": catppuccinLatte,
+  // Nord
   "nord": nord,
+  // Dracula
   "dracula": dracula,
+  // Solarized
   "solarized-dark": solarizedDark,
   "solarized-light": solarizedLight,
+  // Tokyo Night
   "tokyo-night": tokyoNight,
   "tokyo-night-storm": tokyoNightStorm,
   "tokyo-night-day": tokyoNightDay,
+  // One Dark
   "one-dark": oneDark,
+  // Gruvbox
   "gruvbox-dark": gruvboxDark,
   "gruvbox-light": gruvboxLight,
+  // Rose Pine
   "rose-pine": rosePine,
   "rose-pine-moon": rosePineMoon,
   "rose-pine-dawn": rosePineDawn,
+  // Kanagawa
+  "kanagawa-wave": kanagawaWave,
+  "kanagawa-dragon": kanagawaDragon,
+  "kanagawa-lotus": kanagawaLotus,
+  // Everforest
+  "everforest-dark": everforestDark,
+  "everforest-light": everforestLight,
+  // Monokai
+  "monokai": monokai,
+  "monokai-pro": monokaiPro,
+  // Snazzy
+  "snazzy": snazzy,
+  // Material
+  "material-dark": materialDark,
+  "material-light": materialLight,
+  // Palenight
+  "palenight": palenight,
+  // Ayu
+  "ayu-dark": ayuDark,
+  "ayu-mirage": ayuMirage,
+  "ayu-light": ayuLight,
+  // Nightfox
+  "nightfox": nightfox,
+  "dawnfox": dawnfox,
+  // Horizon
+  "horizon": horizon,
+  // Moonfly
+  "moonfly": moonfly,
+  // Nightfly
+  "nightfly": nightfly,
+  // Oxocarbon
+  "oxocarbon-dark": oxocarbonDark,
+  "oxocarbon-light": oxocarbonLight,
+  // Sonokai
+  "sonokai": sonokai,
+  // Edge
+  "edge-dark": edgeDark,
+  "edge-light": edgeLight,
+  // Modus
+  "modus-vivendi": modusVivendi,
+  "modus-operandi": modusOperandi,
 }
 
 /** All built-in themes, indexed by name (includes backward-compat aliases). */

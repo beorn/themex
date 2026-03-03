@@ -7,9 +7,9 @@
  *
  * @example
  * ```typescript
- * import { deriveTheme, catppuccinMocha, resolveThemeColor } from "themex"
+ * import { createTheme, catppuccinMocha, resolveThemeColor } from "themex"
  *
- * const theme = deriveTheme(catppuccinMocha)
+ * const theme = createTheme().preset('catppuccin-mocha').build()
  * const color = resolveThemeColor("$primary", theme) // → "#F9E2AF"
  * ```
  *
@@ -31,12 +31,20 @@ export { resolveThemeColor } from "./resolve.js"
 // ANSI 16 theme generation
 export { generateTheme } from "./generate.js"
 
+// Builder API
+export { createTheme, quickTheme, presetTheme } from "./builder.js"
+
 // Active theme state (side-effectful)
 export { setActiveTheme, getActiveTheme, pushContextTheme, popContextTheme } from "./state.js"
 
 // Validation
 export { validatePalette } from "./validate.js"
 export type { ValidationResult } from "./validate.js"
+
+// Base16 import/export
+export { importBase16 } from "./import/base16.js"
+export { exportBase16 } from "./export/base16.js"
+export type { Base16Scheme } from "./import/types.js"
 
 // Built-in themes (pre-derived)
 export {
@@ -48,25 +56,36 @@ export {
   getThemeByName,
 } from "./palettes/index.js"
 
-// Built-in palettes
+// Built-in palettes (45 palettes from 15 theme families)
 export {
   builtinPalettes,
   getPaletteByName,
-  catppuccinMocha,
-  catppuccinFrappe,
-  catppuccinMacchiato,
-  catppuccinLatte,
-  nord,
-  dracula,
-  solarizedDark,
-  solarizedLight,
-  tokyoNight,
-  tokyoNightStorm,
-  tokyoNightDay,
-  oneDark,
-  gruvboxDark,
-  gruvboxLight,
-  rosePine,
-  rosePineMoon,
-  rosePineDawn,
+  // Catppuccin
+  catppuccinMocha, catppuccinFrappe, catppuccinMacchiato, catppuccinLatte,
+  // Classic
+  nord, dracula, oneDark,
+  solarizedDark, solarizedLight,
+  gruvboxDark, gruvboxLight,
+  // Tokyo Night
+  tokyoNight, tokyoNightStorm, tokyoNightDay,
+  // Rose Pine
+  rosePine, rosePineMoon, rosePineDawn,
+  // Kanagawa
+  kanagawaWave, kanagawaDragon, kanagawaLotus,
+  // Nature
+  everforestDark, everforestLight,
+  nightfox, dawnfox,
+  // Monokai family
+  monokai, monokaiPro, snazzy,
+  // Material family
+  materialDark, materialLight, palenight,
+  // Ayu
+  ayuDark, ayuMirage, ayuLight,
+  // Modern
+  horizon, moonfly, nightfly,
+  oxocarbonDark, oxocarbonLight,
+  sonokai,
+  edgeDark, edgeLight,
+  // Accessibility
+  modusVivendi, modusOperandi,
 } from "./palettes/index.js"
