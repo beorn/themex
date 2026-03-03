@@ -20,6 +20,7 @@ export default defineConfig({
           { text: "Getting Started", link: "/guide/getting-started" },
           { text: "Creating Themes", link: "/guide/creating-themes" },
           { text: "Importing Themes", link: "/guide/importing-themes" },
+          { text: "Web Usage", link: "/guide/web-usage" },
           { text: "Design Philosophy", link: "/guide/design-philosophy" },
         ],
       },
@@ -28,6 +29,7 @@ export default defineConfig({
         items: [
           { text: "ThemePalette", link: "/reference/theme-palette" },
           { text: "Semantic Tokens", link: "/reference/semantic-tokens" },
+          { text: "Derivation Rules", link: "/reference/derivation-rules" },
           { text: "Color Utilities", link: "/reference/color-utilities" },
           { text: "Builder API", link: "/reference/builder-api" },
           { text: "CLI", link: "/reference/cli" },
@@ -36,6 +38,12 @@ export default defineConfig({
       {
         text: "Gallery",
         items: [{ text: "Theme Gallery", link: "/gallery/" }],
+      },
+      {
+        text: "Contributing",
+        items: [
+          { text: "Adding Themes", link: "/contributing/adding-themes" },
+        ],
       },
     ],
 
