@@ -22,6 +22,7 @@ export default defineConfig({
           { text: "Importing Themes", link: "/guide/importing-themes" },
           { text: "Web Usage", link: "/guide/web-usage" },
           { text: "Design Philosophy", link: "/guide/design-philosophy" },
+          { text: "Comparisons", link: "/guide/comparisons" },
         ],
       },
       {
