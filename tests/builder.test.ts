@@ -12,7 +12,7 @@ function expectValidTheme(theme: Theme) {
   // All string token fields must be non-empty hex
   for (const key of [
     "primary", "link", "control", "selected", "selectedfg", "focusring",
-    "text", "text2", "text3", "text4", "bg", "raisedbg", "separator",
+    "text", "text2", "text3", "text4", "bg", "surface", "separator",
     "chromebg", "chromefg", "error", "warning", "success",
   ] as const) {
     expect(theme[key], `${key} should be truthy`).toBeTruthy()
@@ -116,7 +116,7 @@ describe("createTheme", () => {
     const theme = createTheme().bg("#2E3440").build()
     // The surface ramp should be derived from the bg
     const bgRgb = hexToRgb("#2E3440")!
-    const surfaceRgb = hexToRgb(theme.raisedbg)!
+    const surfaceRgb = hexToRgb(theme.surface)!
     // Surface should be lighter than bg in a dark theme
     const bgLum = (bgRgb[0] + bgRgb[1] + bgRgb[2]) / 3
     const surfaceLum = (surfaceRgb[0] + surfaceRgb[1] + surfaceRgb[2]) / 3

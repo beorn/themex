@@ -15,7 +15,7 @@ describe("resolveThemeColor", () => {
     expect(resolveThemeColor("$text3", theme)).toBe(theme.text3)
     expect(resolveThemeColor("$text4", theme)).toBe(theme.text4)
     expect(resolveThemeColor("$bg", theme)).toBe(theme.bg)
-    expect(resolveThemeColor("$raisedbg", theme)).toBe(theme.raisedbg)
+    expect(resolveThemeColor("$surface", theme)).toBe(theme.surface)
     expect(resolveThemeColor("$separator", theme)).toBe(theme.separator)
     expect(resolveThemeColor("$error", theme)).toBe(theme.error)
     expect(resolveThemeColor("$warning", theme)).toBe(theme.warning)
@@ -40,7 +40,7 @@ describe("resolveThemeColor", () => {
     const theme = defaultDarkTheme
     expect(resolveThemeColor("$accent", theme)).toBe(theme.primary)
     expect(resolveThemeColor("$muted", theme)).toBe(theme.text2)
-    expect(resolveThemeColor("$surface", theme)).toBe(theme.raisedbg)
+    expect(resolveThemeColor("$raisedbg", theme)).toBe(theme.surface)
     expect(resolveThemeColor("$background", theme)).toBe(theme.bg)
     expect(resolveThemeColor("$border", theme)).toBe(theme.separator)
   })

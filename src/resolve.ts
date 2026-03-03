@@ -11,7 +11,7 @@ type ThemeColorKey = Exclude<keyof Theme, "name" | "dark" | "palette">
 const tokenAliases: Record<string, ThemeColorKey> = {
   accent: "primary",
   muted: "text2",
-  surface: "raisedbg",
+  raisedbg: "surface",
   background: "bg",
   border: "separator",
 }
@@ -23,7 +23,7 @@ const tokenAliases: Record<string, ThemeColorKey> = {
  * - Named tokens: `$primary`, `$text2`, `$separator`, etc.
  * - Palette colors: `$color0` through `$color15`
  * - Backward-compat aliases: `$accent` → `$primary`, `$muted` → `$text2`,
- *   `$surface` → `$raisedbg`, `$background` → `$bg`, `$border` → `$separator`
+ *   `$raisedbg` → `$surface`, `$background` → `$bg`, `$border` → `$separator`
  *
  * Returns `undefined` for `undefined` input. Non-`$` strings pass through unchanged.
  * Unknown tokens (e.g. `$nonexistent`) pass through as-is so downstream can

@@ -51,7 +51,7 @@ export function generateTheme(primary: AnsiPrimary, dark: boolean): Theme {
     text4: "gray",
 
     bg: "",
-    raisedbg: dark ? "black" : "white",
+    surface: dark ? "black" : "white",
     separator: "gray",
     chromebg: dark ? "whiteBright" : "black",
     chromefg: dark ? "black" : "whiteBright",

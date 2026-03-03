@@ -104,7 +104,7 @@ presetTheme('catppuccin-mocha')            // one-liner from preset name
 | Brand | `$primary`, `$link`, `$control` |
 | Selection | `$selected`, `$selectedfg`, `$focusring` |
 | Text | `$text`, `$text2`, `$text3`, `$text4` |
-| Surface | `$bg`, `$raisedbg`, `$separator`, `$chromebg`, `$chromefg` |
+| Surface | `$bg`, `$surface`, `$separator`, `$chromebg`, `$chromefg` |
 | Status | `$error`, `$warning`, `$success` |
 
 Plus `$color0`–`$color15` palette colors.
@@ -115,7 +115,7 @@ Plus `$color0`–`$color15` palette colors.
 |-----------|-------------|
 | `$accent` | `$primary` |
 | `$muted` | `$text2` |
-| `$surface` | `$raisedbg` |
+| `$raisedbg` | `$surface` |
 | `$background` | `$bg` |
 | `$border` | `$separator` |
 

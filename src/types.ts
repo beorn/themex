@@ -105,7 +105,7 @@ export interface Theme {
   /** Default background (detected or configured) */
   bg: string
   /** Elevated surfaces — dialogs, overlays, popovers */
-  raisedbg: string
+  surface: string
   /** Dividers, borders, rules */
   separator: string
 

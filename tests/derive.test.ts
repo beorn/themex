@@ -31,7 +31,7 @@ describe("deriveTheme", () => {
     expect(theme.text).toBe(catppuccinMocha.text)
     expect(theme.text2).toBe(catppuccinMocha.subtext)
     expect(theme.bg).toBe(catppuccinMocha.base)
-    expect(theme.raisedbg).toBe(catppuccinMocha.surface)
+    expect(theme.surface).toBe(catppuccinMocha.surface)
     expect(theme.separator).toBe(catppuccinMocha.overlay)
     expect(theme.error).toBe(catppuccinMocha.red)
     expect(theme.warning).toBe(catppuccinMocha.orange)

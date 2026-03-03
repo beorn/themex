@@ -19,7 +19,7 @@ describe("all built-in palettes produce valid themes", () => {
         "primary", "link", "control",
         "selected", "selectedfg", "focusring",
         "text", "text2", "text3", "text4",
-        "bg", "raisedbg", "separator",
+        "bg", "surface", "separator",
         "chromebg", "chromefg",
         "error", "warning", "success",
       ]

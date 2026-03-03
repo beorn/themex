@@ -49,7 +49,7 @@ export function deriveTheme(p: ThemePalette, opts?: ThemeOptions): Theme {
 
     // ── Surface (from surface ramp) ────────────────────────────
     bg: p.base,
-    raisedbg: p.surface,
+    surface: p.surface,
     separator: p.overlay,
     chromebg: p.dark ? p.text : p.crust,
     chromefg: p.dark ? p.crust : p.text,
