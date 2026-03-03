@@ -22,7 +22,8 @@ let _inkx: any = null
 async function getInkx() {
   if (!_inkx) {
     try {
-      _inkx = await import(/* webpackIgnore: true */ "inkx")
+      const mod = "inkx"
+      _inkx = await import(mod)
     } catch {
       throw new Error("Terminal palette detection requires 'inkx' to be installed")
     }
