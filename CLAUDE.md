@@ -47,7 +47,10 @@ src/
 ├── resolve.ts        # resolveThemeColor(), token aliases
 ├── generate.ts       # generateTheme() — ANSI 16 theme from primary + dark/light
 ├── state.ts          # activeTheme, contextStack (push/pop/get/set)
+├── detect.ts         # detectTerminalPalette() — OSC 4/10/11 auto-detection
 ├── validate.ts       # validatePalette() — check fields + contrast
+├── view.tsx          # Interactive fullscreen theme browser (bun view)
+├── cli.ts            # CLI entry point (bun cli)
 ├── import/           # Theme format importers
 │   ├── base16.ts     # importBase16() — Base16 YAML → ThemePalette
 │   └── types.ts      # Base16Scheme interface
