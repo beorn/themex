@@ -13,13 +13,21 @@
  * NOT supported by: tmux (blocks OSC), basic xterm, CI environments
  */
 
-import {
-  queryForegroundColor,
-  queryBackgroundColor,
-  queryMultiplePaletteColors,
-  parsePaletteResponse,
-} from "inkx"
 import type { ThemePalette } from "./types.js"
+
+// inkx is an optional peer dependency — lazy-import to avoid breaking
+// standalone consumers that don't have inkx installed.
+let _inkx: typeof import("inkx") | null = null
+async function getInkx() {
+  if (!_inkx) {
+    try {
+      _inkx = await import("inkx")
+    } catch {
+      throw new Error("Terminal palette detection requires 'inkx' to be installed")
+    }
+  }
+  return _inkx
+}
 
 /** Result of terminal palette detection. */
 export interface DetectedPalette {
@@ -90,13 +98,15 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
         stdin.on("data", check)
       })
 
+    const inkx = await getInkx()
+
     // Query bg and fg first
-    const bg = await queryBackgroundColor(write, read, timeoutMs)
-    const fg = await queryForegroundColor(write, read, timeoutMs)
+    const bg = await inkx.queryBackgroundColor(write, read, timeoutMs)
+    const fg = await inkx.queryForegroundColor(write, read, timeoutMs)
 
     // Query ANSI 16 palette
     const ansi: (string | null)[] = new Array(16).fill(null)
-    queryMultiplePaletteColors(
+    inkx.queryMultiplePaletteColors(
       Array.from({ length: 16 }, (_, i) => i),
       write,
     )
@@ -122,7 +132,7 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
         if (end === -1) break
 
         const chunk = remaining.slice(nextOsc, end + 1)
-        const parsed = parsePaletteResponse(chunk)
+        const parsed = inkx.parsePaletteResponse(chunk)
         if (parsed && parsed.index >= 0 && parsed.index < 16) {
           ansi[parsed.index] = parsed.color
         }
