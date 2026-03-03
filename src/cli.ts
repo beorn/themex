@@ -1,11 +1,15 @@
 #!/usr/bin/env bun
 /**
- * themex CLI — Theme exploration and generation tool.
+ * themex CLI -- Theme exploration and generation tool.
  *
  * Usage:
  *   bun cli                          # List all built-in themes
  *   bun cli list                     # List all built-in themes
  *   bun cli show <name>              # Show theme details + color swatches
+ *   bun cli colors                   # Show all themes' accent colors in a grid
+ *   bun cli compare <a> <b>          # Side-by-side theme comparison
+ *   bun cli search <query>           # Filter themes by name
+ *   bun cli json <name>              # Output theme as JSON (for piping)
  *   bun cli generate <primary>       # Generate theme from primary color
  *   bun cli generate <primary> --light  # Light variant
  *   bun cli import <file.yaml>       # Import Base16 YAML
@@ -13,77 +17,154 @@
  *   bun cli validate <name>          # Validate a palette
  */
 
-import { builtinPalettes, getPaletteByName, builtinThemes, getThemeByName } from "./palettes/index.js"
+import { builtinPalettes, getPaletteByName, builtinThemes } from "./palettes/index.js"
 import { deriveTheme } from "./derive.js"
 import { generateTheme } from "./generate.js"
 import { validatePalette } from "./validate.js"
 import { exportBase16 } from "./export/base16.js"
 import { importBase16 } from "./import/base16.js"
-import { resolveThemeColor } from "./resolve.js"
 import type { Theme, ThemePalette, AnsiPrimary } from "./types.js"
 
-// ANSI color helpers for terminal output
+// ============================================================================
+// ANSI Escape Helpers
+// ============================================================================
+
 const esc = (code: string) => `\x1b[${code}m`
 const reset = esc("0")
 const bold = (s: string) => `${esc("1")}${s}${reset}`
 const dim = (s: string) => `${esc("2")}${s}${reset}`
+const underline = (s: string) => `${esc("4")}${s}${reset}`
 const fgRgb = (r: number, g: number, b: number, s: string) => `${esc(`38;2;${r};${g};${b}`)}${s}${reset}`
 const bgRgb = (r: number, g: number, b: number, s: string) => `${esc(`48;2;${r};${g};${b}`)}${s}${reset}`
 
-function hexToRgbTuple(hex: string): [number, number, number] {
+// ============================================================================
+// Color Utilities
+// ============================================================================
+
+function hexToRgb(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16)
   return [(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]
 }
 
+function isHex(s: string): boolean {
+  return s.startsWith("#") && s.length === 7
+}
+
 function colorSwatch(hex: string, width = 2): string {
-  if (!hex || !hex.startsWith("#")) return dim(hex.padEnd(width))
-  const [r, g, b] = hexToRgbTuple(hex)
+  if (!isHex(hex)) return dim(hex.padEnd(width))
+  const [r, g, b] = hexToRgb(hex)
   return bgRgb(r, g, b, " ".repeat(width))
 }
 
 function colorLabel(hex: string, label: string): string {
-  if (!hex || !hex.startsWith("#")) return `${dim(hex.padEnd(7))} ${label}`
-  const [r, g, b] = hexToRgbTuple(hex)
+  if (!isHex(hex)) return `${dim(hex.padEnd(7))} ${label}`
+  const [r, g, b] = hexToRgb(hex)
   return `${colorSwatch(hex)} ${fgRgb(r, g, b, hex)} ${label}`
 }
 
-// Commands
-
-function listThemes() {
-  const names = Object.keys(builtinPalettes)
-  console.log(bold("Built-in Themes") + dim(` (${names.length} palettes)`))
-  console.log()
-
-  const families = new Map<string, string[]>()
-  for (const name of names) {
-    const family = name.split("-")[0]
-    if (!families.has(family)) families.set(family, [])
-    families.get(family)!.push(name)
-  }
-
-  for (const [family, names] of families) {
-    console.log(bold(`  ${family}`))
-    for (const name of names) {
-      const palette = getPaletteByName(name)!
-      const dark = palette.base ? isDarkPalette(palette) : true
-      const mode = dark ? dim("dark") : dim("light")
-      // Show accent colors as swatches
-      const accents = [palette.red, palette.green, palette.yellow, palette.blue, palette.purple, palette.teal]
-        .filter(Boolean)
-        .map((c) => colorSwatch(c!, 1))
-        .join("")
-      console.log(`    ${name.padEnd(24)} ${mode.padEnd(15)} ${accents}`)
-    }
-  }
-  console.log()
-  console.log(dim(`Use 'bun cli show <name>' for details`))
+/** Render text in the foreground color of a hex value. */
+function colored(hex: string, text: string): string {
+  if (!isHex(hex)) return text
+  const [r, g, b] = hexToRgb(hex)
+  return fgRgb(r, g, b, text)
 }
 
 function isDarkPalette(p: ThemePalette): boolean {
   if (!p.base) return true
-  const [r, g, b] = hexToRgbTuple(p.base)
+  const [r, g, b] = hexToRgb(p.base)
   return (r + g + b) / 3 < 128
 }
+
+// ============================================================================
+// Box Drawing
+// ============================================================================
+
+const box = {
+  tl: "\u250c", tr: "\u2510", bl: "\u2514", br: "\u2518",
+  h: "\u2500", v: "\u2502",
+  tee: "\u252c", btee: "\u2534", ltee: "\u251c", rtee: "\u2524", cross: "\u253c",
+} as const
+
+function hline(width: number, char = box.h): string {
+  return char.repeat(width)
+}
+
+function boxBottom(width: number): string {
+  return dim(`${box.bl}${hline(width)}${box.br}`)
+}
+
+function boxHeader(title: string, width: number): string {
+  const pad = width - title.length - 2
+  return dim(`${box.tl}${box.h} `) + bold(title) + dim(` ${hline(Math.max(0, pad))}${box.tr}`)
+}
+
+// ============================================================================
+// Commands
+// ============================================================================
+
+function listThemes() {
+  const names = Object.keys(builtinPalettes)
+  console.log()
+  console.log(bold("  themex") + dim(` -- ${names.length} built-in palettes`))
+  console.log()
+
+  const families = new Map<string, string[]>()
+  for (const name of names) {
+    const family = name.split("-")[0]!
+    if (!families.has(family)) families.set(family, [])
+    families.get(family)!.push(name)
+  }
+
+  // Table header
+  const nameW = 26
+  const modeW = 7
+  console.log(
+    `  ${dim(box.tl + hline(nameW) + box.tee + hline(modeW) + box.tee + hline(10) + box.tr)}`,
+  )
+  console.log(
+    `  ${dim(box.v)} ${bold("Theme".padEnd(nameW - 1))}${dim(box.v)} ${bold("Mode".padEnd(modeW - 1))}${dim(box.v)} ${bold("Accents".padEnd(9))}${dim(box.v)}`,
+  )
+  console.log(
+    `  ${dim(box.ltee + hline(nameW) + box.cross + hline(modeW) + box.cross + hline(10) + box.rtee)}`,
+  )
+
+  let first = true
+  for (const [family, members] of families) {
+    if (!first) {
+      console.log(
+        `  ${dim(box.ltee + hline(nameW) + box.cross + hline(modeW) + box.cross + hline(10) + box.rtee)}`,
+      )
+    }
+    first = false
+
+    for (const name of members) {
+      const palette = getPaletteByName(name)!
+      const dark = isDarkPalette(palette)
+      const mode = dark ? "dark" : "light"
+      const accents = [palette.red, palette.green, palette.yellow, palette.blue, palette.purple, palette.teal, palette.orange, palette.pink]
+        .filter((c) => c && isHex(c))
+        .map((c) => colorSwatch(c!, 1))
+        .join("")
+
+      const displayName = colored(palette.blue || palette.teal, name)
+      // Pad accounting for ANSI escapes in displayName
+      const namePad = " ".repeat(Math.max(0, nameW - 1 - name.length))
+
+      console.log(
+        `  ${dim(box.v)} ${displayName}${namePad}${dim(box.v)} ${dim(mode.padEnd(modeW - 1))}${dim(box.v)} ${accents}  ${dim(box.v)}`,
+      )
+    }
+  }
+
+  console.log(
+    `  ${dim(box.bl + hline(nameW) + box.btee + hline(modeW) + box.btee + hline(10) + box.br)}`,
+  )
+  console.log()
+  console.log(dim(`  Commands: show <name> | colors | compare <a> <b> | search <q> | json <name>`))
+  console.log()
+}
+
+// ── show ─────────────────────────────────────────────────────────────
 
 function showTheme(name: string) {
   const palette = getPaletteByName(name)
@@ -93,66 +174,272 @@ function showTheme(name: string) {
   }
 
   const theme = deriveTheme(palette)
-  console.log(bold(`Theme: ${name}`) + dim(` (${theme.dark ? "dark" : "light"})`))
+  const w = 48
+  console.log()
+  console.log(boxHeader(name, w) + dim(` ${theme.dark ? "dark" : "light"}`))
   console.log()
 
   // Surface ramp
   console.log(bold("  Surface Ramp"))
-  console.log(`    ${colorLabel(palette.crust, "crust")}`)
-  console.log(`    ${colorLabel(palette.base, "base")}`)
-  console.log(`    ${colorLabel(palette.surface, "surface")}`)
-  console.log(`    ${colorLabel(palette.overlay, "overlay")}`)
-  console.log(`    ${colorLabel(palette.subtext, "subtext")}`)
-  console.log(`    ${colorLabel(palette.text, "text")}`)
+  const surfaces = ["crust", "base", "surface", "overlay", "subtext", "text"] as const
+  for (const key of surfaces) {
+    console.log(`    ${colorLabel(palette[key], key)}`)
+  }
   console.log()
 
-  // Accent hues
+  // Accent hues -- two-row grid
   console.log(bold("  Accent Hues"))
   const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
-  for (const hue of hues) {
-    const color = palette[hue]
-    if (color) console.log(`    ${colorLabel(color, hue)}`)
+  const hueRow1 = hues.slice(0, 4)
+  const hueRow2 = hues.slice(4)
+
+  for (const row of [hueRow1, hueRow2]) {
+    const cells = row.map((hue) => {
+      const color = palette[hue]
+      if (!color || !isHex(color)) return `    ${dim(hue.padEnd(10))}`
+      return `    ${colorSwatch(color, 2)} ${fgRgb(...hexToRgb(color), hue.padEnd(8))}`
+    })
+    console.log(cells.join(""))
   }
   console.log()
 
-  // Derived semantic tokens
+  // Semantic tokens grouped
   console.log(bold("  Semantic Tokens"))
-  const tokens = [
-    ["primary", theme.primary],
-    ["link", theme.link],
-    ["control", theme.control],
-    ["selected", theme.selected],
-    ["selectedfg", theme.selectedfg],
-    ["focusring", theme.focusring],
-    ["text", theme.text],
-    ["text2", theme.text2],
-    ["text3", theme.text3],
-    ["text4", theme.text4],
-    ["bg", theme.bg],
-    ["surface", theme.surface],
-    ["separator", theme.separator],
-    ["error", theme.error],
-    ["warning", theme.warning],
-    ["success", theme.success],
-  ] as const
+  const groups: [string, [string, string][]][] = [
+    ["Brand", [["primary", theme.primary], ["link", theme.link], ["control", theme.control]]],
+    ["Selection", [["selected", theme.selected], ["selectedfg", theme.selectedfg], ["focusring", theme.focusring]]],
+    ["Text", [["text", theme.text], ["text2", theme.text2], ["text3", theme.text3], ["text4", theme.text4]]],
+    ["Surface", [["bg", theme.bg], ["surface", theme.surface], ["separator", theme.separator]]],
+    ["Chrome", [["chromebg", theme.chromebg], ["chromefg", theme.chromefg]]],
+    ["Status", [["error", theme.error], ["warning", theme.warning], ["success", theme.success]]],
+  ]
 
-  for (const [label, value] of tokens) {
-    console.log(`    ${colorLabel(value, label)}`)
+  for (const [group, tokens] of groups) {
+    const items = tokens.map(([label, value]) => {
+      if (!isHex(value)) return `${dim(value.padEnd(7))} ${dim(label)}`
+      return `${colorSwatch(value)} ${colored(value, label)}`
+    })
+    console.log(`    ${dim(group.padEnd(11))} ${items.join("  ")}`)
   }
   console.log()
 
-  // Palette
+  // 16-color palette
   console.log(bold("  16-Color Palette"))
   const row1 = theme.palette.slice(0, 8).map((c) => colorSwatch(c, 3)).join("")
   const row2 = theme.palette.slice(8, 16).map((c) => colorSwatch(c, 3)).join("")
-  console.log(`    ${row1}  0-7`)
-  console.log(`    ${row2}  8-15`)
+  console.log(`    ${row1}  ${dim("0-7")}`)
+  console.log(`    ${row2}  ${dim("8-15")}`)
+
+  console.log()
+  console.log(boxBottom(w))
+  console.log()
 }
+
+// ── colors ───────────────────────────────────────────────────────────
+
+function colorsGrid() {
+  const names = Object.keys(builtinPalettes)
+  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
+
+  console.log()
+  console.log(bold("  Accent Colors") + dim(` -- ${names.length} themes`))
+  console.log()
+
+  // Header
+  const nameW = 24
+  const hueW = 3
+  const header = hues.map((h) => h.slice(0, 3).padEnd(hueW)).join(" ")
+  console.log(`  ${"".padEnd(nameW)} ${dim(header)}`)
+  console.log(`  ${dim(hline(nameW + 1 + hues.length * (hueW + 1)))}`)
+
+  for (const name of names) {
+    const palette = getPaletteByName(name)!
+    const swatches = hues.map((hue) => {
+      const color = palette[hue]
+      if (!color || !isHex(color)) return dim(" ".repeat(hueW))
+      return colorSwatch(color, hueW)
+    }).join(" ")
+
+    const dark = isDarkPalette(palette)
+    const modeChar = dark ? dim("d") : dim("l")
+    console.log(`  ${colored(palette.blue || palette.teal, name.padEnd(nameW - 2))} ${modeChar} ${swatches}`)
+  }
+
+  console.log()
+}
+
+// ── compare ──────────────────────────────────────────────────────────
+
+function compareThemes(name1: string, name2: string) {
+  const palette1 = getPaletteByName(name1)
+  const palette2 = getPaletteByName(name2)
+
+  if (!palette1) {
+    console.error(`Theme "${name1}" not found.`)
+    process.exit(1)
+  }
+  if (!palette2) {
+    console.error(`Theme "${name2}" not found.`)
+    process.exit(1)
+  }
+
+  const theme1 = deriveTheme(palette1)
+  const theme2 = deriveTheme(palette2)
+
+  const colW = 32
+  const sepCol = ` ${dim(box.v)} `
+
+  console.log()
+  console.log(bold("  Compare: ") + colored(palette1.blue, name1) + dim(" vs ") + colored(palette2.blue, name2))
+  console.log()
+
+  // Header
+  console.log(`  ${bold(name1.padEnd(colW))}${sepCol}${bold(name2)}`)
+  console.log(`  ${dim(hline(colW))}${dim(box.cross)}${dim(hline(colW + 1))}`)
+
+  // Mode
+  const mode1 = theme1.dark ? "dark" : "light"
+  const mode2 = theme2.dark ? "dark" : "light"
+  console.log(`  ${dim("Mode: ") + mode1.padEnd(colW - 6)}${sepCol}${dim("Mode: ") + mode2}`)
+  console.log()
+
+  // Surface ramp side by side
+  console.log(`  ${bold("Surface Ramp".padEnd(colW))}${sepCol}${bold("Surface Ramp")}`)
+  const surfaces = ["crust", "base", "surface", "overlay", "subtext", "text"] as const
+  for (const key of surfaces) {
+    const c1 = palette1[key]
+    const c2 = palette2[key]
+    const left = `${colorSwatch(c1)} ${isHex(c1) ? colored(c1, c1) : c1} ${dim(key)}`
+    const right = `${colorSwatch(c2)} ${isHex(c2) ? colored(c2, c2) : c2} ${dim(key)}`
+    // Pad left column using raw key + hex length
+    const leftRaw = `XX ${c1} ${key}`
+    const pad = " ".repeat(Math.max(0, colW - leftRaw.length))
+    console.log(`  ${left}${pad}${sepCol}${right}`)
+  }
+  console.log()
+
+  // Accents side by side
+  console.log(`  ${bold("Accent Hues".padEnd(colW))}${sepCol}${bold("Accent Hues")}`)
+  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
+  for (const hue of hues) {
+    const c1 = palette1[hue]
+    const c2 = palette2[hue]
+    const fmtCell = (c: string, h: string) => {
+      if (!isHex(c)) return dim(`${c.padEnd(7)} ${h}`)
+      return `${colorSwatch(c)} ${colored(c, c)} ${dim(h)}`
+    }
+    const left = fmtCell(c1, hue)
+    const right = fmtCell(c2, hue)
+    const leftRaw = `XX ${c1} ${hue}`
+    const pad = " ".repeat(Math.max(0, colW - leftRaw.length))
+    console.log(`  ${left}${pad}${sepCol}${right}`)
+  }
+  console.log()
+
+  // Semantic tokens side by side
+  console.log(`  ${bold("Semantic Tokens".padEnd(colW))}${sepCol}${bold("Semantic Tokens")}`)
+  const tokenKeys = [
+    "primary", "link", "control", "selected", "selectedfg", "focusring",
+    "text", "text2", "text3", "text4", "bg", "surface", "separator",
+    "chromebg", "chromefg", "error", "warning", "success",
+  ] as const
+
+  for (const key of tokenKeys) {
+    const v1 = theme1[key]
+    const v2 = theme2[key]
+    const fmtToken = (v: string, k: string) => {
+      if (!isHex(v)) return dim(`${v.padEnd(7)} ${k}`)
+      return `${colorSwatch(v)} ${colored(v, v)} ${dim(k)}`
+    }
+    const left = fmtToken(v1, key)
+    const right = fmtToken(v2, key)
+    const leftRaw = `XX ${v1} ${key}`
+    const pad = " ".repeat(Math.max(0, colW - leftRaw.length))
+    console.log(`  ${left}${pad}${sepCol}${right}`)
+  }
+  console.log()
+
+  // 16-color palette side by side
+  console.log(`  ${bold("Palette".padEnd(colW))}${sepCol}${bold("Palette")}`)
+  for (const [start, label] of [[0, "0-7"], [8, "8-15"]] as const) {
+    const r1 = theme1.palette.slice(start, start + 8).map((c) => colorSwatch(c, 3)).join("")
+    const r2 = theme2.palette.slice(start, start + 8).map((c) => colorSwatch(c, 3)).join("")
+    // Each row is 24 visible chars (8 * 3)
+    const pad = " ".repeat(Math.max(0, colW - 24 - label.length - 1))
+    console.log(`  ${r1} ${dim(label)}${pad}${sepCol}${r2} ${dim(label)}`)
+  }
+  console.log()
+}
+
+// ── search ───────────────────────────────────────────────────────────
+
+function searchThemes(query: string) {
+  const q = query.toLowerCase()
+  const names = Object.keys(builtinPalettes)
+  const matches = names.filter((name) => name.toLowerCase().includes(q))
+
+  console.log()
+  if (matches.length === 0) {
+    console.log(dim(`  No themes matching "${query}"`))
+    console.log()
+    return
+  }
+
+  console.log(bold(`  Search: "${query}"`) + dim(` -- ${matches.length} match${matches.length === 1 ? "" : "es"}`))
+  console.log()
+
+  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
+
+  for (const name of matches) {
+    const palette = getPaletteByName(name)!
+    const dark = isDarkPalette(palette)
+    const mode = dark ? dim("dark ") : dim("light")
+    const accents = hues.map((hue) => {
+      const color = palette[hue]
+      if (!color || !isHex(color)) return dim(" ")
+      return colorSwatch(color, 1)
+    }).join("")
+
+    // Highlight the matching part in the name
+    const idx = name.toLowerCase().indexOf(q)
+    const before = name.slice(0, idx)
+    const match = name.slice(idx, idx + q.length)
+    const after = name.slice(idx + q.length)
+    const highlighted = `${before}${bold(underline(match))}${after}`
+
+    console.log(`  ${highlighted.padEnd(24 + (highlighted.length - name.length))} ${mode} ${accents}  ${dim(palette.base)}`)
+  }
+  console.log()
+}
+
+// ── json ─────────────────────────────────────────────────────────────
+
+function jsonTheme(name: string) {
+  const palette = getPaletteByName(name)
+  if (!palette) {
+    // Check if it's a pre-built theme
+    const theme = builtinThemes[name]
+    if (theme) {
+      console.log(JSON.stringify(theme, null, 2))
+      return
+    }
+    console.error(`Theme "${name}" not found.`)
+    process.exit(1)
+  }
+
+  const theme = deriveTheme(palette)
+  const output = {
+    palette,
+    theme,
+  }
+  console.log(JSON.stringify(output, null, 2))
+}
+
+// ── generate ─────────────────────────────────────────────────────────
 
 function generateCmd(primary: string, light: boolean) {
   const validPrimaries = ["yellow", "cyan", "magenta", "green", "red", "blue", "white"]
   if (!validPrimaries.includes(primary)) {
-    // Try as hex → use builder
     if (primary.startsWith("#") && primary.length === 7) {
       const { createTheme } = require("./builder.js")
       const theme = createTheme().primary(primary).build()
@@ -168,18 +455,42 @@ function generateCmd(primary: string, light: boolean) {
 }
 
 function showDerivedTheme(theme: Theme, label: string) {
-  console.log(bold(`Generated Theme: ${label}`))
   console.log()
-  const keys = [
-    "primary", "link", "control", "selected", "selectedfg", "focusring",
-    "text", "text2", "text3", "text4", "bg", "surface", "separator",
-    "error", "warning", "success",
-  ] as const
-  for (const key of keys) {
-    const value = theme[key]
-    console.log(`  ${key.padEnd(12)} ${value}`)
+  console.log(bold(`  Generated: ${label}`))
+  console.log()
+
+  const groups: [string, [string, string][]][] = [
+    ["Brand", [["primary", theme.primary], ["link", theme.link], ["control", theme.control]]],
+    ["Selection", [["selected", theme.selected], ["selectedfg", theme.selectedfg], ["focusring", theme.focusring]]],
+    ["Text", [["text", theme.text], ["text2", theme.text2], ["text3", theme.text3], ["text4", theme.text4]]],
+    ["Surface", [["bg", theme.bg], ["surface", theme.surface], ["separator", theme.separator]]],
+    ["Chrome", [["chromebg", theme.chromebg], ["chromefg", theme.chromefg]]],
+    ["Status", [["error", theme.error], ["warning", theme.warning], ["success", theme.success]]],
+  ]
+
+  for (const [group, tokens] of groups) {
+    console.log(`  ${dim(group)}`)
+    for (const [key, value] of tokens) {
+      if (isHex(value)) {
+        console.log(`    ${colorSwatch(value)} ${colored(value, value)} ${key}`)
+      } else {
+        console.log(`    ${dim(value.padEnd(7))} ${key}`)
+      }
+    }
+  }
+
+  console.log()
+  if (theme.palette.length > 0) {
+    console.log(`  ${bold("Palette")}`)
+    const row1 = theme.palette.slice(0, 8).map((c) => colorSwatch(c, 3)).join("")
+    const row2 = theme.palette.slice(8, 16).map((c) => colorSwatch(c, 3)).join("")
+    console.log(`    ${row1}  ${dim("0-7")}`)
+    console.log(`    ${row2}  ${dim("8-15")}`)
+    console.log()
   }
 }
+
+// ── import / export / validate ───────────────────────────────────────
 
 async function importCmd(file: string) {
   const content = await Bun.file(file).text()
@@ -209,21 +520,54 @@ function validateCmd(name: string) {
   }
   const result = validatePalette(palette)
   if (result.valid) {
-    console.log(`${bold("✓")} ${name}: valid palette`)
+    console.log(`${bold("OK")} ${name}: valid palette`)
   } else {
-    console.log(`${bold("✗")} ${name}: invalid palette`)
+    console.log(`${bold("FAIL")} ${name}: invalid palette`)
     for (const error of result.errors) {
       console.log(`  - ${error}`)
     }
   }
   if (result.warnings.length > 0) {
     for (const warning of result.warnings) {
-      console.log(`  ⚠ ${warning}`)
+      console.log(`  ! ${warning}`)
     }
   }
 }
 
+// ============================================================================
+// Help
+// ============================================================================
+
+function showHelp() {
+  console.log(`
+${bold("themex")} ${dim("--")} Universal color themes
+
+${bold("Browse")}
+  ${colored("#88C0D0", "list")}                    List all ${Object.keys(builtinPalettes).length} built-in themes
+  ${colored("#88C0D0", "show")} <name>             Show theme details + color swatches
+  ${colored("#88C0D0", "colors")}                  Accent color grid for all themes
+  ${colored("#88C0D0", "compare")} <a> <b>         Side-by-side theme comparison
+  ${colored("#88C0D0", "search")} <query>          Filter themes by name
+
+${bold("Generate")}
+  ${colored("#88C0D0", "generate")} <primary>      Generate ANSI 16 theme from primary color
+  ${colored("#88C0D0", "json")} <name>             Output theme as JSON ${dim("(for piping)")}
+
+${bold("Import / Export")}
+  ${colored("#88C0D0", "import")} <file.yaml>      Import Base16 YAML to ThemePalette
+  ${colored("#88C0D0", "export")} <name>           Export palette as Base16 YAML
+  ${colored("#88C0D0", "validate")} <name>         Validate a palette
+
+${bold("Options")}
+  --light                 Generate light variant ${dim("(with generate)")}
+  --help                  Show this help
+`)
+}
+
+// ============================================================================
 // Main
+// ============================================================================
+
 const args = process.argv.slice(2)
 const command = args[0] || "list"
 
@@ -239,6 +583,34 @@ switch (command) {
       process.exit(1)
     }
     showTheme(args[1])
+    break
+  case "colors":
+    colorsGrid()
+    break
+  case "compare":
+  case "cmp":
+  case "diff":
+    if (!args[1] || !args[2]) {
+      console.error("Usage: bun cli compare <theme1> <theme2>")
+      process.exit(1)
+    }
+    compareThemes(args[1], args[2])
+    break
+  case "search":
+  case "find":
+  case "grep":
+    if (!args[1]) {
+      console.error("Usage: bun cli search <query>")
+      process.exit(1)
+    }
+    searchThemes(args[1])
+    break
+  case "json":
+    if (!args[1]) {
+      console.error("Usage: bun cli json <theme-name>")
+      process.exit(1)
+    }
+    jsonTheme(args[1])
     break
   case "generate":
   case "gen":
@@ -272,22 +644,10 @@ switch (command) {
   case "help":
   case "--help":
   case "-h":
-    console.log(`${bold("themex")} — Universal color themes
-
-${bold("Commands:")}
-  list                    List all built-in themes
-  show <name>             Show theme details + color swatches
-  generate <primary>      Generate ANSI 16 theme from primary color
-  import <file.yaml>      Import Base16 YAML to ThemePalette
-  export <name>           Export palette as Base16 YAML
-  validate <name>         Validate a palette
-
-${bold("Options:")}
-  --light                 Generate light variant (with generate)
-  --help                  Show this help`)
+    showHelp()
     break
   default:
-    // Maybe it's a theme name — show it
+    // Maybe it's a theme name -- show it
     if (getPaletteByName(command)) {
       showTheme(command)
     } else {
