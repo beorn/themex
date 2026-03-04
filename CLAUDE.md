@@ -127,8 +127,8 @@ import { resolveAliases } from "themex"
 // Values starting with $ reference other tokens
 const resolved = resolveAliases({
   bg: "#1e1e2e",
-  surface: "$bg",        // resolves to "#1e1e2e"
-  popover: "$surface",   // chain resolves to "#1e1e2e"
+  surface: "$bg", // resolves to "#1e1e2e"
+  popover: "$surface", // chain resolves to "#1e1e2e"
 })
 ```
 
