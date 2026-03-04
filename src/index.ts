@@ -59,6 +59,24 @@ export { setActiveTheme, getActiveTheme, pushContextTheme, popContextTheme } fro
 // Validation
 export { validateColorPalette } from "./validate.js"
 export type { ValidationResult } from "./validate.js"
+export { validateTheme, THEME_TOKEN_KEYS } from "./validate-theme.js"
+export type { ThemeValidationResult } from "./validate-theme.js"
+
+// Theme inheritance
+export { extendTheme } from "./extend.js"
+
+// Contrast checking
+export { checkContrast } from "./contrast.js"
+export type { ContrastResult } from "./contrast.js"
+
+// Token aliasing
+export { resolveAliases, resolveTokenAlias } from "./alias.js"
+
+// CSS variables export
+export { themeToCSSVars } from "./css.js"
+
+// Auto-generate themes from a single color
+export { autoGenerateTheme } from "./auto-generate.js"
 
 // Base16 import/export
 export { importBase16 } from "./import/base16.js"
