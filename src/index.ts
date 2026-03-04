@@ -62,9 +62,6 @@ export type { ValidationResult } from "./validate.js"
 export { validateTheme, THEME_TOKEN_KEYS } from "./validate-theme.js"
 export type { ThemeValidationResult } from "./validate-theme.js"
 
-// Theme inheritance
-export { extendTheme } from "./extend.js"
-
 // Contrast checking
 export { checkContrast } from "./contrast.js"
 export type { ContrastResult } from "./contrast.js"

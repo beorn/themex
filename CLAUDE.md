@@ -101,7 +101,7 @@ src/
 
 ## Additional APIs
 
-### Theme Validation
+### Validation
 
 ```typescript
 import { validateTheme, THEME_TOKEN_KEYS } from "themex"

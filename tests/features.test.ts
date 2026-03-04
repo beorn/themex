@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest"
-import { extendTheme } from "../src/extend.js"
 import { validateTheme, THEME_TOKEN_KEYS } from "../src/validate-theme.js"
 import { checkContrast } from "../src/contrast.js"
 import { resolveAliases, resolveTokenAlias } from "../src/alias.js"
@@ -13,93 +12,7 @@ import { hexToRgb } from "../src/color.js"
 import type { Theme } from "../src/types.js"
 
 // ============================================================================
-// 1. Theme Inheritance (extendTheme)
-// ============================================================================
-
-describe("extendTheme", () => {
-  const baseTheme = presetTheme("nord")
-
-  test("returns a new theme with overrides applied", () => {
-    const custom = extendTheme({
-      extends: baseTheme,
-      overrides: { primary: "#A3BE8C", name: "nord-green" },
-    })
-    expect(custom.primary).toBe("#A3BE8C")
-    expect(custom.name).toBe("nord-green")
-  })
-
-  test("inherits all tokens from base when no overrides", () => {
-    const custom = extendTheme({
-      extends: baseTheme,
-      overrides: {},
-    })
-    // All token values should match the base
-    for (const key of THEME_TOKEN_KEYS) {
-      expect(custom[key as keyof Theme]).toBe(baseTheme[key as keyof Theme])
-    }
-  })
-
-  test("overrides only the specified tokens", () => {
-    const custom = extendTheme({
-      extends: baseTheme,
-      overrides: { error: "#FF0000" },
-    })
-    expect(custom.error).toBe("#FF0000")
-    // Other tokens should be unchanged
-    expect(custom.primary).toBe(baseTheme.primary)
-    expect(custom.bg).toBe(baseTheme.bg)
-    expect(custom.fg).toBe(baseTheme.fg)
-    expect(custom.border).toBe(baseTheme.border)
-  })
-
-  test("does not mutate the base theme", () => {
-    const originalPrimary = baseTheme.primary
-    extendTheme({
-      extends: baseTheme,
-      overrides: { primary: "#FF0000" },
-    })
-    expect(baseTheme.primary).toBe(originalPrimary)
-  })
-
-  test("can override palette", () => {
-    const newPalette = Array(16).fill("#AABBCC")
-    const custom = extendTheme({
-      extends: baseTheme,
-      overrides: { palette: newPalette },
-    })
-    expect(custom.palette).toEqual(newPalette)
-    // Original palette is unchanged
-    expect(baseTheme.palette).not.toEqual(newPalette)
-  })
-
-  test("palette is a copy when not overridden", () => {
-    const custom = extendTheme({
-      extends: baseTheme,
-      overrides: { name: "copy-test" },
-    })
-    // Should be a separate array, not the same reference
-    expect(custom.palette).toEqual(baseTheme.palette)
-    expect(custom.palette).not.toBe(baseTheme.palette)
-  })
-
-  test("can chain extensions", () => {
-    const mid = extendTheme({
-      extends: baseTheme,
-      overrides: { primary: "#FF0000", name: "mid" },
-    })
-    const final = extendTheme({
-      extends: mid,
-      overrides: { error: "#00FF00", name: "final" },
-    })
-    expect(final.primary).toBe("#FF0000") // From mid
-    expect(final.error).toBe("#00FF00") // From final override
-    expect(final.bg).toBe(baseTheme.bg) // From original base
-    expect(final.name).toBe("final")
-  })
-})
-
-// ============================================================================
-// 2. Theme Validation (validateTheme)
+// 1. Theme Validation (validateTheme)
 // ============================================================================
 
 describe("validateTheme", () => {
