@@ -13,7 +13,10 @@
  * NOT supported by: tmux (blocks OSC), basic xterm, CI environments
  */
 
-import type { ColorPalette } from "./types.js"
+import type { ColorPalette, Theme } from "./types.js"
+import { deriveTheme } from "./derive.js"
+import { nord } from "./palettes/nord.js"
+import { catppuccinLatte } from "./palettes/catppuccin.js"
 
 // inkx is an optional peer dependency — lazy-import to avoid breaking
 // standalone consumers that don't have inkx installed.
@@ -203,6 +206,51 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
     stdin.removeListener("data", onData)
     if (!wasRaw) stdin.setRawMode(false)
   }
+}
+
+// ============================================================================
+// detectTheme — high-level: detect terminal palette, fill gaps, derive theme
+// ============================================================================
+
+export interface DetectThemeOptions {
+  /** Fallback ColorPalette when detection fails or returns partial data.
+   * Detected colors override matching fallback fields. */
+  fallback?: ColorPalette
+  /** Timeout per OSC query in ms (default 150). */
+  timeoutMs?: number
+}
+
+/**
+ * Detect the terminal's color palette and derive a Theme.
+ *
+ * Queries the terminal via OSC, fills gaps from `fallback` palette,
+ * and runs `deriveTheme()` to produce a complete 33-token Theme.
+ *
+ * Falls back entirely to the fallback palette (or Nord dark) if
+ * detection fails (e.g., not a TTY, tmux, CI).
+ */
+export async function detectTheme(opts: DetectThemeOptions = {}): Promise<Theme> {
+  const detected = await detectTerminalPalette(opts.timeoutMs)
+  const isDark = detected?.dark ?? true
+  const fallback = opts.fallback ?? (isDark ? nord : catppuccinLatte)
+
+  if (!detected) {
+    // Detection failed entirely — use fallback
+    return deriveTheme(fallback)
+  }
+
+  // Merge: detected colors override fallback
+  const merged: ColorPalette = { ...fallback, ...stripNulls(detected.palette) }
+  return deriveTheme(merged)
+}
+
+/** Strip null/undefined values from a partial palette so they don't override fallback. */
+function stripNulls(partial: Partial<ColorPalette>): Partial<ColorPalette> {
+  const result: Record<string, unknown> = {}
+  for (const [k, v] of Object.entries(partial)) {
+    if (v != null) result[k] = v
+  }
+  return result as Partial<ColorPalette>
 }
 
 /** Check if a #RRGGBB color is dark (luminance <= 0.5). */
