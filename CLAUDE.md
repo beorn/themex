@@ -99,6 +99,57 @@ src/
 | Cursor     | `$cursor`, `$cursor-fg`                                                                          |
 | Standalone | `$border`, `$inputborder`, `$focusborder`, `$link`, `$disabled-fg`                               |
 
+## Additional APIs
+
+### Theme Validation
+
+```typescript
+import { validateTheme, THEME_TOKEN_KEYS } from "themex"
+
+const result = validateTheme(myTheme)
+// { valid: boolean, missing: string[], extra: string[] }
+```
+
+### WCAG Contrast Checking
+
+```typescript
+import { checkContrast } from "themex"
+
+const result = checkContrast("#ffffff", "#000000")
+// { ratio: 21, aa: true, aaa: true }
+```
+
+### Token Aliasing
+
+```typescript
+import { resolveAliases } from "themex"
+
+// Values starting with $ reference other tokens
+const resolved = resolveAliases({
+  bg: "#1e1e2e",
+  surface: "$bg",        // resolves to "#1e1e2e"
+  popover: "$surface",   // chain resolves to "#1e1e2e"
+})
+```
+
+### CSS Variable Export
+
+```typescript
+import { themeToCSSVars } from "themex"
+
+const css = themeToCSSVars(theme)
+// "--bg: #1e1e2e;\n--fg: #cdd6f4;\n..."
+```
+
+### Auto-Generate Theme from Primary Color
+
+```typescript
+import { autoGenerateTheme } from "themex"
+
+const theme = autoGenerateTheme("#A3BE8C", "dark")
+// Generates a full theme with all 33 tokens derived from the primary color
+```
+
 ## Key Design Decisions
 
 - **ColorPalette is the 22-color terminal standard format**: 16 ANSI colors + 6 special (background, foreground, cursor, cursor-text, selection, selection-text).
