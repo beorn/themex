@@ -227,7 +227,12 @@ function DemoPanel({ palette, label }: { palette: ColorPalette; label: string })
             <Text backgroundColor="$primary" color="$primary-fg">
               {" Explorer "}
             </Text>
-            <Text color="$muted-fg">{"   Search"}</Text>
+            <Text color="$muted-fg">{"  Search"}</Text>
+          </Box>
+
+          {/* Search input — showcases $inputborder */}
+          <Box borderStyle="single" borderColor="$inputborder" marginBottom={1} paddingX={1}>
+            <Text color="$muted-fg">{"🔍 Search files..."}</Text>
           </Box>
 
           <Box flexDirection="column" marginBottom={1}>
@@ -245,20 +250,16 @@ function DemoPanel({ palette, label }: { palette: ColorPalette; label: string })
             <Text color="$muted-fg" dimColor>
               {"SRC"}
             </Text>
-            <Box marginTop={1}>
-              <Text color="$fg">{"  ▾ components/"}</Text>
-            </Box>
+            <Text color="$fg">{"  ▾ components/"}</Text>
             <Box flexDirection="row">
               <Text color="$fg">{"      "}</Text>
               <Text backgroundColor="$selection" color="$selection-fg">
-                {" App.tsx         "}
+                {" App.tsx "}
               </Text>
             </Box>
             <Text color="$fg">{"      Button.tsx"}</Text>
             <Text color="$fg">{"      Dialog.tsx"}</Text>
-            <Box marginTop={1}>
-              <Text color="$fg">{"  ▸ utils/"}</Text>
-            </Box>
+            <Text color="$fg">{"  ▸ utils/"}</Text>
             <Text color="$disabled-fg" strikethrough>
               {"    deprecated.ts"}
             </Text>
@@ -270,9 +271,11 @@ function DemoPanel({ palette, label }: { palette: ColorPalette; label: string })
         <Box flexDirection="column" flexGrow={1}>
           {/* Tab bar */}
           <Box flexDirection="row" backgroundColor="$surface" paddingX={1}>
-            <Text backgroundColor="$bg" color="$fg">
-              {" App.tsx "}
-            </Text>
+            <Box borderBottom borderColor="$primary">
+              <Text backgroundColor="$bg" color="$fg">
+                {" App.tsx "}
+              </Text>
+            </Box>
             <Text>{"  "}</Text>
             <Text color="$muted-fg">{" config.json "}</Text>
             <Text>{"  "}</Text>
@@ -349,16 +352,25 @@ function DemoPanel({ palette, label }: { palette: ColorPalette; label: string })
               <Text color="$primary">{"Button"}</Text>
               <Text color="$fg"> </Text>
               <Text color="$accent">{"onClick"}</Text>
-              <Text color="$fg">{"={() => setCount(n => n + 1)}>"}</Text>
+              <Text color="$fg">{"={() => "}</Text>
+              <Text color="$primary">{"setCo"}</Text>
+              <Text backgroundColor="$cursor" color="$cursor-fg">{"u"}</Text>
             </Text>
-            <Text>
-              <Text backgroundColor="$selection" color="$selection-fg">
-                {" 11  "}
-              </Text>
-              <Text backgroundColor="$selection" color="$selection-fg">
-                {"        Count: {count}"}
-              </Text>
-            </Text>
+            {/* Autocomplete popup — showcases $popover */}
+            <Box flexDirection="row">
+              <Text color="$muted-fg">{" 11  "}</Text>
+              <Text color="$fg">{"      "}</Text>
+              <Box
+                flexDirection="column"
+                backgroundColor="$popover"
+                borderStyle="single"
+                borderColor="$border"
+              >
+                <Text backgroundColor="$selection" color="$selection-fg">{" setCount      "}</Text>
+                <Text color="$popover-fg">{" setState      "}</Text>
+                <Text color="$popover-fg">{" setTimeout    "}</Text>
+              </Box>
+            </Box>
             <Text>
               <Text color="$muted-fg">{" 12  "}</Text>
               <Text color="$fg">{"      </"}</Text>
@@ -379,17 +391,6 @@ function DemoPanel({ palette, label }: { palette: ColorPalette; label: string })
               <Text color="$muted-fg">{" 15  "}</Text>
               <Text color="$fg">{"}"}</Text>
             </Text>
-            <Text color="$muted-fg">{" 16"}</Text>
-            <Text>
-              <Text color="$muted-fg">{" 17  "}</Text>
-              <Text color="$secondary">{"export const "}</Text>
-              <Text color="$primary" bold>
-                {"VERSION"}
-              </Text>
-              <Text color="$fg">{" = "}</Text>
-              <Text color="$accent">{'"2.0.0"'}</Text>
-            </Text>
-            <Text color="$muted-fg">{" 18"}</Text>
           </Box>
 
           {/* Problems panel */}
@@ -449,8 +450,8 @@ function GenDialog({ state }: { state: GenState }) {
   // Center like km dialogs (HelpOverlay pattern)
   const cols = process.stdout.columns ?? 80
   const rows = process.stdout.rows ?? 24
-  const dialogW = 44
-  const dialogH = 13
+  const dialogW = 48
+  const dialogH = 16
   const marginLeft = Math.max(0, Math.floor((cols - dialogW) / 2))
   const marginTop = Math.max(0, Math.floor((rows - dialogH) / 2))
 
@@ -477,14 +478,22 @@ function GenDialog({ state }: { state: GenState }) {
             const val = state[field]
             const hasVal = val.length > 0 && val.startsWith("#")
             return (
-              <Box key={field}>
+              <Box key={field} flexDirection="row" alignItems="center">
                 <Text color={active ? "$primary" : "$disabled-fg"} bold={active}>
                   {active ? "▸ " : "  "}
-                  {field.padEnd(10)}
+                  {field.padEnd(8)}
                 </Text>
-                {hasVal && <Text backgroundColor={val}>{"   "}</Text>}
-                <Text color={active ? "$popover-fg" : "$muted-fg"}> {val || "(empty)"}</Text>
-                {active && <Text color="$cursor">▏</Text>}
+                {hasVal && <Text backgroundColor={val}>{"  "}</Text>}
+                <Box
+                  borderStyle="single"
+                  borderColor={active ? "$focusborder" : "$inputborder"}
+                  paddingX={1}
+                >
+                  <Text color={active ? "$popover-fg" : "$muted-fg"}>
+                    {val || "(empty)"}
+                    {active && <Text color="$cursor">▏</Text>}
+                  </Text>
+                </Box>
               </Box>
             )
           })}
