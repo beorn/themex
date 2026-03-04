@@ -522,7 +522,7 @@ function ThemeListPanel({ items, cursor, search }: { items: ListItem[]; cursor: 
       {search !== null ? (
         <Text color="$primary">
           /{search}
-          <Text color="$focus-border">▏</Text>
+          <Text color="$focusborder">▏</Text>
         </Text>
       ) : (
         <Text bold color="$fg">
