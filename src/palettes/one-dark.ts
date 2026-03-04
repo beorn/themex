@@ -2,24 +2,33 @@
  * One Dark palette — Atom's iconic dark theme.
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** One Dark — the classic Atom editor theme. */
-export const oneDark: ThemePalette = {
+export const oneDark: ColorPalette = {
   name: "one-dark",
   dark: true,
-  crust: "#21252B",
-  base: "#282C34",
-  surface: "#2C313A",
-  overlay: "#5C6370",
-  subtext: "#ABB2BF",
-  text: "#ABB2BF",
+  black: "#21252B",
   red: "#E06C75",
-  orange: "#D19A66",
-  yellow: "#E5C07B",
   green: "#98C379",
-  teal: "#56B6C2",
+  yellow: "#E5C07B",
   blue: "#61AFEF",
-  purple: "#C678DD",
-  pink: "#E06C75",
+  magenta: "#C678DD",
+  cyan: "#56B6C2",
+  white: "#ABB2BF",
+  brightBlack: "#2C313A",
+  brightRed: "#D19A66",
+  brightGreen: brighten("#98C379", 0.15),
+  brightYellow: brighten("#E5C07B", 0.15),
+  brightBlue: brighten("#61AFEF", 0.15),
+  brightMagenta: "#E06C75",
+  brightCyan: brighten("#56B6C2", 0.15),
+  brightWhite: "#ABB2BF",
+  foreground: "#ABB2BF",
+  background: "#282C34",
+  cursorColor: "#ABB2BF",
+  cursorText: "#282C34",
+  selectionBackground: "#5C6370",
+  selectionForeground: "#ABB2BF",
 }

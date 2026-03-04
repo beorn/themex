@@ -1,14 +1,14 @@
 /**
- * Import Base16 YAML/JSON schemes into ThemePalette format.
+ * Import Base16 YAML/JSON schemes into ColorPalette format.
  *
- * Base16 defines 16 colors (base00–base0F). We map them to ThemePalette's
- * 14 colors (6 surface ramp + 8 accent hues), deriving `crust` from base00.
+ * Base16 defines 16 colors (base00–base0F). We map them to ColorPalette's
+ * 22 colors, deriving bright variants and special colors.
  *
  * @see https://github.com/chriskempson/base16
  */
 
 import { darken, brighten, hexToRgb } from "../color.js"
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
 import type { Base16Scheme } from "./types.js"
 import { BASE16_KEYS } from "./types.js"
 
@@ -34,8 +34,7 @@ function parseBase16Yaml(yaml: string): Base16Scheme {
     let value = line.slice(colonIdx + 1).trim()
 
     // Strip surrounding quotes (single or double)
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1)
     }
 
@@ -85,52 +84,67 @@ function luminance(hex: string): number {
 // Import
 // ============================================================================
 
-/**
- * Import a Base16 YAML (or JSON) scheme into a ThemePalette.
- *
- * Mapping:
- *   base00 → base, base01 → surface, base02 → overlay, base03 → subtext,
- *   base05 → text, base08 → red, base09 → orange, base0A → yellow,
- *   base0B → green, base0C → teal, base0D → blue, base0E → purple,
- *   base0F → pink.
- *
- * `crust` is derived by darkening base00 (dark themes) or brightening it (light themes).
- * `dark` is inferred from base00 luminance.
- */
-export function importBase16(yamlOrJson: string): ThemePalette {
-  const scheme = parseBase16Yaml(yamlOrJson)
-  return base16ToPalette(scheme)
-}
-
 /** Normalize a bare hex string to `#RRGGBB` (uppercase). */
 function hex(bare: string): string {
   return `#${bare.toUpperCase()}`
 }
 
-/** Convert a parsed Base16Scheme to ThemePalette. */
-export function base16ToPalette(scheme: Base16Scheme): ThemePalette {
-  const base = hex(scheme.base00)
-  const isDark = luminance(base) < 0.179
+/**
+ * Import a Base16 YAML (or JSON) scheme into a ColorPalette.
+ *
+ * Mapping:
+ *   base00 → background, base01 → brightBlack, base02 → selectionBackground,
+ *   base03 → white (muted fg), base05 → foreground/brightWhite,
+ *   base08 → red, base09 → brightRed, base0A → yellow,
+ *   base0B → green, base0C → cyan, base0D → blue, base0E → magenta,
+ *   base0F → brightMagenta.
+ *
+ * Bright color variants are derived by brightening normals.
+ * `dark` is inferred from base00 luminance.
+ */
+export function importBase16(yamlOrJson: string): ColorPalette {
+  const scheme = parseBase16Yaml(yamlOrJson)
+  return base16ToColorPalette(scheme)
+}
 
-  // Derive crust: slightly darker (dark theme) or lighter (light theme) than base00
-  const crust = isDark ? darken(base, 0.15) : brighten(base, 0.15)
+/** Convert a parsed Base16Scheme to ColorPalette. */
+export function base16ToColorPalette(scheme: Base16Scheme): ColorPalette {
+  const bg = hex(scheme.base00)
+  const fg = hex(scheme.base05)
+  const isDark = luminance(bg) < 0.179
+
+  const black = isDark ? darken(bg, 0.15) : brighten(bg, 0.15)
+  const red = hex(scheme.base08)
+  const green = hex(scheme.base0B)
+  const yellow = hex(scheme.base0A)
+  const blue = hex(scheme.base0D)
+  const magenta = hex(scheme.base0E)
+  const cyan = hex(scheme.base0C)
 
   return {
     name: scheme.scheme,
     dark: isDark,
-    crust,
-    base,
-    surface: hex(scheme.base01),
-    overlay: hex(scheme.base02),
-    subtext: hex(scheme.base03),
-    text: hex(scheme.base05),
-    red: hex(scheme.base08),
-    orange: hex(scheme.base09),
-    yellow: hex(scheme.base0A),
-    green: hex(scheme.base0B),
-    teal: hex(scheme.base0C),
-    blue: hex(scheme.base0D),
-    purple: hex(scheme.base0E),
-    pink: hex(scheme.base0F),
+    black,
+    red,
+    green,
+    yellow,
+    blue,
+    magenta,
+    cyan,
+    white: hex(scheme.base03),
+    brightBlack: hex(scheme.base01),
+    brightRed: hex(scheme.base09),
+    brightGreen: brighten(green, 0.15),
+    brightYellow: brighten(yellow, 0.15),
+    brightBlue: brighten(blue, 0.15),
+    brightMagenta: hex(scheme.base0F),
+    brightCyan: brighten(cyan, 0.15),
+    brightWhite: fg,
+    foreground: fg,
+    background: bg,
+    cursorColor: fg,
+    cursorText: bg,
+    selectionBackground: hex(scheme.base02),
+    selectionForeground: fg,
   }
 }

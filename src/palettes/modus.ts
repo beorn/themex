@@ -3,44 +3,61 @@
  * Source: https://github.com/protesilaos/modus-themes
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Modus Vivendi — elegant dark theme with maximum legibility. */
-export const modusVivendi: ThemePalette = {
+export const modusVivendi: ColorPalette = {
   name: "modus-vivendi",
   dark: true,
-  crust: "#000000",
-  base: "#000000",
-  surface: "#1E1E1E",
-  overlay: "#535353",
-  subtext: "#989898",
-  text: "#FFFFFF",
+  black: "#000000",
   red: "#FF5F59",
-  orange: "#FEC43F",
-  yellow: "#D0BC00",
   green: "#44BC44",
-  teal: "#00D3D0",
+  yellow: "#D0BC00",
   blue: "#2FAFFF",
-  purple: "#B6A0FF",
-  pink: "#FEACD0",
+  magenta: "#B6A0FF",
+  cyan: "#00D3D0",
+  white: "#989898",
+  brightBlack: "#1E1E1E",
+  brightRed: "#FEC43F",
+  brightGreen: brighten("#44BC44", 0.15),
+  brightYellow: brighten("#D0BC00", 0.15),
+  brightBlue: brighten("#2FAFFF", 0.15),
+  brightMagenta: "#FEACD0",
+  brightCyan: brighten("#00D3D0", 0.15),
+  brightWhite: "#FFFFFF",
+  foreground: "#FFFFFF",
+  background: "#000000",
+  cursorColor: "#FFFFFF",
+  cursorText: "#000000",
+  selectionBackground: "#535353",
+  selectionForeground: "#FFFFFF",
 }
 
 /** Modus Operandi — elegant light theme with maximum legibility. */
-export const modusOperandi: ThemePalette = {
+export const modusOperandi: ColorPalette = {
   name: "modus-operandi",
   dark: false,
-  crust: "#E0E0E0",
-  base: "#FFFFFF",
-  surface: "#F2F2F2",
-  overlay: "#9F9F9F",
-  subtext: "#595959",
-  text: "#000000",
+  black: "#E0E0E0",
   red: "#A60000",
-  orange: "#884900",
-  yellow: "#6F5500",
   green: "#006800",
-  teal: "#005E8B",
+  yellow: "#6F5500",
   blue: "#0031A9",
-  purple: "#531AB6",
-  pink: "#721045",
+  magenta: "#531AB6",
+  cyan: "#005E8B",
+  white: "#595959",
+  brightBlack: "#F2F2F2",
+  brightRed: "#884900",
+  brightGreen: brighten("#006800", 0.15),
+  brightYellow: brighten("#6F5500", 0.15),
+  brightBlue: brighten("#0031A9", 0.15),
+  brightMagenta: "#721045",
+  brightCyan: brighten("#005E8B", 0.15),
+  brightWhite: "#000000",
+  foreground: "#000000",
+  background: "#FFFFFF",
+  cursorColor: "#000000",
+  cursorText: "#FFFFFF",
+  selectionBackground: "#9F9F9F",
+  selectionForeground: "#000000",
 }

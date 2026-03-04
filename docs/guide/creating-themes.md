@@ -17,29 +17,29 @@ A `ThemePalette` has 14 colors organized into two groups:
 
 Ordered by depth, from deepest background to most prominent text:
 
-| Field     | Purpose                              |
-|-----------|--------------------------------------|
+| Field     | Purpose                                 |
+| --------- | --------------------------------------- |
 | `crust`   | Deepest background -- behind everything |
-| `base`    | Primary background                   |
-| `surface` | Raised surfaces -- cards, dialogs    |
-| `overlay` | Borders, dividers, subtle chrome     |
-| `subtext` | Muted/secondary text                 |
-| `text`    | Primary text                         |
+| `base`    | Primary background                      |
+| `surface` | Raised surfaces -- cards, dialogs       |
+| `overlay` | Borders, dividers, subtle chrome        |
+| `subtext` | Muted/secondary text                    |
+| `text`    | Primary text                            |
 
 ### Accent Hues (8 colors)
 
 Standard hue names used across all theme systems:
 
-| Field    | Purpose                           |
-|----------|-----------------------------------|
-| `red`    | Error, destructive actions        |
-| `orange` | Warning, caution                  |
-| `yellow` | Primary accent (dark themes)      |
-| `green`  | Success, positive                 |
-| `teal`   | Cool accent                       |
-| `blue`   | Links, focus (accessibility)      |
-| `purple` | Decorative, tags                  |
-| `pink`   | Decorative, warm accent           |
+| Field    | Purpose                      |
+| -------- | ---------------------------- |
+| `red`    | Error, destructive actions   |
+| `orange` | Warning, caution             |
+| `yellow` | Primary accent (dark themes) |
+| `green`  | Success, positive            |
+| `teal`   | Cool accent                  |
+| `blue`   | Links, focus (accessibility) |
+| `purple` | Decorative, tags             |
+| `pink`   | Decorative, warm accent      |
 
 ### Full Example
 
@@ -52,22 +52,22 @@ const myPalette: ThemePalette = {
   dark: true,
 
   // Surface ramp
-  crust:   "#11111B",
-  base:    "#1E1E2E",
+  crust: "#11111B",
+  base: "#1E1E2E",
   surface: "#313244",
   overlay: "#6C7086",
   subtext: "#A6ADC8",
-  text:    "#CDD6F4",
+  text: "#CDD6F4",
 
   // Accent hues
-  red:    "#F38BA8",
+  red: "#F38BA8",
   orange: "#FAB387",
   yellow: "#F9E2AF",
-  green:  "#A6E3A1",
-  teal:   "#94E2D5",
-  blue:   "#89B4FA",
+  green: "#A6E3A1",
+  teal: "#94E2D5",
+  blue: "#89B4FA",
   purple: "#CBA6F7",
-  pink:   "#F5C2E7",
+  pink: "#F5C2E7",
 }
 
 const theme = deriveTheme(myPalette)
@@ -86,6 +86,7 @@ const theme = createTheme().bg("#2E3440").build()
 ```
 
 The builder:
+
 1. Detects dark/light from background luminance
 2. Generates the full surface ramp (crust, surface, overlay, subtext, text)
 3. Uses Nord-inspired default accents
@@ -94,24 +95,18 @@ The builder:
 ### From Background + Primary
 
 ```typescript
-const theme = createTheme()
-  .bg("#2E3440")
-  .primary("#EBCB8B")
-  .build()
+const theme = createTheme().bg("#2E3440").primary("#EBCB8B").build()
 ```
 
 The builder additionally:
+
 1. Assigns the primary color to its natural hue slot (yellow in this case)
 2. Generates all 8 accent hues by rotating around the hue wheel, preserving the primary color's saturation and lightness
 
 ### From Three Colors
 
 ```typescript
-const theme = createTheme()
-  .bg("#2E3440")
-  .fg("#ECEFF4")
-  .primary("#EBCB8B")
-  .build()
+const theme = createTheme().bg("#2E3440").fg("#ECEFF4").primary("#EBCB8B").build()
 ```
 
 ### Preset with Override
@@ -119,32 +114,22 @@ const theme = createTheme()
 ```typescript
 const theme = createTheme()
   .preset("nord")
-  .primary("#A3BE8C")  // change primary to green
+  .primary("#A3BE8C") // change primary to green
   .build()
 ```
 
 ### Individual Color Overrides
 
 ```typescript
-const theme = createTheme()
-  .preset("catppuccin-mocha")
-  .color("red", "#FF0000")
-  .color("surface", "#222244")
-  .build()
+const theme = createTheme().preset("catppuccin-mocha").color("red", "#FF0000").color("surface", "#222244").build()
 ```
 
 ### Explicit Dark/Light Mode
 
 ```typescript
-const darkTheme = createTheme()
-  .primary("#EBCB8B")
-  .dark()
-  .build()
+const darkTheme = createTheme().primary("#EBCB8B").dark().build()
 
-const lightTheme = createTheme()
-  .primary("#1976D2")
-  .light()
-  .build()
+const lightTheme = createTheme().primary("#1976D2").light().build()
 ```
 
 ## Choosing an Accent
@@ -175,6 +160,7 @@ if (result.warnings.length > 0) {
 ```
 
 The validator checks:
+
 - All 14 color fields are present and non-empty
 - `name` and `dark` are set
 - Text/background contrast is sufficient (warns on low contrast)
@@ -200,7 +186,7 @@ import { pushContextTheme, popContextTheme } from "themex"
 
 pushContextTheme(dialogTheme) // children see dialogTheme
 // ... render children ...
-popContextTheme()              // restore parent theme
+popContextTheme() // restore parent theme
 ```
 
 ::: tip

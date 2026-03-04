@@ -30,9 +30,7 @@ function themeToCssVars(theme: Theme): Record<string, string> {
     "--theme-error": theme.error,
     "--theme-warning": theme.warning,
     "--theme-success": theme.success,
-    ...Object.fromEntries(
-      theme.palette.map((color, i) => [`--theme-color${i}`, color])
-    ),
+    ...Object.fromEntries(theme.palette.map((color, i) => [`--theme-color${i}`, color])),
   }
 }
 
@@ -49,12 +47,12 @@ Then use the variables in CSS:
 ```css
 :root {
   /* Set by themeToCssVars() */
-  --theme-primary: #F9E2AF;
-  --theme-text: #CDD6F4;
-  --theme-bg: #1E1E2E;
+  --theme-primary: #f9e2af;
+  --theme-text: #cdd6f4;
+  --theme-bg: #1e1e2e;
   --theme-surface: #313244;
-  --theme-separator: #6C7086;
-  --theme-error: #F38BA8;
+  --theme-separator: #6c7086;
+  --theme-error: #f38ba8;
   /* ... all 19 tokens + 16 palette colors */
 }
 
@@ -129,22 +127,14 @@ export function ThemeProvider({ preset, palette, children }: ThemeProviderProps)
     // ... remaining tokens
   }, [theme])
 
-  return (
-    <ThemeContext.Provider value={theme}>
-      {children}
-    </ThemeContext.Provider>
-  )
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
 }
 
 // ── Usage ──────────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: "error" | "warning" | "success" }) {
   const theme = useTheme()
-  return (
-    <span style={{ color: theme[status] }}>
-      {status}
-    </span>
-  )
+  return <span style={{ color: theme[status] }}>{status}</span>
 }
 
 function App() {
@@ -164,22 +154,18 @@ Combine the provider with state for runtime theme switching:
 import { useState } from "react"
 import { presetTheme } from "themex"
 
-const themeNames = [
-  "catppuccin-mocha", "nord", "dracula",
-  "catppuccin-latte", "solarized-light",
-] as const
+const themeNames = ["catppuccin-mocha", "nord", "dracula", "catppuccin-latte", "solarized-light"] as const
 
 function App() {
   const [themeName, setThemeName] = useState<string>("catppuccin-mocha")
 
   return (
     <ThemeProvider preset={themeName}>
-      <select
-        value={themeName}
-        onChange={(e) => setThemeName(e.target.value)}
-      >
+      <select value={themeName} onChange={(e) => setThemeName(e.target.value)}>
         {themeNames.map((name) => (
-          <option key={name} value={name}>{name}</option>
+          <option key={name} value={name}>
+            {name}
+          </option>
         ))}
       </select>
       <MainContent />

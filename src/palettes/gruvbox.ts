@@ -2,44 +2,61 @@
  * Gruvbox palettes — retro groove color scheme.
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Gruvbox Dark — warm retro dark theme. */
-export const gruvboxDark: ThemePalette = {
+export const gruvboxDark: ColorPalette = {
   name: "gruvbox-dark",
   dark: true,
-  crust: "#1D2021",
-  base: "#282828",
-  surface: "#3C3836",
-  overlay: "#665C54",
-  subtext: "#BDAE93",
-  text: "#EBDBB2",
+  black: "#1D2021",
   red: "#FB4934",
-  orange: "#FE8019",
-  yellow: "#FABD2F",
   green: "#B8BB26",
-  teal: "#8EC07C",
+  yellow: "#FABD2F",
   blue: "#83A598",
-  purple: "#D3869B",
-  pink: "#D3869B",
+  magenta: "#D3869B",
+  cyan: "#8EC07C",
+  white: "#BDAE93",
+  brightBlack: "#3C3836",
+  brightRed: "#FE8019",
+  brightGreen: brighten("#B8BB26", 0.15),
+  brightYellow: brighten("#FABD2F", 0.15),
+  brightBlue: brighten("#83A598", 0.15),
+  brightMagenta: "#D3869B",
+  brightCyan: brighten("#8EC07C", 0.15),
+  brightWhite: "#EBDBB2",
+  foreground: "#EBDBB2",
+  background: "#282828",
+  cursorColor: "#EBDBB2",
+  cursorText: "#282828",
+  selectionBackground: "#665C54",
+  selectionForeground: "#EBDBB2",
 }
 
 /** Gruvbox Light — warm retro light theme. */
-export const gruvboxLight: ThemePalette = {
+export const gruvboxLight: ColorPalette = {
   name: "gruvbox-light",
   dark: false,
-  crust: "#F9F5D7",
-  base: "#FBF1C7",
-  surface: "#EBDBB2",
-  overlay: "#A89984",
-  subtext: "#665C54",
-  text: "#3C3836",
+  black: "#F9F5D7",
   red: "#CC241D",
-  orange: "#D65D0E",
-  yellow: "#D79921",
   green: "#98971A",
-  teal: "#689D6A",
+  yellow: "#D79921",
   blue: "#458588",
-  purple: "#B16286",
-  pink: "#B16286",
+  magenta: "#B16286",
+  cyan: "#689D6A",
+  white: "#665C54",
+  brightBlack: "#EBDBB2",
+  brightRed: "#D65D0E",
+  brightGreen: brighten("#98971A", 0.15),
+  brightYellow: brighten("#D79921", 0.15),
+  brightBlue: brighten("#458588", 0.15),
+  brightMagenta: "#B16286",
+  brightCyan: brighten("#689D6A", 0.15),
+  brightWhite: "#3C3836",
+  foreground: "#3C3836",
+  background: "#FBF1C7",
+  cursorColor: "#3C3836",
+  cursorText: "#FBF1C7",
+  selectionBackground: "#A89984",
+  selectionForeground: "#3C3836",
 }

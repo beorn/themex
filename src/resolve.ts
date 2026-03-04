@@ -1,33 +1,27 @@
 /**
  * Token resolution — resolves `$token` strings against a Theme.
+ *
+ * All theme property names are lowercase, no hyphens (e.g. `surfacefg`).
+ * Hyphens in token strings are stripped for lookup: `$surface-fg` → `surfacefg`.
+ * This allows both `$surfacefg` and `$surface-fg` to resolve identically.
  */
 
 import type { Theme } from "./types.js"
 
 /** Color-typed keys of Theme (excludes metadata and palette). */
-type ThemeColorKey = Exclude<keyof Theme, "name" | "dark" | "palette">
-
-/** Backward-compat aliases: old token name → canonical token name. */
-const tokenAliases: Record<string, ThemeColorKey> = {
-  accent: "primary",
-  muted: "text2",
-  raisedbg: "surface",
-  background: "bg",
-  border: "separator",
-}
+type ThemeColorKey = Exclude<keyof Theme, "name" | "palette">
 
 /**
  * Resolve a color value — if it starts with `$`, look up the token in the theme.
  *
  * Supports:
- * - Named tokens: `$primary`, `$text2`, `$separator`, etc.
+ * - Named tokens: `$primary`, `$fg`, `$border`, etc.
+ * - Compound tokens: `$surfacefg`, `$mutedfg`, `$disabledfg`, etc.
+ * - Hyphenated tokens (compat): `$surface-fg` → strips hyphens → `surfacefg`
  * - Palette colors: `$color0` through `$color15`
- * - Backward-compat aliases: `$accent` → `$primary`, `$muted` → `$text2`,
- *   `$raisedbg` → `$surface`, `$background` → `$bg`, `$border` → `$separator`
  *
  * Returns `undefined` for `undefined` input. Non-`$` strings pass through unchanged.
- * Unknown tokens (e.g. `$nonexistent`) pass through as-is so downstream can
- * decide how to handle them.
+ * Unknown tokens pass through as-is.
  */
 export function resolveThemeColor(color: string | undefined, theme: Theme): string | undefined {
   if (!color) return undefined
@@ -43,15 +37,8 @@ export function resolveThemeColor(color: string | undefined, theme: Theme): stri
     }
   }
 
-  // Check backward-compat aliases first
-  const aliased = tokenAliases[token]
-  if (aliased) {
-    const val = theme[aliased]
-    return typeof val === "string" ? val : color
-  }
-
-  // Direct token lookup
-  const key = token as ThemeColorKey
+  // Strip hyphens for lookup (supports both $surfacefg and $surface-fg)
+  const key = token.replace(/-/g, "") as ThemeColorKey
   const val = theme[key]
   return typeof val === "string" ? val : color
 }

@@ -1,41 +1,30 @@
 /**
- * Palette validation — checks ThemePalette fields and contrast.
+ * Palette validation — checks ColorPalette fields and contrast.
  */
 
 import { hexToRgb } from "./color.js"
-import type { ThemePalette } from "./types.js"
+import { COLOR_PALETTE_FIELDS, type ColorPalette } from "./types.js"
 
-/** Validation result from validatePalette(). */
+/** Validation result from validateColorPalette(). */
 export interface ValidationResult {
   valid: boolean
   errors: string[]
   warnings: string[]
 }
 
-/** All required color fields on ThemePalette. */
-const paletteColorFields = [
-  "crust", "base", "surface", "overlay", "subtext", "text",
-  "red", "orange", "yellow", "green", "teal", "blue", "purple", "pink",
-] as const
-
 /**
- * Validate a ThemePalette.
+ * Validate a ColorPalette.
  *
  * Checks:
- * - All 14 color fields are present and non-empty
- * - `name` and `dark` are set
- * - Warns on low-contrast text/bg combinations
+ * - All 22 color fields are present and non-empty hex strings
+ * - Warns on low-contrast foreground/background combinations
  */
-export function validatePalette(p: ThemePalette): ValidationResult {
+export function validateColorPalette(p: ColorPalette): ValidationResult {
   const errors: string[] = []
   const warnings: string[] = []
 
-  // Required metadata
-  if (!p.name) errors.push("name is required")
-  if (typeof p.dark !== "boolean") errors.push("dark must be a boolean")
-
   // Required color fields
-  for (const field of paletteColorFields) {
+  for (const field of COLOR_PALETTE_FIELDS) {
     const val = p[field]
     if (!val || typeof val !== "string") {
       errors.push(`${field} is required and must be a non-empty string`)
@@ -43,16 +32,18 @@ export function validatePalette(p: ThemePalette): ValidationResult {
   }
 
   // Contrast warnings (only for hex colors)
-  if (p.text && p.base) {
-    const textRgb = hexToRgb(p.text)
-    const baseRgb = hexToRgb(p.base)
-    if (textRgb && baseRgb) {
-      const textSum = textRgb[0] + textRgb[1] + textRgb[2]
-      const baseSum = baseRgb[0] + baseRgb[1] + baseRgb[2]
-      const textIsLight = textSum > 384
-      const bgIsLight = baseSum > 384
-      if (textIsLight === bgIsLight) {
-        warnings.push(`Low contrast: text (${p.text}) and base (${p.base}) have similar lightness`)
+  if (p.foreground && p.background) {
+    const fgRgb = hexToRgb(p.foreground)
+    const bgRgb = hexToRgb(p.background)
+    if (fgRgb && bgRgb) {
+      const fgSum = fgRgb[0] + fgRgb[1] + fgRgb[2]
+      const bgSum = bgRgb[0] + bgRgb[1] + bgRgb[2]
+      const fgIsLight = fgSum > 384
+      const bgIsLight = bgSum > 384
+      if (fgIsLight === bgIsLight) {
+        warnings.push(
+          `Low contrast: foreground (${p.foreground}) and background (${p.background}) have similar lightness`,
+        )
       }
     }
   }

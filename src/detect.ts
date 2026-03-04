@@ -6,14 +6,14 @@
  * - OSC 11: background color
  * - OSC 4;0–15: ANSI 16 palette colors
  *
- * Then maps the detected colors to a partial ThemePalette for
- * theme generation via createTheme().
+ * Then maps the detected colors to a partial ColorPalette for
+ * theme generation via createTheme() or deriveTheme().
  *
  * Supported by: Ghostty, Kitty, WezTerm, iTerm2, foot, Alacritty, xterm
  * NOT supported by: tmux (blocks OSC), basic xterm, CI environments
  */
 
-import type { ThemePalette } from "./types.js"
+import type { ColorPalette } from "./types.js"
 
 // inkx is an optional peer dependency — lazy-import to avoid breaking
 // standalone consumers that don't have inkx installed.
@@ -29,8 +29,16 @@ async function getInkx() {
     }
   }
   return _inkx as {
-    queryBackgroundColor: (write: (s: string) => void, read: (ms: number) => Promise<string | null>, timeout: number) => Promise<string | null>
-    queryForegroundColor: (write: (s: string) => void, read: (ms: number) => Promise<string | null>, timeout: number) => Promise<string | null>
+    queryBackgroundColor: (
+      write: (s: string) => void,
+      read: (ms: number) => Promise<string | null>,
+      timeout: number,
+    ) => Promise<string | null>
+    queryForegroundColor: (
+      write: (s: string) => void,
+      read: (ms: number) => Promise<string | null>,
+      timeout: number,
+    ) => Promise<string | null>
     queryMultiplePaletteColors: (indices: number[], write: (s: string) => void) => void
     parsePaletteResponse: (chunk: string) => { index: number; color: string } | null
   }
@@ -46,8 +54,8 @@ export interface DetectedPalette {
   ansi: (string | null)[]
   /** Whether the terminal appears to be dark mode (from bg luminance) */
   dark: boolean
-  /** Partial ThemePalette derived from detected colors */
-  palette: Partial<ThemePalette>
+  /** Partial ColorPalette derived from detected colors */
+  palette: Partial<ColorPalette>
 }
 
 /**
@@ -82,7 +90,6 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
 
     const read = (ms: number): Promise<string | null> =>
       new Promise((resolve) => {
-        // Check if we already have data in the buffer
         if (buffer.length > 0) {
           const result = buffer
           buffer = ""
@@ -118,22 +125,19 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
       write,
     )
 
-    // Wait for responses, collecting as they arrive
+    // Wait for responses
     await new Promise((resolve) => setTimeout(resolve, timeoutMs))
 
     // Parse any buffered palette responses
     const remaining = buffer
     buffer = ""
     if (remaining) {
-      // Parse all palette responses from the buffer
-      // Responses may be concatenated
       const oscPrefix = "\x1b]4;"
       let pos = 0
       while (pos < remaining.length) {
         const nextOsc = remaining.indexOf(oscPrefix, pos)
         if (nextOsc === -1) break
 
-        // Find the end (BEL or ST)
         let end = remaining.indexOf("\x07", nextOsc)
         if (end === -1) end = remaining.indexOf("\x1b\\", nextOsc)
         if (end === -1) break
@@ -150,32 +154,49 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
     // Determine dark/light from bg
     const dark = bg ? isDarkColor(bg) : true
 
-    // Build partial palette from detected colors
-    const palette: Partial<ThemePalette> = { dark }
-    if (bg) {
-      palette.crust = bg
-      palette.base = bg
+    // Build partial ColorPalette from detected colors
+    const palette: Partial<ColorPalette> = { dark }
+
+    if (bg) palette.background = bg
+    if (fg) palette.foreground = fg
+
+    // Map ANSI 16 indices to ColorPalette fields
+    const ansiFields: (keyof ColorPalette)[] = [
+      "black",
+      "red",
+      "green",
+      "yellow",
+      "blue",
+      "magenta",
+      "cyan",
+      "white",
+      "brightBlack",
+      "brightRed",
+      "brightGreen",
+      "brightYellow",
+      "brightBlue",
+      "brightMagenta",
+      "brightCyan",
+      "brightWhite",
+    ]
+    for (let i = 0; i < 16; i++) {
+      if (ansi[i]) {
+        ;(palette as Record<string, string>)[ansiFields[i]!] = ansi[i]!
+      }
     }
+
+    // Derive special colors from detected values
     if (fg) {
-      palette.text = fg
+      palette.cursorColor = fg
+      palette.selectionForeground = fg
     }
-
-    // Map ANSI colors to palette hues
-    // Standard ANSI: 0=black, 1=red, 2=green, 3=yellow, 4=blue, 5=magenta, 6=cyan, 7=white
-    // Bright:        8=bright black, 9=bright red, ...
-    if (ansi[1]) palette.red = ansi[1]
-    if (ansi[2]) palette.green = ansi[2]
-    if (ansi[3]) palette.yellow = ansi[3]
-    if (ansi[4]) palette.blue = ansi[4]
-    if (ansi[6]) palette.teal = ansi[6]
-
-    // Derive orange from red + yellow midpoint (or use bright red if distinct hue)
-    // Derive pink from red + magenta midpoint (or use magenta)
-    if (ansi[5]) palette.purple = ansi[5]
-
-    // Surface ramp from ANSI grayscale
-    if (ansi[8]) palette.surface = ansi[8] // bright black = slightly lighter bg
-    if (ansi[7]) palette.subtext = ansi[7] // white = dimmer text
+    if (bg) {
+      palette.cursorText = bg
+    }
+    if (ansi[4]) {
+      // Selection background from blue at 30% on bg
+      palette.selectionBackground = ansi[4]
+    }
 
     return { fg, bg, ansi, dark, palette }
   } finally {

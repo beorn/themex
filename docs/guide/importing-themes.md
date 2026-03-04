@@ -36,24 +36,24 @@ const theme = deriveTheme(palette)
 
 ### Base16 to ThemePalette Mapping
 
-| Base16 | ThemePalette | Role                        |
-|--------|--------------|-----------------------------|
-| base00 | `base`       | Primary background          |
-| base01 | `surface`    | Raised surfaces             |
-| base02 | `overlay`    | Borders, chrome             |
-| base03 | `subtext`    | Muted text                  |
-| base04 | _(skipped)_  | Between subtext and text    |
-| base05 | `text`       | Primary text                |
-| base06 | _(skipped)_  | Light foreground            |
-| base07 | _(skipped)_  | Lightest background         |
-| base08 | `red`        | Error                       |
-| base09 | `orange`     | Warning                     |
-| base0A | `yellow`     | Primary accent              |
-| base0B | `green`      | Success                     |
-| base0C | `teal`       | Cool accent                 |
-| base0D | `blue`       | Links, focus                |
-| base0E | `purple`     | Decorative                  |
-| base0F | `pink`       | Warm accent                 |
+| Base16 | ThemePalette | Role                     |
+| ------ | ------------ | ------------------------ |
+| base00 | `base`       | Primary background       |
+| base01 | `surface`    | Raised surfaces          |
+| base02 | `overlay`    | Borders, chrome          |
+| base03 | `subtext`    | Muted text               |
+| base04 | _(skipped)_  | Between subtext and text |
+| base05 | `text`       | Primary text             |
+| base06 | _(skipped)_  | Light foreground         |
+| base07 | _(skipped)_  | Lightest background      |
+| base08 | `red`        | Error                    |
+| base09 | `orange`     | Warning                  |
+| base0A | `yellow`     | Primary accent           |
+| base0B | `green`      | Success                  |
+| base0C | `teal`       | Cool accent              |
+| base0D | `blue`       | Links, focus             |
+| base0E | `purple`     | Decorative               |
+| base0F | `pink`       | Warm accent              |
 
 The `crust` field (not present in Base16) is derived by darkening `base00` for dark themes or brightening it for light themes. Dark/light is inferred from the luminance of `base00`.
 
@@ -100,11 +100,11 @@ base0F: "F5C2E7"
 
 ThemePalette has 14 colors but Base16 has 16. The three extra Base16 slots are interpolated on export:
 
-| Base16 | Derivation |
-|--------|------------|
+| Base16 | Derivation                                                      |
+| ------ | --------------------------------------------------------------- |
 | base04 | `blend(subtext, text, 0.33)` -- between comments and foreground |
-| base06 | `blend(text, white/black, 0.15)` -- lighter/darker foreground |
-| base07 | `crust` -- the deepest background inverse |
+| base06 | `blend(text, white/black, 0.15)` -- lighter/darker foreground   |
+| base07 | `crust` -- the deepest background inverse                       |
 
 ### Export from CLI
 

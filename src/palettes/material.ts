@@ -4,44 +4,61 @@
  * Reference: https://material-theme.com/docs/reference/color-palette/
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Material Darker — the deep dark Material variant. */
-export const materialDark: ThemePalette = {
+export const materialDark: ColorPalette = {
   name: "material-dark",
   dark: true,
-  crust: "#171717",  // line_highlight (deepest)
-  base: "#212121",   // background
-  surface: "#2c2c2c", // selection
-  overlay: "#424242", // guides/line_numbers
-  subtext: "#545454", // comments
-  text: "#eeffff",   // foreground
+  black: "#171717", // line_highlight (deepest)
   red: "#ff5370",
-  orange: "#f78c6c",
-  yellow: "#ffcb6b",
   green: "#c3e88d",
-  teal: "#89ddff",   // cyan
+  yellow: "#ffcb6b",
   blue: "#82aaff",
-  purple: "#c792ea",
-  pink: "#f07178",
+  magenta: "#c792ea",
+  cyan: "#89ddff", // cyan
+  white: "#545454", // comments
+  brightBlack: "#2c2c2c", // selection
+  brightRed: "#f78c6c",
+  brightGreen: brighten("#c3e88d", 0.15),
+  brightYellow: brighten("#ffcb6b", 0.15),
+  brightBlue: brighten("#82aaff", 0.15),
+  brightMagenta: "#f07178",
+  brightCyan: brighten("#89ddff", 0.15),
+  brightWhite: "#eeffff", // foreground
+  foreground: "#eeffff", // foreground
+  background: "#212121", // background
+  cursorColor: "#eeffff", // foreground
+  cursorText: "#212121", // background
+  selectionBackground: "#424242", // guides/line_numbers
+  selectionForeground: "#eeffff", // foreground
 }
 
 /** Material Lighter — the light Material variant. */
-export const materialLight: ThemePalette = {
+export const materialLight: ColorPalette = {
   name: "material-light",
   dark: false,
-  crust: "#ecf0f1",  // line_highlight
-  base: "#fafafa",   // background
-  surface: "#ebf4f3", // selection
-  overlay: "#cfd8dc", // line_numbers
-  subtext: "#90a4ae", // comments/fg
-  text: "#546E7A",   // foreground (darker than comments for light theme)
+  black: "#ecf0f1", // line_highlight
   red: "#e53935",
-  orange: "#f76d47",
-  yellow: "#ffb62c",
   green: "#91b859",
-  teal: "#39adb5",   // cyan
+  yellow: "#ffb62c",
   blue: "#6182b8",
-  purple: "#7c4dff",
-  pink: "#ff5370",
+  magenta: "#7c4dff",
+  cyan: "#39adb5", // cyan
+  white: "#90a4ae", // comments/fg
+  brightBlack: "#ebf4f3", // selection
+  brightRed: "#f76d47",
+  brightGreen: brighten("#91b859", 0.15),
+  brightYellow: brighten("#ffb62c", 0.15),
+  brightBlue: brighten("#6182b8", 0.15),
+  brightMagenta: "#ff5370",
+  brightCyan: brighten("#39adb5", 0.15),
+  brightWhite: "#546E7A", // foreground (darker than comments for light theme)
+  foreground: "#546E7A", // foreground (darker than comments for light theme)
+  background: "#fafafa", // background
+  cursorColor: "#546E7A", // foreground
+  cursorText: "#fafafa", // background
+  selectionBackground: "#cfd8dc", // line_numbers
+  selectionForeground: "#546E7A", // foreground
 }

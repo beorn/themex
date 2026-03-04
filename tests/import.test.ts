@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { importBase16, base16ToPalette } from "../src/import/base16.js"
+import { importBase16, base16ToColorPalette } from "../src/import/base16.js"
 import { exportBase16 } from "../src/export/base16.js"
 import type { Base16Scheme } from "../src/import/types.js"
 
@@ -39,27 +39,31 @@ describe("importBase16", () => {
     expect(palette.name).toBe("Solarized Dark")
     expect(palette.dark).toBe(true)
 
-    // Surface ramp (base00→base, base01→surface, etc.)
-    expect(palette.base).toBe("#002B36")
-    expect(palette.surface).toBe("#073642")
-    expect(palette.overlay).toBe("#586E75")
-    expect(palette.subtext).toBe("#657B83")
-    expect(palette.text).toBe("#93A1A1")
+    // ColorPalette mapping:
+    //   base00 → background, base01 → brightBlack, base02 → selectionBackground,
+    //   base03 → white, base05 → foreground/brightWhite,
+    //   base08 → red, base09 → brightRed, base0A → yellow,
+    //   base0B → green, base0C → cyan, base0D → blue, base0E → magenta,
+    //   base0F → brightMagenta
+    expect(palette.background).toBe("#002B36")
+    expect(palette.brightBlack).toBe("#073642")
+    expect(palette.selectionBackground).toBe("#586E75")
+    expect(palette.white).toBe("#657B83")
+    expect(palette.foreground).toBe("#93A1A1")
+    expect(palette.brightWhite).toBe("#93A1A1")
 
-    // Crust is derived (darker than base for dark themes)
-    expect(palette.crust).not.toBe(palette.base)
-    // Should be darker than base00
-    expect(palette.crust.toLowerCase() < palette.base.toLowerCase()).toBe(true)
+    // black is derived (darker than background for dark themes)
+    expect(palette.black).not.toBe(palette.background)
 
     // Accent hues
     expect(palette.red).toBe("#DC322F")
-    expect(palette.orange).toBe("#CB4B16")
+    expect(palette.brightRed).toBe("#CB4B16")
     expect(palette.yellow).toBe("#B58900")
     expect(palette.green).toBe("#859900")
-    expect(palette.teal).toBe("#2AA198")
+    expect(palette.cyan).toBe("#2AA198")
     expect(palette.blue).toBe("#268BD2")
-    expect(palette.purple).toBe("#6C71C4")
-    expect(palette.pink).toBe("#D33682")
+    expect(palette.magenta).toBe("#6C71C4")
+    expect(palette.brightMagenta).toBe("#D33682")
   })
 
   test("detects dark theme from low-luminance base00", () => {
@@ -91,8 +95,8 @@ base0F: "d33682"
     const palette = importBase16(lightYaml)
     expect(palette.dark).toBe(false)
     expect(palette.name).toBe("Solarized Light")
-    // Crust should be brighter than base for light themes
-    expect(palette.crust).not.toBe(palette.base)
+    // black is derived (brighter than background for light themes)
+    expect(palette.black).not.toBe(palette.background)
   })
 
   test("handles quoted and unquoted YAML values", () => {
@@ -118,8 +122,8 @@ base0F: "d65d0e"
 `
     const palette = importBase16(mixedYaml)
     expect(palette.name).toBe("Gruvbox Dark")
-    expect(palette.base).toBe("#282828")
-    expect(palette.surface).toBe("#3C3836")
+    expect(palette.background).toBe("#282828")
+    expect(palette.brightBlack).toBe("#3C3836")
   })
 
   test("handles single-quoted values", () => {
@@ -145,7 +149,7 @@ base0F: 'd33682'
 `
     const palette = importBase16(singleQuoted)
     expect(palette.name).toBe("Test Theme")
-    expect(palette.base).toBe("#002B36")
+    expect(palette.background).toBe("#002B36")
   })
 
   test("skips comments and blank lines", () => {
@@ -174,7 +178,7 @@ base0F: "d33682"
 `
     const palette = importBase16(withComments)
     expect(palette.name).toBe("Test")
-    expect(palette.base).toBe("#002B36")
+    expect(palette.background).toBe("#002B36")
   })
 
   test("throws on missing scheme name", () => {
@@ -231,11 +235,11 @@ base0D: "dddddd"
 base0E: "eeeeee"
 base0F: "ffffff"
 `
-    expect(() => importBase16(badHex)).toThrow('Base16 color base00 must be a 6-digit hex string without \'#\'')
+    expect(() => importBase16(badHex)).toThrow("Base16 color base00 must be a 6-digit hex string without '#'")
   })
 })
 
-describe("base16ToPalette", () => {
+describe("base16ToColorPalette", () => {
   test("accepts a pre-parsed Base16Scheme object", () => {
     const scheme: Base16Scheme = {
       scheme: "Direct",
@@ -257,9 +261,9 @@ describe("base16ToPalette", () => {
       base0E: "9d7cd8",
       base0F: "db4b4b",
     }
-    const palette = base16ToPalette(scheme)
+    const palette = base16ToColorPalette(scheme)
     expect(palette.name).toBe("Direct")
-    expect(palette.base).toBe("#1A1B26")
+    expect(palette.background).toBe("#1A1B26")
     expect(palette.blue).toBe("#7AA2F7")
   })
 })
@@ -321,7 +325,7 @@ describe("exportBase16", () => {
 // ============================================================================
 
 describe("round-trip", () => {
-  test("import → export → import preserves mapped colors", () => {
+  test("import -> export -> import preserves mapped colors", () => {
     const palette1 = importBase16(solarizedDarkYaml)
     const yaml = exportBase16(palette1)
     const palette2 = importBase16(yaml)
@@ -329,27 +333,27 @@ describe("round-trip", () => {
     // All directly-mapped fields should survive the round trip
     expect(palette2.name).toBe(palette1.name)
     expect(palette2.dark).toBe(palette1.dark)
-    expect(palette2.base).toBe(palette1.base)
-    expect(palette2.surface).toBe(palette1.surface)
-    expect(palette2.overlay).toBe(palette1.overlay)
-    expect(palette2.subtext).toBe(palette1.subtext)
-    expect(palette2.text).toBe(palette1.text)
+    expect(palette2.background).toBe(palette1.background)
+    expect(palette2.brightBlack).toBe(palette1.brightBlack)
+    expect(palette2.selectionBackground).toBe(palette1.selectionBackground)
+    expect(palette2.white).toBe(palette1.white)
+    expect(palette2.foreground).toBe(palette1.foreground)
     expect(palette2.red).toBe(palette1.red)
-    expect(palette2.orange).toBe(palette1.orange)
+    expect(palette2.brightRed).toBe(palette1.brightRed)
     expect(palette2.yellow).toBe(palette1.yellow)
     expect(palette2.green).toBe(palette1.green)
-    expect(palette2.teal).toBe(palette1.teal)
+    expect(palette2.cyan).toBe(palette1.cyan)
     expect(palette2.blue).toBe(palette1.blue)
-    expect(palette2.purple).toBe(palette1.purple)
-    expect(palette2.pink).toBe(palette1.pink)
+    expect(palette2.magenta).toBe(palette1.magenta)
+    expect(palette2.brightMagenta).toBe(palette1.brightMagenta)
   })
 
-  test("round-trip preserves crust derivation", () => {
+  test("round-trip preserves black derivation", () => {
     const palette1 = importBase16(solarizedDarkYaml)
     const yaml = exportBase16(palette1)
     const palette2 = importBase16(yaml)
 
-    // Crust is derived from base00 each time, so it should be identical
-    expect(palette2.crust).toBe(palette1.crust)
+    // black is derived from base00 each time, so it should be identical
+    expect(palette2.black).toBe(palette1.black)
   })
 })

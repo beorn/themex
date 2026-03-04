@@ -42,9 +42,7 @@ export default defineConfig({
       },
       {
         text: "Contributing",
-        items: [
-          { text: "Adding Themes", link: "/contributing/adding-themes" },
-        ],
+        items: [{ text: "Adding Themes", link: "/contributing/adding-themes" }],
       },
     ],
 

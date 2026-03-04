@@ -9,26 +9,23 @@ Returns a chainable `ThemeBuilder` that accumulates configuration and produces a
 ```typescript
 import { createTheme } from "themex"
 
-const theme = createTheme()
-  .bg("#2E3440")
-  .primary("#EBCB8B")
-  .build()
+const theme = createTheme().bg("#2E3440").primary("#EBCB8B").build()
 ```
 
 ### Builder Methods
 
-| Method                  | Description                                      |
-|-------------------------|--------------------------------------------------|
-| `.bg(color)`            | Set background color (maps to palette `base`)    |
-| `.fg(color)`            | Set foreground color (maps to palette `text`)     |
-| `.primary(color)`       | Set primary accent color                          |
-| `.accent(color)`        | Alias for `.primary()`                            |
-| `.dark()`               | Force dark mode                                   |
-| `.light()`              | Force light mode                                  |
-| `.color(name, value)`   | Set any palette color by name                     |
-| `.palette(p)`           | Set full palette at once                          |
-| `.preset(name)`         | Load a built-in palette by name                   |
-| `.build()`              | Derive the final `Theme`                          |
+| Method                | Description                                   |
+| --------------------- | --------------------------------------------- |
+| `.bg(color)`          | Set background color (maps to palette `base`) |
+| `.fg(color)`          | Set foreground color (maps to palette `text`) |
+| `.primary(color)`     | Set primary accent color                      |
+| `.accent(color)`      | Alias for `.primary()`                        |
+| `.dark()`             | Force dark mode                               |
+| `.light()`            | Force light mode                              |
+| `.color(name, value)` | Set any palette color by name                 |
+| `.palette(p)`         | Set full palette at once                      |
+| `.preset(name)`       | Load a built-in palette by name               |
+| `.build()`            | Derive the final `Theme`                      |
 
 ### How the Builder Fills Gaps
 
@@ -57,10 +54,7 @@ Gets you: auto-detected dark mode, generated surface ramp, default Nord-inspired
 ### Two Colors: Background + Primary
 
 ```typescript
-const theme = createTheme()
-  .bg("#1A1B26")
-  .primary("#E0AF68")
-  .build()
+const theme = createTheme().bg("#1A1B26").primary("#E0AF68").build()
 ```
 
 Gets you: full surface ramp from background, 8 accent hues generated from primary, yellow used as `$primary` token.
@@ -68,11 +62,7 @@ Gets you: full surface ramp from background, 8 accent hues generated from primar
 ### Three Colors: Full Control
 
 ```typescript
-const theme = createTheme()
-  .bg("#2E3440")
-  .fg("#ECEFF4")
-  .primary("#EBCB8B")
-  .build()
+const theme = createTheme().bg("#2E3440").fg("#ECEFF4").primary("#EBCB8B").build()
 ```
 
 ### Preset with Customization
@@ -81,28 +71,21 @@ const theme = createTheme()
 // Override just the primary accent of Nord
 const theme = createTheme()
   .preset("nord")
-  .primary("#A3BE8C")  // green instead of yellow
+  .primary("#A3BE8C") // green instead of yellow
   .build()
 ```
 
 ### Individual Color Overrides
 
 ```typescript
-const theme = createTheme()
-  .preset("catppuccin-mocha")
-  .color("red", "#FF0000")
-  .color("surface", "#222244")
-  .build()
+const theme = createTheme().preset("catppuccin-mocha").color("red", "#FF0000").color("surface", "#222244").build()
 ```
 
 ### Explicit Mode Override
 
 ```typescript
 // Force light mode even with a dark-ish background
-const theme = createTheme()
-  .bg("#3A3A3A")
-  .light()
-  .build()
+const theme = createTheme().bg("#3A3A3A").light().build()
 ```
 
 ### Full Palette
@@ -111,12 +94,22 @@ const theme = createTheme()
 import type { ThemePalette } from "themex"
 
 const myPalette: ThemePalette = {
-  name: "custom", dark: true,
-  crust: "#11111B", base: "#1E1E2E", surface: "#313244",
-  overlay: "#6C7086", subtext: "#A6ADC8", text: "#CDD6F4",
-  red: "#F38BA8", orange: "#FAB387", yellow: "#F9E2AF",
-  green: "#A6E3A1", teal: "#94E2D5", blue: "#89B4FA",
-  purple: "#CBA6F7", pink: "#F5C2E7",
+  name: "custom",
+  dark: true,
+  crust: "#11111B",
+  base: "#1E1E2E",
+  surface: "#313244",
+  overlay: "#6C7086",
+  subtext: "#A6ADC8",
+  text: "#CDD6F4",
+  red: "#F38BA8",
+  orange: "#FAB387",
+  yellow: "#F9E2AF",
+  green: "#A6E3A1",
+  teal: "#94E2D5",
+  blue: "#89B4FA",
+  purple: "#CBA6F7",
+  pink: "#F5C2E7",
 }
 
 const theme = createTheme().palette(myPalette).build()
@@ -142,6 +135,7 @@ const theme3 = quickTheme("teal", "light")
 Supported color names: `red`, `orange`, `yellow`, `green`, `teal`, `cyan`, `blue`, `purple`, `pink`, `magenta`, `white`.
 
 **Signature:**
+
 ```typescript
 function quickTheme(primaryOrHex: string, mode?: "dark" | "light"): Theme
 ```
@@ -161,6 +155,7 @@ const theme3 = presetTheme("dracula")
 Equivalent to `createTheme().preset(name).build()`.
 
 **Signature:**
+
 ```typescript
 function presetTheme(name: string): Theme
 ```
@@ -172,13 +167,14 @@ Generate an ANSI 16 theme from a primary color name. These themes use ANSI color
 ```typescript
 import { generateTheme } from "themex"
 
-const theme = generateTheme("yellow", true)   // dark theme, yellow primary
-const theme2 = generateTheme("cyan", false)    // light theme, cyan primary
+const theme = generateTheme("yellow", true) // dark theme, yellow primary
+const theme2 = generateTheme("cyan", false) // light theme, cyan primary
 ```
 
 Supported primaries: `yellow`, `cyan`, `magenta`, `green`, `red`, `blue`, `white`.
 
 **Signature:**
+
 ```typescript
 function generateTheme(primary: AnsiPrimary, dark: boolean): Theme
 ```

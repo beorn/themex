@@ -3,24 +3,33 @@
  * Source: https://github.com/bluz71/vim-moonfly-colors
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Moonfly — dark charcoal theme. */
-export const moonfly: ThemePalette = {
+export const moonfly: ColorPalette = {
   name: "moonfly",
   dark: true,
-  crust: "#121212",
-  base: "#080808",
-  surface: "#1C1C1C",
-  overlay: "#323437",
-  subtext: "#808080",
-  text: "#C6C6C6",
+  black: "#121212",
   red: "#FF5D5D",
-  orange: "#DE935F",
-  yellow: "#E3C78A",
   green: "#8CC85F",
-  teal: "#79DAC8",
+  yellow: "#E3C78A",
   blue: "#80A0FF",
-  purple: "#AE81FF",
-  pink: "#FF5189",
+  magenta: "#AE81FF",
+  cyan: "#79DAC8",
+  white: "#808080",
+  brightBlack: "#1C1C1C",
+  brightRed: "#DE935F",
+  brightGreen: brighten("#8CC85F", 0.15),
+  brightYellow: brighten("#E3C78A", 0.15),
+  brightBlue: brighten("#80A0FF", 0.15),
+  brightMagenta: "#FF5189",
+  brightCyan: brighten("#79DAC8", 0.15),
+  brightWhite: "#C6C6C6",
+  foreground: "#C6C6C6",
+  background: "#080808",
+  cursorColor: "#C6C6C6",
+  cursorText: "#080808",
+  selectionBackground: "#323437",
+  selectionForeground: "#C6C6C6",
 }

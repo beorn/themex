@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { blend, brighten, contrastFg, darken, hexToRgb, rgbToHex } from "../src/color.js"
+import { blend, brighten, complement, contrastFg, darken, desaturate, hexToRgb, rgbToHex } from "../src/color.js"
 
 describe("hexToRgb", () => {
   test("parses valid hex colors", () => {
@@ -85,5 +85,53 @@ describe("contrastFg", () => {
 
   test("defaults to white for non-hex inputs", () => {
     expect(contrastFg("red")).toBe("#FFFFFF")
+  })
+})
+
+describe("desaturate", () => {
+  test("reduces saturation by the given amount", () => {
+    // A fully saturated red
+    const result = desaturate("#FF0000", 0.5)
+    // Result should be less saturated but same hue
+    const rgb = hexToRgb(result)!
+    expect(rgb[0]).toBeGreaterThan(rgb[1]) // Still reddish
+    expect(rgb[0]).toBeGreaterThan(rgb[2])
+    // With reduced saturation, the green and blue channels should increase
+    expect(rgb[1]).toBeGreaterThan(0)
+  })
+
+  test("amount=0 returns original color", () => {
+    const result = desaturate("#FF0000", 0)
+    expect(result).toBe("#FF0000")
+  })
+
+  test("returns non-hex colors unchanged", () => {
+    expect(desaturate("red", 0.5)).toBe("red")
+  })
+})
+
+describe("complement", () => {
+  test("rotates hue by 180 degrees", () => {
+    // Red complement should be cyan-ish
+    const result = complement("#FF0000")
+    const rgb = hexToRgb(result)!
+    // Complement of pure red is cyan (0, 255, 255)
+    expect(rgb[0]).toBeLessThan(rgb[1])
+    expect(rgb[2]).toBeGreaterThan(0)
+  })
+
+  test("double complement returns near-original", () => {
+    const original = "#5E81AC"
+    const double = complement(complement(original))
+    // Should be very close to original (rounding may cause slight difference)
+    const origRgb = hexToRgb(original)!
+    const doubleRgb = hexToRgb(double)!
+    for (let i = 0; i < 3; i++) {
+      expect(Math.abs(origRgb[i]! - doubleRgb[i]!)).toBeLessThanOrEqual(1)
+    }
+  })
+
+  test("returns non-hex colors unchanged", () => {
+    expect(complement("blue")).toBe("blue")
   })
 })

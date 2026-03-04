@@ -2,137 +2,213 @@
  * Core type definitions for the themex theme system.
  *
  * Two-layer architecture:
- *   Layer 1: ThemePalette — 14 raw colors (what theme authors define)
- *   Layer 2: Theme — semantic tokens (what UI apps consume)
+ *   Layer 1: ColorPalette — 22 terminal colors (what palette generators produce)
+ *   Layer 2: Theme — 33 semantic tokens (what UI apps consume)
+ *
+ * Pipeline: Palette generators → ColorPalette (22) → deriveTheme() → Theme (33)
  */
 
 // ============================================================================
-// ThemePalette — Theme Author Input
+// ColorPalette — The 22-Color Terminal Standard
 // ============================================================================
 
 /**
- * Raw color palette — what a theme author fills in.
- * 14 colors + 2 metadata = the universal theme input format.
+ * The 22-color format every modern terminal emulator uses
+ * (Ghostty, Kitty, Alacritty, iTerm2, WezTerm).
  *
- * Naming: Catppuccin-inspired surface ramp (widely adopted),
- * ANSI-standard hue names (universal across all theme systems).
+ * 16 ANSI palette colors + 6 special colors = universal pivot format.
+ * All fields are required hex strings (#RRGGBB).
  */
-export interface ThemePalette {
-  name: string
-  dark: boolean
+export interface ColorPalette {
+  name?: string
+  dark?: boolean
 
-  // ── Surface ramp (6 colors) ────────────────────────────────────
-  // Ordered by depth: crust (deepest) → text (most prominent)
-  /** Deepest background — behind everything */
-  crust: string
-  /** Primary background */
-  base: string
-  /** Raised surfaces — cards, dialogs, popovers */
-  surface: string
-  /** Borders, dividers, subtle chrome */
-  overlay: string
-  /** Muted/secondary text */
-  subtext: string
-  /** Primary text */
-  text: string
-
-  // ── Accent hues (8 colors) ─────────────────────────────────────
-  /** Error, destructive actions */
+  // ── 16 ANSI palette ────────────────────────────────────────────
+  /** ANSI 0 — normal black */
+  black: string
+  /** ANSI 1 — normal red */
   red: string
-  /** Warning, caution */
-  orange: string
-  /** Primary accent (dark themes), attention */
-  yellow: string
-  /** Success, positive */
+  /** ANSI 2 — normal green */
   green: string
-  /** Cyan/teal — cool accent */
-  teal: string
-  /** Links, focus — always blue (accessibility) */
+  /** ANSI 3 — normal yellow */
+  yellow: string
+  /** ANSI 4 — normal blue */
   blue: string
-  /** Decorative, tags */
-  purple: string
-  /** Decorative, warm accent */
-  pink: string
+  /** ANSI 5 — normal magenta */
+  magenta: string
+  /** ANSI 6 — normal cyan */
+  cyan: string
+  /** ANSI 7 — normal white */
+  white: string
+  /** ANSI 8 — bright black */
+  brightBlack: string
+  /** ANSI 9 — bright red */
+  brightRed: string
+  /** ANSI 10 — bright green */
+  brightGreen: string
+  /** ANSI 11 — bright yellow */
+  brightYellow: string
+  /** ANSI 12 — bright blue */
+  brightBlue: string
+  /** ANSI 13 — bright magenta */
+  brightMagenta: string
+  /** ANSI 14 — bright cyan */
+  brightCyan: string
+  /** ANSI 15 — bright white */
+  brightWhite: string
+
+  // ── 6 special colors ────────────────────────────────────────────
+  /** Default text color */
+  foreground: string
+  /** Default background color */
+  background: string
+  /** Cursor block/line color */
+  cursorColor: string
+  /** Text rendered under the cursor */
+  cursorText: string
+  /** Background color of selected text */
+  selectionBackground: string
+  /** Text color of selected text */
+  selectionForeground: string
 }
 
-/** Accent hue name — the 8 universal colors present in every theme system. */
-export type HueName = "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "purple" | "pink"
+/** All 22 color field names on ColorPalette. */
+export const COLOR_PALETTE_FIELDS = [
+  "black",
+  "red",
+  "green",
+  "yellow",
+  "blue",
+  "magenta",
+  "cyan",
+  "white",
+  "brightBlack",
+  "brightRed",
+  "brightGreen",
+  "brightYellow",
+  "brightBlue",
+  "brightMagenta",
+  "brightCyan",
+  "brightWhite",
+  "foreground",
+  "background",
+  "cursorColor",
+  "cursorText",
+  "selectionBackground",
+  "selectionForeground",
+] as const
+
+/** Name of one of the 16 ANSI palette colors. */
+export type AnsiColorName =
+  | "black"
+  | "red"
+  | "green"
+  | "yellow"
+  | "blue"
+  | "magenta"
+  | "cyan"
+  | "white"
+  | "brightBlack"
+  | "brightRed"
+  | "brightGreen"
+  | "brightYellow"
+  | "brightBlue"
+  | "brightMagenta"
+  | "brightCyan"
+  | "brightWhite"
 
 // ============================================================================
-// Theme — Semantic Tokens for UI Consumption
+// Theme — 33 Semantic Tokens for UI Consumption
 // ============================================================================
 
 /**
- * Semantic color token map (19 tokens + palette).
+ * Semantic color token map (33 tokens + palette).
  *
+ * Follows shadcn-style pairing: `$name` (area bg) + `$namefg` (text on area).
  * Components reference tokens with a `$` prefix (e.g. `color="$primary"`).
- * Palette colors use `$color0` through `$color15`.
- * Tokens are resolved at render time via `resolveThemeColor`.
+ * All property names are lowercase, no hyphens, no camelCase.
  */
 export interface Theme {
   /** Human-readable theme name */
   name: string
-  /** True if this is a dark theme (affects contrast decisions) */
-  dark: boolean
 
-  // Brand
-  /** Primary brand tint — active indicators, interactive controls */
-  primary: string
-  /** Hyperlinks, references (derived from primary) */
-  link: string
-  /** Interactive chrome, input borders (derived from primary) */
-  control: string
-
-  // Selection
-  /** Selection highlight background */
-  selected: string
-  /** Text on selected background (contrast-paired) */
-  selectedfg: string
-  /** Keyboard focus outline (always blue — accessibility) */
-  focusring: string
-
-  // Text
-  /** Primary text — headings, body */
-  text: string
-  /** Secondary text — descriptions, metadata */
-  text2: string
-  /** Tertiary text — timestamps, hints, placeholders */
-  text3: string
-  /** Quaternary text — ghost text, watermarks, barely visible */
-  text4: string
-
-  // Surface
-  /** Default background (detected or configured) */
+  // ── 14 pairs (area + text-on-area) ──────────────────────────────
+  /** Default background */
   bg: string
-  /** Elevated surfaces — dialogs, overlays, popovers */
+  /** Default text */
+  fg: string
+  /** Elevated content area background */
   surface: string
-  /** Dividers, borders, rules */
-  separator: string
-
-  // Chrome (inverted areas — title bars, status bars)
-  /** Chrome background — inverted from normal (bright in dark themes) */
-  chromebg: string
-  /** Chrome foreground — text on chrome background (dark in dark themes) */
-  chromefg: string
-
-  // Status
-  /** Error/destructive — validation errors, delete actions */
+  /** Text on elevated surface */
+  surfacefg: string
+  /** Floating content background (popover, dropdown) */
+  popover: string
+  /** Text on floating content */
+  popoverfg: string
+  /** Muted area background (hover state) */
+  muted: string
+  /** Secondary/muted text (~70% contrast) */
+  mutedfg: string
+  /** Brand accent area */
+  primary: string
+  /** Text on primary accent area */
+  primaryfg: string
+  /** Alternate accent area */
+  secondary: string
+  /** Text on secondary accent area */
+  secondaryfg: string
+  /** Attention/pop accent area */
+  accent: string
+  /** Text on accent area */
+  accentfg: string
+  /** Error/destructive area */
   error: string
-  /** Warning/caution — unsaved changes */
+  /** Text on error area */
+  errorfg: string
+  /** Warning/caution area */
   warning: string
-  /** Success/positive — saved confirmation, passing tests */
+  /** Text on warning area */
+  warningfg: string
+  /** Success/positive area */
   success: string
+  /** Text on success area */
+  successfg: string
+  /** Neutral info area */
+  info: string
+  /** Text on info area */
+  infofg: string
+  /** Selected items background */
+  selection: string
+  /** Text on selected items */
+  selectionfg: string
+  /** Chrome area (status/title bar) */
+  inverse: string
+  /** Text on chrome area */
+  inversefg: string
+  /** Cursor color */
+  cursor: string
+  /** Text under cursor */
+  cursorfg: string
 
-  // Content palette (16 indexed colors for categorization)
-  /** 16 content colors ($color0 through $color15) */
+  // ── 5 standalone tokens ─────────────────────────────────────────
+  /** Structural dividers, borders */
+  border: string
+  /** Interactive control borders (inputs, buttons) */
+  inputborder: string
+  /** Focus border (always blue) */
+  focusborder: string
+  /** Hyperlinks */
+  link: string
+  /** Disabled/placeholder text (~50% contrast) */
+  disabledfg: string
+
+  // ── 16 palette passthrough ──────────────────────────────────────
+  /** 16 ANSI colors ($color0–$color15) */
   palette: string[]
 }
 
 /** Supported primary colors for ANSI 16 theme generation. */
 export type AnsiPrimary = "yellow" | "cyan" | "magenta" | "green" | "red" | "blue" | "white"
 
-/** Options for deriveTheme(). */
-export interface ThemeOptions {
-  /** Which hue to use as primary accent. Default: yellow (dark), blue (light) */
-  accent?: HueName
-}
+/** Accent hue name — the 8 hue names for palette generators. */
+export type HueName = "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "purple" | "pink"

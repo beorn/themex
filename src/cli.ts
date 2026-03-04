@@ -21,10 +21,10 @@
 import { builtinPalettes, getPaletteByName, builtinThemes } from "./palettes/index.js"
 import { deriveTheme } from "./derive.js"
 import { generateTheme } from "./generate.js"
-import { validatePalette } from "./validate.js"
+import { validateColorPalette } from "./validate.js"
 import { exportBase16 } from "./export/base16.js"
 import { importBase16 } from "./import/base16.js"
-import type { Theme, ThemePalette, AnsiPrimary } from "./types.js"
+import type { Theme, ColorPalette, AnsiPrimary } from "./types.js"
 
 // ============================================================================
 // ANSI Escape Helpers
@@ -70,9 +70,9 @@ function colored(hex: string, text: string): string {
   return fgRgb(r, g, b, text)
 }
 
-function isDarkPalette(p: ThemePalette): boolean {
-  if (!p.base) return true
-  const [r, g, b] = hexToRgb(p.base)
+function isDarkPalette(p: ColorPalette): boolean {
+  if (!p.background) return true
+  const [r, g, b] = hexToRgb(p.background)
   return (r + g + b) / 3 < 128
 }
 
@@ -81,9 +81,17 @@ function isDarkPalette(p: ThemePalette): boolean {
 // ============================================================================
 
 const box = {
-  tl: "\u250c", tr: "\u2510", bl: "\u2514", br: "\u2518",
-  h: "\u2500", v: "\u2502",
-  tee: "\u252c", btee: "\u2534", ltee: "\u251c", rtee: "\u2524", cross: "\u253c",
+  tl: "\u250c",
+  tr: "\u2510",
+  bl: "\u2514",
+  br: "\u2518",
+  h: "\u2500",
+  v: "\u2502",
+  tee: "\u252c",
+  btee: "\u2534",
+  ltee: "\u251c",
+  rtee: "\u2524",
+  cross: "\u253c",
 } as const
 
 function hline(width: number, char = box.h): string {
@@ -119,22 +127,16 @@ function listThemes() {
   // Table header
   const nameW = 26
   const modeW = 7
-  console.log(
-    `  ${dim(box.tl + hline(nameW) + box.tee + hline(modeW) + box.tee + hline(10) + box.tr)}`,
-  )
+  console.log(`  ${dim(box.tl + hline(nameW) + box.tee + hline(modeW) + box.tee + hline(10) + box.tr)}`)
   console.log(
     `  ${dim(box.v)} ${bold("Theme".padEnd(nameW - 1))}${dim(box.v)} ${bold("Mode".padEnd(modeW - 1))}${dim(box.v)} ${bold("Accents".padEnd(9))}${dim(box.v)}`,
   )
-  console.log(
-    `  ${dim(box.ltee + hline(nameW) + box.cross + hline(modeW) + box.cross + hline(10) + box.rtee)}`,
-  )
+  console.log(`  ${dim(box.ltee + hline(nameW) + box.cross + hline(modeW) + box.cross + hline(10) + box.rtee)}`)
 
   let first = true
   for (const [family, members] of families) {
     if (!first) {
-      console.log(
-        `  ${dim(box.ltee + hline(nameW) + box.cross + hline(modeW) + box.cross + hline(10) + box.rtee)}`,
-      )
+      console.log(`  ${dim(box.ltee + hline(nameW) + box.cross + hline(modeW) + box.cross + hline(10) + box.rtee)}`)
     }
     first = false
 
@@ -142,12 +144,12 @@ function listThemes() {
       const palette = getPaletteByName(name)!
       const dark = isDarkPalette(palette)
       const mode = dark ? "dark" : "light"
-      const accents = [palette.red, palette.green, palette.yellow, palette.blue, palette.purple, palette.teal, palette.orange, palette.pink]
+      const accents = [palette.red, palette.green, palette.yellow, palette.blue, palette.magenta, palette.cyan]
         .filter((c) => c && isHex(c))
         .map((c) => colorSwatch(c!, 1))
         .join("")
 
-      const displayName = colored(palette.blue || palette.teal, name)
+      const displayName = colored(palette.blue || palette.cyan, name)
       // Pad accounting for ANSI escapes in displayName
       const namePad = " ".repeat(Math.max(0, nameW - 1 - name.length))
 
@@ -157,9 +159,7 @@ function listThemes() {
     }
   }
 
-  console.log(
-    `  ${dim(box.bl + hline(nameW) + box.btee + hline(modeW) + box.btee + hline(10) + box.br)}`,
-  )
+  console.log(`  ${dim(box.bl + hline(nameW) + box.btee + hline(modeW) + box.btee + hline(10) + box.br)}`)
   console.log()
   console.log(dim(`  Commands: show <name> | colors | compare <a> <b> | search <q> | json <name>`))
   console.log()
@@ -175,44 +175,87 @@ function showTheme(name: string) {
   }
 
   const theme = deriveTheme(palette)
+  const isDark = palette.dark !== false
   const w = 48
   console.log()
-  console.log(boxHeader(name, w) + dim(` ${theme.dark ? "dark" : "light"}`))
+  console.log(boxHeader(name, w) + dim(` ${isDark ? "dark" : "light"}`))
   console.log()
 
-  // Surface ramp
-  console.log(bold("  Surface Ramp"))
-  const surfaces = ["crust", "base", "surface", "overlay", "subtext", "text"] as const
-  for (const key of surfaces) {
+  // ANSI palette colors
+  console.log(bold("  ANSI Colors"))
+  const ansiKeys = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"] as const
+  for (const key of ansiKeys) {
     console.log(`    ${colorLabel(palette[key], key)}`)
   }
   console.log()
 
-  // Accent hues -- two-row grid
-  console.log(bold("  Accent Hues"))
-  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
-  const hueRow1 = hues.slice(0, 4)
-  const hueRow2 = hues.slice(4)
-
-  for (const row of [hueRow1, hueRow2]) {
-    const cells = row.map((hue) => {
-      const color = palette[hue]
-      if (!color || !isHex(color)) return `    ${dim(hue.padEnd(10))}`
-      return `    ${colorSwatch(color, 2)} ${fgRgb(...hexToRgb(color), hue.padEnd(8))}`
-    })
-    console.log(cells.join(""))
+  // Special colors
+  console.log(bold("  Special Colors"))
+  const specialKeys = [
+    "foreground",
+    "background",
+    "cursorColor",
+    "cursorText",
+    "selectionBackground",
+    "selectionForeground",
+  ] as const
+  for (const key of specialKeys) {
+    console.log(`    ${colorLabel(palette[key], key)}`)
   }
   console.log()
 
   // Semantic tokens grouped
   console.log(bold("  Semantic Tokens"))
   const groups: [string, [string, string][]][] = [
-    ["Brand", [["primary", theme.primary], ["link", theme.link], ["control", theme.control]]],
-    ["Selection", [["selected", theme.selected], ["selectedfg", theme.selectedfg], ["focusring", theme.focusring]]],
-    ["Text", [["text", theme.text], ["text2", theme.text2], ["text3", theme.text3], ["text4", theme.text4]]],
-    ["Surface", [["bg", theme.bg], ["surface", theme.surface], ["separator", theme.separator]]],
-    ["Chrome", [["chromebg", theme.chromebg], ["chromefg", theme.chromefg]]],
-    ["Status", [["error", theme.error], ["warning", theme.warning], ["success", theme.success]]],
+    [
+      "Brand",
+      [
+        ["primary", theme.primary],
+        ["primaryfg", theme.primaryfg],
+        ["link", theme.link],
+        ["inputborder", theme.inputborder],
+      ],
+    ],
+    [
+      "Selection",
+      [
+        ["selection", theme.selection],
+        ["selectionfg", theme.selectionfg],
+        ["focusborder", theme.focusborder],
+      ],
+    ],
+    [
+      "Text",
+      [
+        ["fg", theme.fg],
+        ["mutedfg", theme.mutedfg],
+        ["disabledfg", theme.disabledfg],
+      ],
+    ],
+    [
+      "Surface",
+      [
+        ["bg", theme.bg],
+        ["surface", theme.surface],
+        ["border", theme.border],
+      ],
+    ],
+    [
+      "Chrome",
+      [
+        ["inverse", theme.inverse],
+        ["inversefg", theme.inversefg],
+      ],
+    ],
+    [
+      "Status",
+      [
+        ["error", theme.error],
+        ["warning", theme.warning],
+        ["success", theme.success],
+        ["info", theme.info],
+      ],
+    ],
   ]
 
   for (const [group, tokens] of groups) {
@@ -226,8 +269,14 @@ function showTheme(name: string) {
 
   // 16-color palette
   console.log(bold("  16-Color Palette"))
-  const row1 = theme.palette.slice(0, 8).map((c) => colorSwatch(c, 3)).join("")
-  const row2 = theme.palette.slice(8, 16).map((c) => colorSwatch(c, 3)).join("")
+  const row1 = theme.palette
+    .slice(0, 8)
+    .map((c) => colorSwatch(c, 3))
+    .join("")
+  const row2 = theme.palette
+    .slice(8, 16)
+    .map((c) => colorSwatch(c, 3))
+    .join("")
   console.log(`    ${row1}  ${dim("0-7")}`)
   console.log(`    ${row2}  ${dim("8-15")}`)
 
@@ -240,30 +289,32 @@ function showTheme(name: string) {
 
 function colorsGrid() {
   const names = Object.keys(builtinPalettes)
-  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
+  const ansiColors = ["red", "green", "yellow", "blue", "magenta", "cyan"] as const
 
   console.log()
-  console.log(bold("  Accent Colors") + dim(` -- ${names.length} themes`))
+  console.log(bold("  ANSI Colors") + dim(` -- ${names.length} themes`))
   console.log()
 
   // Header
   const nameW = 24
   const hueW = 3
-  const header = hues.map((h) => h.slice(0, 3).padEnd(hueW)).join(" ")
+  const header = ansiColors.map((h) => h.slice(0, 3).padEnd(hueW)).join(" ")
   console.log(`  ${"".padEnd(nameW)} ${dim(header)}`)
-  console.log(`  ${dim(hline(nameW + 1 + hues.length * (hueW + 1)))}`)
+  console.log(`  ${dim(hline(nameW + 1 + ansiColors.length * (hueW + 1)))}`)
 
   for (const name of names) {
     const palette = getPaletteByName(name)!
-    const swatches = hues.map((hue) => {
-      const color = palette[hue]
-      if (!color || !isHex(color)) return dim(" ".repeat(hueW))
-      return colorSwatch(color, hueW)
-    }).join(" ")
+    const swatches = ansiColors
+      .map((color) => {
+        const c = palette[color]
+        if (!c || !isHex(c)) return dim(" ".repeat(hueW))
+        return colorSwatch(c, hueW)
+      })
+      .join(" ")
 
     const dark = isDarkPalette(palette)
     const modeChar = dark ? dim("d") : dim("l")
-    console.log(`  ${colored(palette.blue || palette.teal, name.padEnd(nameW - 2))} ${modeChar} ${swatches}`)
+    console.log(`  ${colored(palette.blue || palette.cyan, name.padEnd(nameW - 2))} ${modeChar} ${swatches}`)
   }
 
   console.log()
@@ -299,39 +350,45 @@ function compareThemes(name1: string, name2: string) {
   console.log(`  ${dim(hline(colW))}${dim(box.cross)}${dim(hline(colW + 1))}`)
 
   // Mode
-  const mode1 = theme1.dark ? "dark" : "light"
-  const mode2 = theme2.dark ? "dark" : "light"
+  const mode1 = palette1.dark !== false ? "dark" : "light"
+  const mode2 = palette2.dark !== false ? "dark" : "light"
   console.log(`  ${dim("Mode: ") + mode1.padEnd(colW - 6)}${sepCol}${dim("Mode: ") + mode2}`)
   console.log()
 
-  // Surface ramp side by side
-  console.log(`  ${bold("Surface Ramp".padEnd(colW))}${sepCol}${bold("Surface Ramp")}`)
-  const surfaces = ["crust", "base", "surface", "overlay", "subtext", "text"] as const
-  for (const key of surfaces) {
+  // ANSI colors side by side
+  console.log(`  ${bold("ANSI Colors".padEnd(colW))}${sepCol}${bold("ANSI Colors")}`)
+  const ansiKeys = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"] as const
+  for (const key of ansiKeys) {
     const c1 = palette1[key]
     const c2 = palette2[key]
     const left = `${colorSwatch(c1)} ${isHex(c1) ? colored(c1, c1) : c1} ${dim(key)}`
     const right = `${colorSwatch(c2)} ${isHex(c2) ? colored(c2, c2) : c2} ${dim(key)}`
-    // Pad left column using raw key + hex length
     const leftRaw = `XX ${c1} ${key}`
     const pad = " ".repeat(Math.max(0, colW - leftRaw.length))
     console.log(`  ${left}${pad}${sepCol}${right}`)
   }
   console.log()
 
-  // Accents side by side
-  console.log(`  ${bold("Accent Hues".padEnd(colW))}${sepCol}${bold("Accent Hues")}`)
-  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
-  for (const hue of hues) {
-    const c1 = palette1[hue]
-    const c2 = palette2[hue]
-    const fmtCell = (c: string, h: string) => {
-      if (!isHex(c)) return dim(`${c.padEnd(7)} ${h}`)
-      return `${colorSwatch(c)} ${colored(c, c)} ${dim(h)}`
+  // Special colors side by side
+  console.log(`  ${bold("Special Colors".padEnd(colW))}${sepCol}${bold("Special Colors")}`)
+  const specialKeys = [
+    "foreground",
+    "background",
+    "cursorColor",
+    "cursorText",
+    "selectionBackground",
+    "selectionForeground",
+  ] as const
+  for (const key of specialKeys) {
+    const c1 = palette1[key]
+    const c2 = palette2[key]
+    const fmtCell = (c: string, k: string) => {
+      if (!isHex(c)) return dim(`${c.padEnd(7)} ${k}`)
+      return `${colorSwatch(c)} ${colored(c, c)} ${dim(k)}`
     }
-    const left = fmtCell(c1, hue)
-    const right = fmtCell(c2, hue)
-    const leftRaw = `XX ${c1} ${hue}`
+    const left = fmtCell(c1, key)
+    const right = fmtCell(c2, key)
+    const leftRaw = `XX ${c1} ${key}`
     const pad = " ".repeat(Math.max(0, colW - leftRaw.length))
     console.log(`  ${left}${pad}${sepCol}${right}`)
   }
@@ -339,15 +396,31 @@ function compareThemes(name1: string, name2: string) {
 
   // Semantic tokens side by side
   console.log(`  ${bold("Semantic Tokens".padEnd(colW))}${sepCol}${bold("Semantic Tokens")}`)
-  const tokenKeys = [
-    "primary", "link", "control", "selected", "selectedfg", "focusring",
-    "text", "text2", "text3", "text4", "bg", "surface", "separator",
-    "chromebg", "chromefg", "error", "warning", "success",
-  ] as const
+  const tokenKeys: (keyof Theme)[] = [
+    "primary",
+    "primaryfg",
+    "link",
+    "inputborder",
+    "selection",
+    "selectionfg",
+    "focusborder",
+    "fg",
+    "mutedfg",
+    "disabledfg",
+    "bg",
+    "surface",
+    "border",
+    "inverse",
+    "inversefg",
+    "error",
+    "warning",
+    "success",
+    "info",
+  ]
 
   for (const key of tokenKeys) {
-    const v1 = theme1[key]
-    const v2 = theme2[key]
+    const v1 = theme1[key] as string
+    const v2 = theme2[key] as string
     const fmtToken = (v: string, k: string) => {
       if (!isHex(v)) return dim(`${v.padEnd(7)} ${k}`)
       return `${colorSwatch(v)} ${colored(v, v)} ${dim(k)}`
@@ -362,9 +435,18 @@ function compareThemes(name1: string, name2: string) {
 
   // 16-color palette side by side
   console.log(`  ${bold("Palette".padEnd(colW))}${sepCol}${bold("Palette")}`)
-  for (const [start, label] of [[0, "0-7"], [8, "8-15"]] as const) {
-    const r1 = theme1.palette.slice(start, start + 8).map((c) => colorSwatch(c, 3)).join("")
-    const r2 = theme2.palette.slice(start, start + 8).map((c) => colorSwatch(c, 3)).join("")
+  for (const [start, label] of [
+    [0, "0-7"],
+    [8, "8-15"],
+  ] as const) {
+    const r1 = theme1.palette
+      .slice(start, start + 8)
+      .map((c) => colorSwatch(c, 3))
+      .join("")
+    const r2 = theme2.palette
+      .slice(start, start + 8)
+      .map((c) => colorSwatch(c, 3))
+      .join("")
     // Each row is 24 visible chars (8 * 3)
     const pad = " ".repeat(Math.max(0, colW - 24 - label.length - 1))
     console.log(`  ${r1} ${dim(label)}${pad}${sepCol}${r2} ${dim(label)}`)
@@ -389,17 +471,19 @@ function searchThemes(query: string) {
   console.log(bold(`  Search: "${query}"`) + dim(` -- ${matches.length} match${matches.length === 1 ? "" : "es"}`))
   console.log()
 
-  const hues = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink"] as const
+  const ansiColors = ["red", "green", "yellow", "blue", "magenta", "cyan"] as const
 
   for (const name of matches) {
     const palette = getPaletteByName(name)!
     const dark = isDarkPalette(palette)
     const mode = dark ? dim("dark ") : dim("light")
-    const accents = hues.map((hue) => {
-      const color = palette[hue]
-      if (!color || !isHex(color)) return dim(" ")
-      return colorSwatch(color, 1)
-    }).join("")
+    const accents = ansiColors
+      .map((color) => {
+        const c = palette[color]
+        if (!c || !isHex(c)) return dim(" ")
+        return colorSwatch(c, 1)
+      })
+      .join("")
 
     // Highlight the matching part in the name
     const idx = name.toLowerCase().indexOf(q)
@@ -408,7 +492,9 @@ function searchThemes(query: string) {
     const after = name.slice(idx + q.length)
     const highlighted = `${before}${bold(underline(match))}${after}`
 
-    console.log(`  ${highlighted.padEnd(24 + (highlighted.length - name.length))} ${mode} ${accents}  ${dim(palette.base)}`)
+    console.log(
+      `  ${highlighted.padEnd(24 + (highlighted.length - name.length))} ${mode} ${accents}  ${dim(palette.background)}`,
+    )
   }
   console.log()
 }
@@ -461,12 +547,55 @@ function showDerivedTheme(theme: Theme, label: string) {
   console.log()
 
   const groups: [string, [string, string][]][] = [
-    ["Brand", [["primary", theme.primary], ["link", theme.link], ["control", theme.control]]],
-    ["Selection", [["selected", theme.selected], ["selectedfg", theme.selectedfg], ["focusring", theme.focusring]]],
-    ["Text", [["text", theme.text], ["text2", theme.text2], ["text3", theme.text3], ["text4", theme.text4]]],
-    ["Surface", [["bg", theme.bg], ["surface", theme.surface], ["separator", theme.separator]]],
-    ["Chrome", [["chromebg", theme.chromebg], ["chromefg", theme.chromefg]]],
-    ["Status", [["error", theme.error], ["warning", theme.warning], ["success", theme.success]]],
+    [
+      "Brand",
+      [
+        ["primary", theme.primary],
+        ["primaryfg", theme.primaryfg],
+        ["link", theme.link],
+        ["inputborder", theme.inputborder],
+      ],
+    ],
+    [
+      "Selection",
+      [
+        ["selection", theme.selection],
+        ["selectionfg", theme.selectionfg],
+        ["focusborder", theme.focusborder],
+      ],
+    ],
+    [
+      "Text",
+      [
+        ["fg", theme.fg],
+        ["mutedfg", theme.mutedfg],
+        ["disabledfg", theme.disabledfg],
+      ],
+    ],
+    [
+      "Surface",
+      [
+        ["bg", theme.bg],
+        ["surface", theme.surface],
+        ["border", theme.border],
+      ],
+    ],
+    [
+      "Chrome",
+      [
+        ["inverse", theme.inverse],
+        ["inversefg", theme.inversefg],
+      ],
+    ],
+    [
+      "Status",
+      [
+        ["error", theme.error],
+        ["warning", theme.warning],
+        ["success", theme.success],
+        ["info", theme.info],
+      ],
+    ],
   ]
 
   for (const [group, tokens] of groups) {
@@ -483,8 +612,14 @@ function showDerivedTheme(theme: Theme, label: string) {
   console.log()
   if (theme.palette.length > 0) {
     console.log(`  ${bold("Palette")}`)
-    const row1 = theme.palette.slice(0, 8).map((c) => colorSwatch(c, 3)).join("")
-    const row2 = theme.palette.slice(8, 16).map((c) => colorSwatch(c, 3)).join("")
+    const row1 = theme.palette
+      .slice(0, 8)
+      .map((c) => colorSwatch(c, 3))
+      .join("")
+    const row2 = theme.palette
+      .slice(8, 16)
+      .map((c) => colorSwatch(c, 3))
+      .join("")
     console.log(`    ${row1}  ${dim("0-7")}`)
     console.log(`    ${row2}  ${dim("8-15")}`)
     console.log()
@@ -519,7 +654,7 @@ function validateCmd(name: string) {
     console.error(`Theme "${name}" not found.`)
     process.exit(1)
   }
-  const result = validatePalette(palette)
+  const result = validateColorPalette(palette)
   if (result.valid) {
     console.log(`${bold("OK")} ${name}: valid palette`)
   } else {
@@ -558,7 +693,7 @@ ${bold("Generate")}
   ${colored("#88C0D0", "json")} <name>             Output theme as JSON ${dim("(for piping)")}
 
 ${bold("Import / Export")}
-  ${colored("#88C0D0", "import")} <file.yaml>      Import Base16 YAML to ThemePalette
+  ${colored("#88C0D0", "import")} <file.yaml>      Import Base16 YAML to ColorPalette
   ${colored("#88C0D0", "export")} <name>           Export palette as Base16 YAML
   ${colored("#88C0D0", "validate")} <name>         Validate a palette
 

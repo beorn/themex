@@ -78,3 +78,65 @@ export function contrastFg(bg: string): "#000000" | "#FFFFFF" {
   const luminance = 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
   return luminance > 0.179 ? "#000000" : "#FFFFFF"
 }
+
+// ============================================================================
+// HSL Utilities
+// ============================================================================
+
+export type HSL = [number, number, number] // [h: 0-360, s: 0-1, l: 0-1]
+
+export function rgbToHsl(r: number, g: number, b: number): HSL {
+  r /= 255
+  g /= 255
+  b /= 255
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b)
+  const l = (max + min) / 2
+  if (max === min) return [0, 0, l]
+  const d = max - min
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+  let h = 0
+  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6
+  else if (max === g) h = ((b - r) / d + 2) / 6
+  else h = ((r - g) / d + 4) / 6
+  return [h * 360, s, l]
+}
+
+export function hslToHex(h: number, s: number, l: number): string {
+  h = ((h % 360) + 360) % 360
+  const a = s * Math.min(l, 1 - l)
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12
+    return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+  }
+  return rgbToHex(f(0) * 255, f(8) * 255, f(4) * 255)
+}
+
+export function hexToHsl(hex: string): HSL | null {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return null
+  return rgbToHsl(rgb[0], rgb[1], rgb[2])
+}
+
+/**
+ * Desaturate a hex color by reducing saturation.
+ * amount=0.4 reduces saturation by 40%.
+ * For non-hex inputs, returns the color unchanged.
+ */
+export function desaturate(color: string, amount: number): string {
+  const hsl = hexToHsl(color)
+  if (!hsl) return color
+  const [h, s, l] = hsl
+  return hslToHex(h, s * (1 - amount), l)
+}
+
+/**
+ * Get the complementary color (180° hue rotation).
+ * For non-hex inputs, returns the color unchanged.
+ */
+export function complement(color: string): string {
+  const hsl = hexToHsl(color)
+  if (!hsl) return color
+  const [h, s, l] = hsl
+  return hslToHex(h + 180, s, l)
+}

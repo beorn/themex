@@ -26,16 +26,16 @@ These names come from the Catppuccin project, which popularized a surface ramp n
 
 Every theme system in existence uses some subset of these 8 hue names. They are universal:
 
-| Hue    | Semantic Role           |
-|--------|------------------------|
-| red    | Error, danger          |
-| orange | Warning, caution       |
-| yellow | Primary accent (dark)  |
-| green  | Success, positive      |
-| teal   | Cool accent, info      |
-| blue   | Links, focus           |
-| purple | Decorative, tags       |
-| pink   | Decorative, warm       |
+| Hue    | Semantic Role         |
+| ------ | --------------------- |
+| red    | Error, danger         |
+| orange | Warning, caution      |
+| yellow | Primary accent (dark) |
+| green  | Success, positive     |
+| teal   | Cool accent, info     |
+| blue   | Links, focus          |
+| purple | Decorative, tags      |
+| pink   | Decorative, warm      |
 
 These are ANSI-standard names that appear in Base16, Catppuccin, Nord, Dracula, Tokyo Night, and every other major theme system. By using these exact names, we get natural interoperability.
 
@@ -88,7 +88,7 @@ The `$` prefix convention (`$primary`, `$bg`, `$error`) lets you mix semantic to
 
 ```typescript
 resolveThemeColor("$primary", theme) // looks up theme.primary
-resolveThemeColor("#FF0000", theme)  // passes through unchanged
+resolveThemeColor("#FF0000", theme) // passes through unchanged
 ```
 
 This makes token resolution a no-op for literal colors, keeping the API simple for components that accept both tokens and raw hex values.
@@ -101,18 +101,18 @@ Research on existing theme systems informed themex's architecture. We studied TU
 
 ### Systems Compared
 
-| System | Architecture | Tokens | Key Innovation |
-|--------|-------------|--------|----------------|
-| **Textual** | 11 base colors, auto-shade generation (3 lighter + 3 darker per color) | ~77 (11 x 7) | CSS variable system, minimal authoring (`Theme(primary=...)`) |
-| **Charm/lipgloss** | CompleteAdaptiveColor (6 values per token) | Per-component | Dark/light x truecolor/256/16 adaptive, color utilities |
-| **BubbleTint** | Registry of tints (Base16-sourced), named ANSI accessors | ~18 | Global tint registry for BubbleTea apps |
-| **Catppuccin** | 26-color palette, per-app ports | 26 | OKLCH bright derivation, cross-app consistency |
-| **oh-my-pi** | `vars` palette -> `colors` semantic -> component interfaces | 66 | Two-layer indirection, color-blind mode, symbol theming |
-| **oh-my-posh** | Palette refs (`p:name`) + template conditionals | ~20 | Decorator chain, conditional palettes |
-| **Omarchy (DHH)** | 22 tokens in `colors.toml`, cross-app config generation | 22 | Config generation pipeline (Neovim, tmux, bat, lazygit) |
-| **Zed** | 150+ tokens with state variants | 150+ | Hover/active/disabled per token, 24 terminal colors |
-| **Apple HIG** | ONE accent + opacity cascade | ~20 | Text hierarchy via opacity, system palette |
-| **Material Design 3** | HCT color space, one seed color | ~25 roles | Primary/secondary/tertiary from hue rotation |
+| System                | Architecture                                                           | Tokens        | Key Innovation                                                |
+| --------------------- | ---------------------------------------------------------------------- | ------------- | ------------------------------------------------------------- |
+| **Textual**           | 11 base colors, auto-shade generation (3 lighter + 3 darker per color) | ~77 (11 x 7)  | CSS variable system, minimal authoring (`Theme(primary=...)`) |
+| **Charm/lipgloss**    | CompleteAdaptiveColor (6 values per token)                             | Per-component | Dark/light x truecolor/256/16 adaptive, color utilities       |
+| **BubbleTint**        | Registry of tints (Base16-sourced), named ANSI accessors               | ~18           | Global tint registry for BubbleTea apps                       |
+| **Catppuccin**        | 26-color palette, per-app ports                                        | 26            | OKLCH bright derivation, cross-app consistency                |
+| **oh-my-pi**          | `vars` palette -> `colors` semantic -> component interfaces            | 66            | Two-layer indirection, color-blind mode, symbol theming       |
+| **oh-my-posh**        | Palette refs (`p:name`) + template conditionals                        | ~20           | Decorator chain, conditional palettes                         |
+| **Omarchy (DHH)**     | 22 tokens in `colors.toml`, cross-app config generation                | 22            | Config generation pipeline (Neovim, tmux, bat, lazygit)       |
+| **Zed**               | 150+ tokens with state variants                                        | 150+          | Hover/active/disabled per token, 24 terminal colors           |
+| **Apple HIG**         | ONE accent + opacity cascade                                           | ~20           | Text hierarchy via opacity, system palette                    |
+| **Material Design 3** | HCT color space, one seed color                                        | ~25 roles     | Primary/secondary/tertiary from hue rotation                  |
 
 ### What We Adopted
 
@@ -142,7 +142,7 @@ Lipgloss demonstrates that terminal apps can use the ANSI 16 palette as "semanti
 
 ### What We Rejected
 
-**Textual's lack of terminal detection**: Textual is "opinionated" -- it assumes full truecolor control and ignores the terminal's existing theme. This makes Textual apps feel like GUI apps that happen to render in a terminal. We want apps that *belong* in the terminal, respecting the user's chosen palette.
+**Textual's lack of terminal detection**: Textual is "opinionated" -- it assumes full truecolor control and ignores the terminal's existing theme. This makes Textual apps feel like GUI apps that happen to render in a terminal. We want apps that _belong_ in the terminal, respecting the user's chosen palette.
 
 **Textual's CSS-based architecture**: Their styling system is tightly coupled to a CSS engine. We use `$token` strings resolved at render time, which works in any context (terminal, web, native) without requiring a CSS parser.
 
@@ -160,15 +160,15 @@ Lipgloss demonstrates that terminal apps can use the ANSI 16 palette as "semanti
 
 How existing theme systems structure their palettes:
 
-| Theme | Base/Surface | Accent Hues | Status | Total | Primary Accent? |
-|-------|-------------|-------------|--------|-------|----------------|
-| **Catppuccin** | 12 (3 bg + 3 surface + 3 overlay + 2 subtext + text) | 14 | 4 (from accents) | 26 | No (port chooses) |
-| **Dracula** | 7 (bg x5, fg, selection) | 7 (R/O/Y/G/C/Pu/Pk) | 5 (functional UI) | ~15 | No (peers) |
-| **Nord** | 7 (4 Polar Night + 3 Snow Storm) | 9 (4 Frost + 5 Aurora) | 3 (from Aurora) | 16 | Yes (nord8 blue) |
-| **Solarized** | 8 (symmetric base03--base3) | 8 (YORGMVBC) | 0 (informal) | 16 | No (equals) |
-| **Tokyo Night** | ~15 (7 bg + 5 fg + neutrals) | ~16 (7 blues + 9 others) | 4 (error/warn/info/hint) | ~55 | Yes (blue) |
-| **One Dark** | 5 (bg + 3 mono + accent) | 8 (hue-1 through hue-6-2) | 0 (informal) | ~13 | Yes (syntax-accent) |
-| **themex** | 6 (crust/base/surface/overlay/subtext/text) | 8 (R/O/Y/G/T/B/Pu/Pk) | 3 (error/warning/success) | 14 | Yes (user-chosen) |
+| Theme           | Base/Surface                                         | Accent Hues               | Status                    | Total | Primary Accent?     |
+| --------------- | ---------------------------------------------------- | ------------------------- | ------------------------- | ----- | ------------------- |
+| **Catppuccin**  | 12 (3 bg + 3 surface + 3 overlay + 2 subtext + text) | 14                        | 4 (from accents)          | 26    | No (port chooses)   |
+| **Dracula**     | 7 (bg x5, fg, selection)                             | 7 (R/O/Y/G/C/Pu/Pk)       | 5 (functional UI)         | ~15   | No (peers)          |
+| **Nord**        | 7 (4 Polar Night + 3 Snow Storm)                     | 9 (4 Frost + 5 Aurora)    | 3 (from Aurora)           | 16    | Yes (nord8 blue)    |
+| **Solarized**   | 8 (symmetric base03--base3)                          | 8 (YORGMVBC)              | 0 (informal)              | 16    | No (equals)         |
+| **Tokyo Night** | ~15 (7 bg + 5 fg + neutrals)                         | ~16 (7 blues + 9 others)  | 4 (error/warn/info/hint)  | ~55   | Yes (blue)          |
+| **One Dark**    | 5 (bg + 3 mono + accent)                             | 8 (hue-1 through hue-6-2) | 0 (informal)              | ~13   | Yes (syntax-accent) |
+| **themex**      | 6 (crust/base/surface/overlay/subtext/text)          | 8 (R/O/Y/G/T/B/Pu/Pk)     | 3 (error/warning/success) | 14    | Yes (user-chosen)   |
 
 ## Key Insights
 
@@ -187,13 +187,13 @@ Eight observations that emerged from studying every major theme system:
 
 How themex tokens relate to Material Design 3 color roles:
 
-| M3 Role | themex Token | Notes |
-|---------|-----------|-------|
-| Primary | `$primary` | Same concept -- the brand accent |
-| On Primary | `$selectedfg` | Text on primary-colored backgrounds |
-| Secondary | `$control` | M3 secondary = desaturated primary. Our control = muted accent for chrome |
-| Tertiary | `$focusring` / `$selected` | M3 tertiary = rotated hue. Our selection + focus use a contrasting hue |
-| Error | `$error` | Direct match |
-| Surface | `$bg` / `$surface` | M3 has surface + surface container. We have bg + surface |
-| On Surface | `$text` / `$text2` | Direct match |
-| Outline | `$separator` | Direct match |
+| M3 Role    | themex Token               | Notes                                                                     |
+| ---------- | -------------------------- | ------------------------------------------------------------------------- |
+| Primary    | `$primary`                 | Same concept -- the brand accent                                          |
+| On Primary | `$selectedfg`              | Text on primary-colored backgrounds                                       |
+| Secondary  | `$control`                 | M3 secondary = desaturated primary. Our control = muted accent for chrome |
+| Tertiary   | `$focusring` / `$selected` | M3 tertiary = rotated hue. Our selection + focus use a contrasting hue    |
+| Error      | `$error`                   | Direct match                                                              |
+| Surface    | `$bg` / `$surface`         | M3 has surface + surface container. We have bg + surface                  |
+| On Surface | `$text` / `$text2`         | Direct match                                                              |
+| Outline    | `$separator`               | Direct match                                                              |

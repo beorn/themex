@@ -19,22 +19,22 @@ export const myTheme: ThemePalette = {
   dark: true,
 
   // Surface ramp (ordered by depth: deepest -> most prominent)
-  crust:   "#111111",  // Deepest background (status bars, gutters)
-  base:    "#1A1A1A",  // Primary background
-  surface: "#2A2A2A",  // Raised surfaces (cards, dialogs)
-  overlay: "#555555",  // Borders, dividers, subtle chrome
-  subtext: "#AAAAAA",  // Muted/secondary text
-  text:    "#DDDDDD",  // Primary text
+  crust: "#111111", // Deepest background (status bars, gutters)
+  base: "#1A1A1A", // Primary background
+  surface: "#2A2A2A", // Raised surfaces (cards, dialogs)
+  overlay: "#555555", // Borders, dividers, subtle chrome
+  subtext: "#AAAAAA", // Muted/secondary text
+  text: "#DDDDDD", // Primary text
 
   // Accent hues (8 universal hue names)
-  red:    "#FF5555",
+  red: "#FF5555",
   orange: "#FFB86C",
   yellow: "#F1FA8C",
-  green:  "#50FA7B",
-  teal:   "#8BE9FD",
-  blue:   "#6272A4",
+  green: "#50FA7B",
+  teal: "#8BE9FD",
+  blue: "#6272A4",
   purple: "#BD93F9",
-  pink:   "#FF79C6",
+  pink: "#FF79C6",
 }
 ```
 

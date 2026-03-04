@@ -3,24 +3,33 @@
  * Source: https://github.com/jolaleye/horizon-theme-vscode
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Horizon — warm dark variant with vivid accents. */
-export const horizon: ThemePalette = {
+export const horizon: ColorPalette = {
   name: "horizon",
   dark: true,
-  crust: "#16161C",
-  base: "#1C1E26",
-  surface: "#232530",
-  overlay: "#2E303E",
-  subtext: "#6C6F93",
-  text: "#D5D8DA",
+  black: "#16161C",
   red: "#E95678",
-  orange: "#FAB795",
-  yellow: "#FAC29A",
   green: "#29D398",
-  teal: "#59E1E3",
+  yellow: "#FAC29A",
   blue: "#26BBD9",
-  purple: "#B877DB",
-  pink: "#EE64AC",
+  magenta: "#B877DB",
+  cyan: "#59E1E3",
+  white: "#6C6F93",
+  brightBlack: "#232530",
+  brightRed: "#FAB795",
+  brightGreen: brighten("#29D398", 0.15),
+  brightYellow: brighten("#FAC29A", 0.15),
+  brightBlue: brighten("#26BBD9", 0.15),
+  brightMagenta: "#EE64AC",
+  brightCyan: brighten("#59E1E3", 0.15),
+  brightWhite: "#D5D8DA",
+  foreground: "#D5D8DA",
+  background: "#1C1E26",
+  cursorColor: "#D5D8DA",
+  cursorText: "#1C1E26",
+  selectionBackground: "#2E303E",
+  selectionForeground: "#D5D8DA",
 }

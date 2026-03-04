@@ -2,24 +2,33 @@
  * Nord palette — Arctic, north-bluish clean.
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Nord — the classic dark arctic theme. */
-export const nord: ThemePalette = {
+export const nord: ColorPalette = {
   name: "nord",
   dark: true,
-  crust: "#2E3440",
-  base: "#2E3440",
-  surface: "#3B4252",
-  overlay: "#4C566A",
-  subtext: "#D8DEE9",
-  text: "#ECEFF4",
+  black: "#2E3440",
   red: "#BF616A",
-  orange: "#D08770",
-  yellow: "#EBCB8B",
   green: "#A3BE8C",
-  teal: "#8FBCBB",
+  yellow: "#EBCB8B",
   blue: "#5E81AC",
-  purple: "#B48EAD",
-  pink: "#B48EAD",
+  magenta: "#B48EAD",
+  cyan: "#8FBCBB",
+  white: "#D8DEE9",
+  brightBlack: "#3B4252",
+  brightRed: "#D08770",
+  brightGreen: brighten("#A3BE8C", 0.15),
+  brightYellow: brighten("#EBCB8B", 0.15),
+  brightBlue: brighten("#5E81AC", 0.15),
+  brightMagenta: "#B48EAD",
+  brightCyan: brighten("#8FBCBB", 0.15),
+  brightWhite: "#ECEFF4",
+  foreground: "#ECEFF4",
+  background: "#2E3440",
+  cursorColor: "#ECEFF4",
+  cursorText: "#2E3440",
+  selectionBackground: "#4C566A",
+  selectionForeground: "#ECEFF4",
 }

@@ -4,24 +4,33 @@
  * Reference: https://github.com/JonathanSpeek/palenight-iterm2
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Palenight — the soft, purple-tinted Material dark variant. */
-export const palenight: ThemePalette = {
+export const palenight: ColorPalette = {
   name: "palenight",
   dark: true,
-  crust: "#1c1f2b",  // line_highlight (deepest)
-  base: "#292d3e",   // background
-  surface: "#343b51", // selection
-  overlay: "#4e5579", // guides/invisibles
-  subtext: "#676e95", // comments
-  text: "#a6accd",   // foreground
+  black: "#1c1f2b", // line_highlight (deepest)
   red: "#f07178",
-  orange: "#f78c6c",
-  yellow: "#ffcb6b",
   green: "#c3e88d",
-  teal: "#89ddff",   // cyan
+  yellow: "#ffcb6b",
   blue: "#82aaff",
-  purple: "#c792ea",
-  pink: "#ff5370",
+  magenta: "#c792ea",
+  cyan: "#89ddff", // cyan
+  white: "#676e95", // comments
+  brightBlack: "#343b51", // selection
+  brightRed: "#f78c6c",
+  brightGreen: brighten("#c3e88d", 0.15),
+  brightYellow: brighten("#ffcb6b", 0.15),
+  brightBlue: brighten("#82aaff", 0.15),
+  brightMagenta: "#ff5370",
+  brightCyan: brighten("#89ddff", 0.15),
+  brightWhite: "#a6accd", // foreground
+  foreground: "#a6accd", // foreground
+  background: "#292d3e", // background
+  cursorColor: "#a6accd", // foreground
+  cursorText: "#292d3e", // background
+  selectionBackground: "#4e5579", // guides/invisibles
+  selectionForeground: "#a6accd", // foreground
 }

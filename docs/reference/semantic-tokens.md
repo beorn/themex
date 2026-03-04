@@ -6,53 +6,53 @@ The `Theme` interface contains 19 semantic tokens organized into 5 categories. T
 
 ### Brand Tokens
 
-| Token      | Purpose                                     | Derivation                              |
-|------------|---------------------------------------------|-----------------------------------------|
-| `$primary` | Primary brand tint, active indicators       | Palette accent hue (default: yellow/blue) |
-| `$link`    | Hyperlinks, references                      | `palette.blue`                          |
-| `$control` | Interactive chrome, input borders           | `blend(primary, overlay, 0.3)`          |
+| Token      | Purpose                               | Derivation                                |
+| ---------- | ------------------------------------- | ----------------------------------------- |
+| `$primary` | Primary brand tint, active indicators | Palette accent hue (default: yellow/blue) |
+| `$link`    | Hyperlinks, references                | `palette.blue`                            |
+| `$control` | Interactive chrome, input borders     | `blend(primary, overlay, 0.3)`            |
 
 ### Selection Tokens
 
-| Token        | Purpose                            | Derivation                                     |
-|--------------|------------------------------------|-------------------------------------------------|
-| `$selected`  | Selection highlight background     | Contrasting hue (warm->teal, cool->yellow)     |
-| `$selectedfg`| Text on selected background        | `crust` (dark) or `text` (light)               |
-| `$focusring` | Keyboard focus outline             | Always `palette.blue` (accessibility)           |
+| Token         | Purpose                        | Derivation                                 |
+| ------------- | ------------------------------ | ------------------------------------------ |
+| `$selected`   | Selection highlight background | Contrasting hue (warm->teal, cool->yellow) |
+| `$selectedfg` | Text on selected background    | `crust` (dark) or `text` (light)           |
+| `$focusring`  | Keyboard focus outline         | Always `palette.blue` (accessibility)      |
 
 ### Text Tokens
 
-| Token    | Purpose                                  | Derivation                          |
-|----------|------------------------------------------|-------------------------------------|
-| `$text`  | Primary text (headings, body)            | `palette.text`                      |
-| `$text2` | Secondary text (descriptions, metadata)  | `palette.subtext`                   |
-| `$text3` | Tertiary text (timestamps, hints)        | `blend(subtext, overlay, 0.5)`      |
-| `$text4` | Ghost text (watermarks, barely visible)  | `blend(overlay, base, 0.5)`         |
+| Token    | Purpose                                 | Derivation                     |
+| -------- | --------------------------------------- | ------------------------------ |
+| `$text`  | Primary text (headings, body)           | `palette.text`                 |
+| `$text2` | Secondary text (descriptions, metadata) | `palette.subtext`              |
+| `$text3` | Tertiary text (timestamps, hints)       | `blend(subtext, overlay, 0.5)` |
+| `$text4` | Ghost text (watermarks, barely visible) | `blend(overlay, base, 0.5)`    |
 
 ### Surface Tokens
 
-| Token        | Purpose                                    | Derivation                              |
-|--------------|--------------------------------------------|-----------------------------------------|
-| `$bg`        | Default background                         | `palette.base`                          |
-| `$surface`   | Elevated surfaces (dialogs, cards)         | `palette.surface`                       |
-| `$separator` | Dividers, borders, rules                   | `palette.overlay`                       |
-| `$chromebg`  | Chrome background (title/status bars)      | `text` (dark) or `crust` (light)        |
-| `$chromefg`  | Chrome foreground text                     | `crust` (dark) or `text` (light)        |
+| Token        | Purpose                               | Derivation                       |
+| ------------ | ------------------------------------- | -------------------------------- |
+| `$bg`        | Default background                    | `palette.base`                   |
+| `$surface`   | Elevated surfaces (dialogs, cards)    | `palette.surface`                |
+| `$separator` | Dividers, borders, rules              | `palette.overlay`                |
+| `$chromebg`  | Chrome background (title/status bars) | `text` (dark) or `crust` (light) |
+| `$chromefg`  | Chrome foreground text                | `crust` (dark) or `text` (light) |
 
 ### Status Tokens
 
-| Token      | Purpose                                  | Derivation        |
-|------------|------------------------------------------|--------------------|
-| `$error`   | Error, destructive (validation, delete)  | `palette.red`      |
-| `$warning` | Warning, caution (unsaved changes)       | `palette.orange`   |
-| `$success` | Success, positive (saved, passing)       | `palette.green`    |
+| Token      | Purpose                                 | Derivation       |
+| ---------- | --------------------------------------- | ---------------- |
+| `$error`   | Error, destructive (validation, delete) | `palette.red`    |
+| `$warning` | Warning, caution (unsaved changes)      | `palette.orange` |
+| `$success` | Success, positive (saved, passing)      | `palette.green`  |
 
 ### Palette Colors
 
 In addition to the 19 semantic tokens, each theme includes a 16-color indexed palette accessible as `$color0` through `$color15`:
 
-| Token      | Source (Dark Theme)  |
-|------------|---------------------|
+| Token      | Source (Dark Theme) |
+| ---------- | ------------------- |
 | `$color0`  | crust               |
 | `$color1`  | red                 |
 | `$color2`  | green               |
@@ -77,23 +77,23 @@ Use `resolveThemeColor()` to resolve `$token` strings against a theme:
 ```typescript
 import { resolveThemeColor } from "themex"
 
-resolveThemeColor("$primary", theme)   // -> "#F9E2AF"
-resolveThemeColor("$color3", theme)    // -> "#F9E2AF" (yellow from palette)
-resolveThemeColor("#FF0000", theme)    // -> "#FF0000" (pass-through)
-resolveThemeColor(undefined, theme)    // -> undefined
+resolveThemeColor("$primary", theme) // -> "#F9E2AF"
+resolveThemeColor("$color3", theme) // -> "#F9E2AF" (yellow from palette)
+resolveThemeColor("#FF0000", theme) // -> "#FF0000" (pass-through)
+resolveThemeColor(undefined, theme) // -> undefined
 ```
 
 ## Backward-Compatible Aliases
 
 Old token names are still supported:
 
-| Old Token      | Resolves To  |
-|----------------|--------------|
-| `$accent`      | `$primary`   |
-| `$muted`       | `$text2`     |
-| `$raisedbg`    | `$surface`   |
-| `$background`  | `$bg`        |
-| `$border`      | `$separator` |
+| Old Token     | Resolves To  |
+| ------------- | ------------ |
+| `$accent`     | `$primary`   |
+| `$muted`      | `$text2`     |
+| `$raisedbg`   | `$surface`   |
+| `$background` | `$bg`        |
+| `$border`     | `$separator` |
 
 ## Theme Interface
 

@@ -29,8 +29,8 @@ const theme = presetTheme("catppuccin-mocha")
 
 // Resolve semantic tokens
 const primary = resolveThemeColor("$primary", theme) // "#F9E2AF"
-const bg = resolveThemeColor("$bg", theme)            // "#1E1E2E"
-const error = resolveThemeColor("$error", theme)      // "#F38BA8"
+const bg = resolveThemeColor("$bg", theme) // "#1E1E2E"
+const error = resolveThemeColor("$error", theme) // "#F38BA8"
 ```
 
 ### Create a Theme from Scratch
@@ -42,18 +42,10 @@ import { createTheme } from "themex"
 const theme = createTheme().bg("#2E3440").build()
 
 // Background + primary accent
-const theme2 = createTheme()
-  .bg("#2E3440")
-  .primary("#EBCB8B")
-  .build()
+const theme2 = createTheme().bg("#2E3440").primary("#EBCB8B").build()
 
 // Full control: bg, fg, primary, explicit dark mode
-const theme3 = createTheme()
-  .bg("#2E3440")
-  .fg("#ECEFF4")
-  .primary("#EBCB8B")
-  .dark()
-  .build()
+const theme3 = createTheme().bg("#2E3440").fg("#ECEFF4").primary("#EBCB8B").dark().build()
 ```
 
 ### One-liner Shortcuts
@@ -93,8 +85,8 @@ Non-token strings pass through unchanged, so you can mix tokens with literal col
 
 ```typescript
 resolveThemeColor("$primary", theme) // resolved from theme
-resolveThemeColor("#FF0000", theme)  // passed through as-is
-resolveThemeColor("red", theme)      // passed through as-is
+resolveThemeColor("#FF0000", theme) // passed through as-is
+resolveThemeColor("red", theme) // passed through as-is
 ```
 
 ## CLI

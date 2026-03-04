@@ -2,24 +2,33 @@
  * Dracula palette — dark theme with vibrant accents.
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Dracula — vibrant dark theme. */
-export const dracula: ThemePalette = {
+export const dracula: ColorPalette = {
   name: "dracula",
   dark: true,
-  crust: "#21222C",
-  base: "#282A36",
-  surface: "#44475A",
-  overlay: "#6272A4",
-  subtext: "#6272A4",
-  text: "#F8F8F2",
+  black: "#21222C",
   red: "#FF5555",
-  orange: "#FFB86C",
-  yellow: "#F1FA8C",
   green: "#50FA7B",
-  teal: "#8BE9FD",
+  yellow: "#F1FA8C",
   blue: "#BD93F9",
-  purple: "#BD93F9",
-  pink: "#FF79C6",
+  magenta: "#BD93F9",
+  cyan: "#8BE9FD",
+  white: "#6272A4",
+  brightBlack: "#44475A",
+  brightRed: "#FFB86C",
+  brightGreen: brighten("#50FA7B", 0.15),
+  brightYellow: brighten("#F1FA8C", 0.15),
+  brightBlue: brighten("#BD93F9", 0.15),
+  brightMagenta: "#FF79C6",
+  brightCyan: brighten("#8BE9FD", 0.15),
+  brightWhite: "#F8F8F2",
+  foreground: "#F8F8F2",
+  background: "#282A36",
+  cursorColor: "#F8F8F2",
+  cursorText: "#282A36",
+  selectionBackground: "#6272A4",
+  selectionForeground: "#F8F8F2",
 }

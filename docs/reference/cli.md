@@ -57,6 +57,7 @@ Aliases: `gen`
 Supported primaries: `yellow`, `cyan`, `magenta`, `green`, `red`, `blue`, `white`.
 
 Options:
+
 - `--light` -- Generate a light variant (default is dark)
 
 You can also pass a hex color to generate a truecolor theme via the builder:
@@ -106,28 +107,28 @@ bunx themex -h
 
 All 45 built-in themes:
 
-| Family     | Themes |
-|------------|--------|
-| Catppuccin | `catppuccin-mocha`, `catppuccin-frappe`, `catppuccin-macchiato`, `catppuccin-latte` |
-| Nord       | `nord` |
-| Dracula    | `dracula` |
-| Solarized  | `solarized-dark`, `solarized-light` |
-| Tokyo Night| `tokyo-night`, `tokyo-night-storm`, `tokyo-night-day` |
-| One Dark   | `one-dark` |
-| Gruvbox    | `gruvbox-dark`, `gruvbox-light` |
-| Rose Pine  | `rose-pine`, `rose-pine-moon`, `rose-pine-dawn` |
-| Kanagawa   | `kanagawa-wave`, `kanagawa-dragon`, `kanagawa-lotus` |
-| Everforest | `everforest-dark`, `everforest-light` |
-| Monokai    | `monokai`, `monokai-pro` |
-| Snazzy     | `snazzy` |
-| Material   | `material-dark`, `material-light` |
-| Palenight  | `palenight` |
-| Ayu        | `ayu-dark`, `ayu-mirage`, `ayu-light` |
-| Nightfox   | `nightfox`, `dawnfox` |
-| Horizon    | `horizon` |
-| Moonfly    | `moonfly` |
-| Nightfly   | `nightfly` |
-| Oxocarbon  | `oxocarbon-dark`, `oxocarbon-light` |
-| Sonokai    | `sonokai` |
-| Edge       | `edge-dark`, `edge-light` |
-| Modus      | `modus-vivendi`, `modus-operandi` |
+| Family      | Themes                                                                              |
+| ----------- | ----------------------------------------------------------------------------------- |
+| Catppuccin  | `catppuccin-mocha`, `catppuccin-frappe`, `catppuccin-macchiato`, `catppuccin-latte` |
+| Nord        | `nord`                                                                              |
+| Dracula     | `dracula`                                                                           |
+| Solarized   | `solarized-dark`, `solarized-light`                                                 |
+| Tokyo Night | `tokyo-night`, `tokyo-night-storm`, `tokyo-night-day`                               |
+| One Dark    | `one-dark`                                                                          |
+| Gruvbox     | `gruvbox-dark`, `gruvbox-light`                                                     |
+| Rose Pine   | `rose-pine`, `rose-pine-moon`, `rose-pine-dawn`                                     |
+| Kanagawa    | `kanagawa-wave`, `kanagawa-dragon`, `kanagawa-lotus`                                |
+| Everforest  | `everforest-dark`, `everforest-light`                                               |
+| Monokai     | `monokai`, `monokai-pro`                                                            |
+| Snazzy      | `snazzy`                                                                            |
+| Material    | `material-dark`, `material-light`                                                   |
+| Palenight   | `palenight`                                                                         |
+| Ayu         | `ayu-dark`, `ayu-mirage`, `ayu-light`                                               |
+| Nightfox    | `nightfox`, `dawnfox`                                                               |
+| Horizon     | `horizon`                                                                           |
+| Moonfly     | `moonfly`                                                                           |
+| Nightfly    | `nightfly`                                                                          |
+| Oxocarbon   | `oxocarbon-dark`, `oxocarbon-light`                                                 |
+| Sonokai     | `sonokai`                                                                           |
+| Edge        | `edge-dark`, `edge-light`                                                           |
+| Modus       | `modus-vivendi`, `modus-operandi`                                                   |

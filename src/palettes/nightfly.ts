@@ -3,24 +3,33 @@
  * Source: https://github.com/bluz71/vim-nightfly-colors
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
+import { brighten } from "../color.js"
 
 /** Nightfly — midnight-blue dark theme. */
-export const nightfly: ThemePalette = {
+export const nightfly: ColorPalette = {
   name: "nightfly",
   dark: true,
-  crust: "#081E2F",
-  base: "#011627",
-  surface: "#0E293F",
-  overlay: "#2C3043",
-  subtext: "#7C8F8F",
-  text: "#C3CCDC",
+  black: "#081E2F",
   red: "#FC514E",
-  orange: "#F78C6C",
-  yellow: "#E3D18A",
   green: "#A1CD5E",
-  teal: "#7FDBCA",
+  yellow: "#E3D18A",
   blue: "#82AAFF",
-  purple: "#C792EA",
-  pink: "#FF5874",
+  magenta: "#C792EA",
+  cyan: "#7FDBCA",
+  white: "#7C8F8F",
+  brightBlack: "#0E293F",
+  brightRed: "#F78C6C",
+  brightGreen: brighten("#A1CD5E", 0.15),
+  brightYellow: brighten("#E3D18A", 0.15),
+  brightBlue: brighten("#82AAFF", 0.15),
+  brightMagenta: "#FF5874",
+  brightCyan: brighten("#7FDBCA", 0.15),
+  brightWhite: "#C3CCDC",
+  foreground: "#C3CCDC",
+  background: "#011627",
+  cursorColor: "#C3CCDC",
+  cursorText: "#011627",
+  selectionBackground: "#2C3043",
+  selectionForeground: "#C3CCDC",
 }
