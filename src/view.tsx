@@ -354,19 +354,18 @@ function DemoPanel({ palette, label }: { palette: ColorPalette; label: string })
               <Text color="$accent">{"onClick"}</Text>
               <Text color="$fg">{"={() => "}</Text>
               <Text color="$primary">{"setCo"}</Text>
-              <Text backgroundColor="$cursor" color="$cursor-fg">{"u"}</Text>
+              <Text backgroundColor="$cursor" color="$cursor-fg">
+                {"u"}
+              </Text>
             </Text>
             {/* Autocomplete popup — showcases $popover */}
             <Box flexDirection="row">
               <Text color="$muted-fg">{" 11  "}</Text>
               <Text color="$fg">{"      "}</Text>
-              <Box
-                flexDirection="column"
-                backgroundColor="$popover"
-                borderStyle="single"
-                borderColor="$border"
-              >
-                <Text backgroundColor="$selection" color="$selection-fg">{" setCount      "}</Text>
+              <Box flexDirection="column" backgroundColor="$popover" borderStyle="single" borderColor="$border">
+                <Text backgroundColor="$selection" color="$selection-fg">
+                  {" setCount      "}
+                </Text>
                 <Text color="$popover-fg">{" setState      "}</Text>
                 <Text color="$popover-fg">{" setTimeout    "}</Text>
               </Box>
@@ -484,11 +483,7 @@ function GenDialog({ state }: { state: GenState }) {
                   {field.padEnd(8)}
                 </Text>
                 {hasVal && <Text backgroundColor={val}>{"  "}</Text>}
-                <Box
-                  borderStyle="single"
-                  borderColor={active ? "$focusborder" : "$inputborder"}
-                  paddingX={1}
-                >
+                <Box borderStyle="single" borderColor={active ? "$focusborder" : "$inputborder"} paddingX={1}>
                   <Text color={active ? "$popover-fg" : "$muted-fg"}>
                     {val || "(empty)"}
                     {active && <Text color="$cursor">▏</Text>}
