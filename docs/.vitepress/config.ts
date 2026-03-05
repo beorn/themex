@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress"
 
 export default defineConfig({
-  title: "themex",
+  title: "swatch",
   description: "Universal color themes for any platform — terminal, web, native",
   base: "/themex/",
   head: [["link", { rel: "icon", type: "image/svg+xml", href: "/themex/favicon.svg" }]],

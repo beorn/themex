@@ -10,8 +10,8 @@
  */
 
 import React, { useState, useMemo, useCallback } from "react"
-import { Box, Text, ThemeProvider } from "inkx"
-import { run, useInput, type Key } from "inkx/runtime"
+import { Box, Text, ThemeProvider } from "@hightea/term"
+import { run, useInput, type Key } from "@hightea/term/runtime"
 import { builtinPalettes, getPaletteByName } from "./palettes/index.js"
 import { deriveTheme } from "./derive.js"
 import { createTheme } from "./builder.js"

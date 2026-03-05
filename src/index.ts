@@ -9,7 +9,7 @@
  *
  * @example
  * ```typescript
- * import { createTheme, catppuccinMocha, resolveThemeColor } from "themex"
+ * import { createTheme, catppuccinMocha, resolveThemeColor } from "swatch"
  *
  * const theme = createTheme().preset('catppuccin-mocha').build()
  * const color = resolveThemeColor("$primary", theme) // → "#F9E2AF"

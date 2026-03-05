@@ -676,7 +676,7 @@ function validateCmd(name: string) {
 
 function showHelp() {
   console.log(`
-${bold("themex")} ${dim("--")} Universal color themes
+${bold("swatch")} ${dim("--")} Universal color themes
 
 ${bold("Interactive")}
   ${colored("#88C0D0", "view")}                    Fullscreen theme browser ${dim("(bun view)")}

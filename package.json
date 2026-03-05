@@ -1,5 +1,5 @@
 {
-  "name": "themex",
+  "name": "swatch",
   "version": "0.1.0",
   "description": "Universal color themes for any platform — terminal, web, native",
   "keywords": [
@@ -24,7 +24,7 @@
     "url": "https://github.com/beorn/themex.git"
   },
   "bin": {
-    "themex": "./src/cli.ts"
+    "swatch": "./src/cli.ts"
   },
   "type": "module",
   "sideEffects": [
@@ -56,10 +56,10 @@
     "vitepress": "^1.6.4"
   },
   "peerDependencies": {
-    "inkx": "*"
+    "@hightea/term": "*"
   },
   "peerDependenciesMeta": {
-    "inkx": {
+    "@hightea/term": {
       "optional": true
     }
   }

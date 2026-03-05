@@ -25,10 +25,10 @@ let _inkx: any = null
 async function getInkx() {
   if (!_inkx) {
     try {
-      const mod = "inkx"
+      const mod = "@hightea/term"
       _inkx = await import(mod)
     } catch {
-      throw new Error("Terminal palette detection requires 'inkx' to be installed")
+      throw new Error("Terminal palette detection requires '@hightea/term' to be installed")
     }
   }
   return _inkx as {
