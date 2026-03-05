@@ -46,7 +46,7 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [{ icon: "github", link: "https://github.com/beorn/themex" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/beorn/swatch" }],
 
     footer: {
       message: "Released under the MIT License.",

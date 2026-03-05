@@ -34,7 +34,7 @@ const palette = importBase16(yamlString)
 ## Commands
 
 ```bash
-bun vitest run --project vendor vendor/beorn-themex/tests/   # Run tests (166 tests)
+bun vitest run --project vendor vendor/swatch/tests/   # Run tests (166 tests)
 ```
 
 ## Source Structure

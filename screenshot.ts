@@ -4,7 +4,7 @@ import { spawn } from "node:child_process"
 import { writeFileSync } from "node:fs"
 
 const term = createTerminal({ backend: createXtermBackend({ cols: 140, rows: 42 }) })
-const proc = spawn("bun", ["vendor/beorn-themex/src/view.tsx"], {
+const proc = spawn("bun", ["vendor/swatch/src/view.tsx"], {
   cwd: "/Users/beorn/Code/pim/km",
   env: { ...process.env, TERM: "xterm-256color", NO_COLOR: undefined, FORCE_COLOR: "1" },
 })

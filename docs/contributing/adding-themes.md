@@ -141,7 +141,7 @@ console.log(theme)
 ### Run the Test Suite
 
 ```bash
-bun vitest run vendor/beorn-themex/tests/
+bun vitest run vendor/swatch/tests/
 ```
 
 The existing tests include validation of all registered palettes. Adding your palette to the registry automatically includes it in the test coverage.
