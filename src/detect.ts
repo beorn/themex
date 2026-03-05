@@ -18,20 +18,20 @@ import { deriveTheme } from "./derive.js"
 import { nord } from "./palettes/nord.js"
 import { catppuccinLatte } from "./palettes/catppuccin.js"
 
-// inkx is an optional peer dependency — lazy-import to avoid breaking
-// standalone consumers that don't have inkx installed.
+// hightea is an optional peer dependency — lazy-import to avoid breaking
+// standalone consumers that don't have hightea installed.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let _inkx: any = null
+let _hightea: any = null
 async function getInkx() {
-  if (!_inkx) {
+  if (!_hightea) {
     try {
       const mod = "@hightea/term"
-      _inkx = await import(mod)
+      _hightea = await import(mod)
     } catch {
       throw new Error("Terminal palette detection requires '@hightea/term' to be installed")
     }
   }
-  return _inkx as {
+  return _hightea as {
     queryBackgroundColor: (
       write: (s: string) => void,
       read: (ms: number) => Promise<string | null>,
@@ -115,15 +115,15 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
         stdin.on("data", check)
       })
 
-    const inkx = await getInkx()
+    const hightea = await getInkx()
 
     // Query bg and fg first
-    const bg = await inkx.queryBackgroundColor(write, read, timeoutMs)
-    const fg = await inkx.queryForegroundColor(write, read, timeoutMs)
+    const bg = await hightea.queryBackgroundColor(write, read, timeoutMs)
+    const fg = await hightea.queryForegroundColor(write, read, timeoutMs)
 
     // Query ANSI 16 palette
     const ansi: (string | null)[] = new Array(16).fill(null)
-    inkx.queryMultiplePaletteColors(
+    hightea.queryMultiplePaletteColors(
       Array.from({ length: 16 }, (_, i) => i),
       write,
     )
@@ -146,7 +146,7 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
         if (end === -1) break
 
         const chunk = remaining.slice(nextOsc, end + 1)
-        const parsed = inkx.parsePaletteResponse(chunk)
+        const parsed = hightea.parsePaletteResponse(chunk)
         if (parsed && parsed.index >= 0 && parsed.index < 16) {
           ansi[parsed.index] = parsed.color
         }

@@ -6,7 +6,7 @@
  *
  * Usage is optional — standalone users pass Theme objects explicitly
  * to resolveThemeColor(token, theme). The global state exists for
- * inkx's render pipeline where React context isn't accessible.
+ * hightea's render pipeline where React context isn't accessible.
  */
 
 import type { Theme } from "./types.js"

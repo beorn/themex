@@ -713,7 +713,7 @@ const command = args[0] || "help"
 switch (command) {
   case "view":
   case "browse": {
-    // Dynamically import the view TUI (separate file with React/inkx)
+    // Dynamically import the view TUI (separate file with React/hightea)
     await import("./view.js")
     break
   }

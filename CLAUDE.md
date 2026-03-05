@@ -156,5 +156,5 @@ const theme = autoGenerateTheme("#A3BE8C", "dark")
 - **Dual derivation**: truecolor mode uses blends for smooth gradients; ansi16 mode uses direct aliases to palette colors.
 - **shadcn-style `$name / $name-fg` pairing convention**: Every background token has a matching foreground token for guaranteed contrast.
 - **No backward-compat aliases**: Clean token namespace, no legacy indirection.
-- **Global state is optional**: `setActiveTheme`/`pushContextTheme` exist for inkx's render pipeline. Standalone users pass Theme objects explicitly.
+- **Global state is optional**: `setActiveTheme`/`pushContextTheme` exist for hightea's render pipeline. Standalone users pass Theme objects explicitly.
 - **Base16 import is lossless for mapped fields**: base00-base0F map to ColorPalette fields. Round-trip preserves mapped fields exactly.
