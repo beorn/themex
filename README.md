@@ -1,8 +1,6 @@
 # Swatch
 
-Easily theme any app with modern design tokens. Easily create themes from just a few colors.
-
-Powerfully derived &mdash; 33 semantic tokens like `$primary`, `$error`, and `$surface` with guaranteed contrast and dark/light mode support. Create themes from one color, a popular palette like Catppuccin or Nord, your system theme, or fully custom values. 43 built-in palettes. Terminal, web, native. Zero dependencies.
+Generate complete color themes from minimal input. Give it **one hex color** or choose from **43 built-in palettes** — swatch derives **33 semantic tokens** with guaranteed contrast and dark/light variants. Terminal, web, native. Zero dependencies.
 
 <p align="center"><img src="./docs/swatch-overview.svg" alt="Swatch theme tokens derived from Catppuccin Mocha" width="680"></p>
 <p align="center"><em>Catppuccin Mocha — 22 palette colors derive 33 semantic tokens</em></p>
@@ -12,6 +10,8 @@ Powerfully derived &mdash; 33 semantic tokens like `$primary`, `$error`, and `$s
 ```bash
 bun add swatch    # or npm i swatch / pnpm add swatch / yarn add swatch
 ```
+
+### Use a built-in theme
 
 ```typescript
 import { presetTheme, resolveThemeColor } from "swatch"
@@ -46,6 +46,12 @@ const theme = createTheme()
   .build()
 ```
 
+## Why Swatch?
+
+- **Theme authors** — define as few as **1 color**. Swatch handles contrast, mode adjustments, and all 33 tokens. Fine-tune only what you want.
+- **App developers** — use semantic tokens like `$primary` and `$surface` instead of raw hex codes. Swap themes at runtime without changing code.
+- **Accessible by default** — every background token has a matching foreground with guaranteed contrast. No more illegible text.
+
 ## How It Works
 
 ```
@@ -69,89 +75,58 @@ Terminal palettes define 22 colors &mdash; a compact, universal format that ever
 
 Theme authors define what they know. Swatch produces what components need.
 
-## Why Swatch?
+## CLI
 
-- **Easy to specify** &mdash; provide 1&ndash;3 colors, pick a well-known palette, or import Base16. Swatch derives all 33 tokens automatically with correct contrast ratios. Override individual tokens when you want fine control.
-- **Easy to use** &mdash; components consume `$primary`, `$error`, `$surface` instead of raw colors. Every background token has a matching foreground. Themes change without touching code.
+```bash
+npx swatch list                          # list all built-in themes
+npx swatch show nord                     # preview a theme's colors
+npx swatch generate "#4caf50" --light    # generate a theme from one color
+npx swatch import base16-scheme.yaml     # import a Base16 scheme
+```
 
 ## API
 
-### Theme Creation
+```typescript
+import { presetTheme, createTheme, autoGenerateTheme, resolveThemeColor } from "swatch"
 
-| Function | Description |
-|----------|-------------|
-| `presetTheme(name)` | Create a theme from a built-in preset name |
-| `createTheme()` | Chainable builder: `.bg()`, `.fg()`, `.primary()`, `.preset()`, `.dark()`, `.light()`, `.build()` |
-| `quickTheme(color, mode?)` | One-liner from a primary color or color name |
-| `autoGenerateTheme(hex, mode)` | Generate a full theme from a single color |
-| `deriveTheme(palette, mode?)` | Derive 33 semantic tokens from a 22-color palette |
+// Load a preset
+const theme = presetTheme("nord")
 
-### Palette Generators
+// Build from scratch
+const theme = createTheme().bg("#2E3440").primary("#EBCB8B").build()
 
-| Function | Description |
-|----------|-------------|
-| `fromPreset(name)` | Look up a built-in `ColorPalette` by name |
-| `fromColors(opts)` | Generate a full palette from `{ background?, foreground?, primary? }` |
-| `fromBase16(yaml)` | Import a Base16 YAML scheme as a `ColorPalette` |
+// One color → full theme
+const theme = autoGenerateTheme("#5E81AC", "dark")
 
-### Token Resolution
+// Resolve tokens
+resolveThemeColor("$primary", theme)  // → hex color
+```
 
-| Function | Description |
-|----------|-------------|
-| `resolveThemeColor(token, theme)` | Resolve `$token` strings to hex |
-| `resolveAliases(record)` | Resolve `$`-prefixed values in a record (chain-resolves) |
-
-### Validation and Contrast
-
-| Function | Description |
-|----------|-------------|
-| `validateColorPalette(palette)` | Validate fields and contrast ratios |
-| `validateTheme(theme)` | Check for missing/extra tokens |
-| `checkContrast(fg, bg)` | WCAG contrast check: `{ ratio, aa, aaa }` |
-
-### Export
-
-| Function | Description |
-|----------|-------------|
-| `themeToCSSVars(theme)` | Convert theme to `Record<string, string>` of CSS custom properties |
-| `exportBase16(palette)` | Export a `ColorPalette` as Base16 YAML |
-
-### Terminal Detection
-
-| Function | Description |
-|----------|-------------|
-| `detectTerminalPalette(timeout?)` | Auto-detect terminal colors via OSC 4/10/11 queries |
-| `detectTheme(opts?)` | Detect and derive a theme, with fallback palette |
-
-### Color Utilities
-
-`blend`, `brighten`, `darken`, `contrastFg`, `desaturate`, `complement`, `hexToRgb`, `rgbToHex`, `hexToHsl`, `hslToHex`, `rgbToHsl`
+Also available: `deriveTheme()`, `fromBase16()`, `exportBase16()`, `themeToCSSVars()`, `validateTheme()`, `checkContrast()`, `detectTerminalPalette()`, and color utilities (`blend`, `brighten`, `darken`, etc.). See the [full API reference](https://beorn.codes/swatch/reference/builder-api).
 
 ## Semantic Tokens (33)
 
-Every background token has a matching `*fg` foreground for guaranteed contrast.
+Swatch outputs 33 tokens covering all UI needs: backgrounds (`$bg`, `$surface`, `$popover`), text (`$fg` and matching `*fg` variants for every background), brand colors (`$primary`, `$secondary`, `$accent`), status colors (`$error`, `$warning`, `$success`, `$info`), plus `$selection`, `$cursor`, `$border`, `$link`, and more. Every background token has a matching foreground for guaranteed readable text.
 
-| Category | Tokens |
-|----------|--------|
-| Default | `$bg`, `$fg` |
-| Surface | `$surface` / `$surfacefg`, `$popover` / `$popoverfg` |
-| Muted | `$muted` / `$mutedfg` |
-| Brand | `$primary` / `$primaryfg`, `$secondary` / `$secondaryfg` |
-| Accent | `$accent` / `$accentfg` |
-| Status | `$error` / `$errorfg`, `$warning` / `$warningfg`, `$success` / `$successfg`, `$info` / `$infofg` |
-| Selection | `$selection` / `$selectionfg` |
-| Chrome | `$inverse` / `$inversefg` |
-| Cursor | `$cursor` / `$cursorfg` |
-| Standalone | `$border`, `$inputborder`, `$focusborder`, `$link`, `$disabledfg` |
-| Palette | `$color0`&ndash;`$color15` (ANSI 16 passthrough) |
+See the [full token reference](https://beorn.codes/swatch/reference/semantic-tokens) for details and derivation rules.
 
 ## Built-in Palettes (43)
 
-Catppuccin (Mocha, Frappe, Macchiato, Latte), Nord, Dracula, Solarized (Dark, Light), Tokyo Night (Night, Storm, Day), One Dark, Gruvbox (Dark, Light), Rose Pine (Main, Moon, Dawn), Kanagawa (Wave, Dragon, Lotus), Everforest (Dark, Light), Monokai (Classic, Pro), Snazzy, Material (Dark, Light), Palenight, Ayu (Dark, Mirage, Light), Nightfox, Dawnfox, Horizon, Moonfly, Nightfly, Oxocarbon (Dark, Light), Sonokai, Edge (Dark, Light), Modus (Vivendi, Operandi).
+Popular themes including **Catppuccin** (all 4 flavors), **Nord**, **Dracula**, **Solarized**, **Tokyo Night**, **Gruvbox**, **Rose Pine**, **Kanagawa**, and many more. Import any of the **600+ Base16 community schemes** too.
+
+[Browse the theme gallery](https://beorn.codes/swatch/gallery/) to preview all palettes.
+
+## Documentation
+
+- **[Getting Started](https://beorn.codes/swatch/guide/getting-started)** — tutorial with examples
+- **[Theme Gallery](https://beorn.codes/swatch/gallery/)** — preview all 43 built-in themes
+- [Creating Themes](https://beorn.codes/swatch/guide/creating-themes) — builder API, custom palettes
+- [Web Usage](https://beorn.codes/swatch/guide/web-usage) — CSS variables, React integration
+- [Design Philosophy](https://beorn.codes/swatch/guide/design-philosophy) — why two layers, why 22 colors
 
 ## Inspiration
 
-Terminal emulators (Ghostty, Kitty, Alacritty), shadcn/ui, Base16, Catppuccin/Nord/Dracula.
+Terminal emulators (Ghostty, Kitty, Alacritty), shadcn/ui, Base16, and the color communities behind Catppuccin, Nord, and Dracula.
 
 ## License
 
