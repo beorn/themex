@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 260" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e2e"/>
+      <stop offset="100%" stop-color="#181825"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="680" height="260" rx="12" fill="url(#bg-grad)"/>
+
+  <!-- Title -->
+  <text x="340" y="32" text-anchor="middle" fill="#cdd6f4" font-size="13" font-weight="600" letter-spacing="0.5">CATPPUCCIN MOCHA — 33 SEMANTIC TOKENS DERIVED FROM 22 PALETTE COLORS</text>
+
+  <!-- Row 1: Core tokens -->
+  <text x="20" y="62" fill="#6c7086" font-size="10" font-weight="500">CORE</text>
+
+  <!-- $bg -->
+  <rect x="20" y="70" width="56" height="36" rx="6" fill="#1e1e2e" stroke="#313244" stroke-width="1"/>
+  <text x="48" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$bg</text>
+
+  <!-- $fg -->
+  <rect x="84" y="70" width="56" height="36" rx="6" fill="#cdd6f4"/>
+  <text x="112" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$fg</text>
+
+  <!-- $surface -->
+  <rect x="148" y="70" width="56" height="36" rx="6" fill="#313244"/>
+  <text x="176" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$surface</text>
+
+  <!-- $muted -->
+  <rect x="212" y="70" width="56" height="36" rx="6" fill="#45475a"/>
+  <text x="240" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$muted</text>
+
+  <!-- $border -->
+  <rect x="276" y="70" width="56" height="36" rx="6" fill="#585b70"/>
+  <text x="304" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$border</text>
+
+  <!-- $inverse -->
+  <rect x="340" y="70" width="56" height="36" rx="6" fill="#cdd6f4"/>
+  <text x="368" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$inverse</text>
+
+  <!-- Row 2: Brand + Status -->
+  <text x="20" y="148" fill="#6c7086" font-size="10" font-weight="500">BRAND &amp; STATUS</text>
+
+  <!-- $primary -->
+  <rect x="20" y="156" width="56" height="36" rx="6" fill="#f9e2af"/>
+  <text x="48" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$primary</text>
+
+  <!-- $secondary -->
+  <rect x="84" y="156" width="56" height="36" rx="6" fill="#89b4fa"/>
+  <text x="112" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$secondary</text>
+
+  <!-- $accent -->
+  <rect x="148" y="156" width="56" height="36" rx="6" fill="#cba6f7"/>
+  <text x="176" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$accent</text>
+
+  <!-- $error -->
+  <rect x="212" y="156" width="56" height="36" rx="6" fill="#f38ba8"/>
+  <text x="240" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$error</text>
+
+  <!-- $warning -->
+  <rect x="276" y="156" width="56" height="36" rx="6" fill="#fab387"/>
+  <text x="304" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$warning</text>
+
+  <!-- $success -->
+  <rect x="340" y="156" width="56" height="36" rx="6" fill="#a6e3a1"/>
+  <text x="368" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$success</text>
+
+  <!-- $info -->
+  <rect x="404" y="156" width="56" height="36" rx="6" fill="#94e2d5"/>
+  <text x="432" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$info</text>
+
+  <!-- $link -->
+  <rect x="468" y="156" width="56" height="36" rx="6" fill="#89b4fa"/>
+  <text x="496" y="203" text-anchor="middle" fill="#6c7086" font-size="9">$link</text>
+
+  <!-- Row 1 continued: ANSI palette -->
+  <text x="420" y="62" fill="#6c7086" font-size="10" font-weight="500">ANSI PALETTE</text>
+
+  <!-- ANSI colors row 1 (0-7) -->
+  <rect x="420" y="70" width="28" height="16" rx="3" fill="#11111b"/>
+  <rect x="452" y="70" width="28" height="16" rx="3" fill="#f38ba8"/>
+  <rect x="484" y="70" width="28" height="16" rx="3" fill="#a6e3a1"/>
+  <rect x="516" y="70" width="28" height="16" rx="3" fill="#f9e2af"/>
+  <rect x="548" y="70" width="28" height="16" rx="3" fill="#89b4fa"/>
+  <rect x="580" y="70" width="28" height="16" rx="3" fill="#cba6f7"/>
+  <rect x="612" y="70" width="28" height="16" rx="3" fill="#94e2d5"/>
+  <rect x="644" y="70" width="28" height="16" rx="3" fill="#a6adc8"/>
+
+  <!-- ANSI colors row 2 (8-15) -->
+  <rect x="420" y="90" width="28" height="16" rx="3" fill="#313244"/>
+  <rect x="452" y="90" width="28" height="16" rx="3" fill="#fab387"/>
+  <rect x="484" y="90" width="28" height="16" rx="3" fill="#b4f0ab"/>
+  <rect x="516" y="90" width="28" height="16" rx="3" fill="#fcecc5"/>
+  <rect x="548" y="90" width="28" height="16" rx="3" fill="#a4c6fd"/>
+  <rect x="580" y="90" width="28" height="16" rx="3" fill="#f5c2e7"/>
+  <rect x="612" y="90" width="28" height="16" rx="3" fill="#ace9e1"/>
+  <rect x="644" y="90" width="28" height="16" rx="3" fill="#cdd6f4"/>
+
+  <text x="530" y="117" text-anchor="middle" fill="#6c7086" font-size="9">$color0–$color15</text>
+
+  <!-- Arrow showing derivation -->
+  <text x="550" y="148" fill="#6c7086" font-size="10" font-weight="500">DERIVATION</text>
+  <line x1="530" y1="120" x2="530" y2="127" stroke="#585b70" stroke-width="1"/>
+  <text x="550" y="163" fill="#45475a" font-size="22">22 → 33</text>
+  <text x="550" y="180" text-anchor="middle" fill="#585b70" font-size="10">palette → tokens</text>
+
+  <!-- Bottom tagline -->
+  <text x="340" y="245" text-anchor="middle" fill="#45475a" font-size="11">one definition · every platform · guaranteed contrast</text>
+</svg>
