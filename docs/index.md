@@ -4,7 +4,7 @@ layout: home
 hero:
   name: swatch
   text: Universal Color Themes
-  tagline: Generate complete color themes from minimal input. One hex color or 43 built-in palettes → 33 semantic tokens with guaranteed contrast. Zero dependencies.
+  tagline: Easily theme any app with modern design tokens. Easily create themes from just a few colors.
   actions:
     - theme: brand
       text: Get Started

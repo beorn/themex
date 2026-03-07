@@ -1,6 +1,6 @@
 # swatch - Universal Color Themes
 
-Universal color themes for any platform — terminal, web, native. Zero dependencies.
+Easily theme any app with modern design tokens. Easily create themes from just a few colors. Zero dependencies.
 
 ## Architecture
 

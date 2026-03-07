@@ -1,7 +1,7 @@
 {
   "name": "swatch",
   "version": "0.2.0",
-  "description": "Universal color themes for any platform — terminal, web, native",
+  "description": "Easily theme any app with modern design tokens. Easily create themes from just a few colors.",
   "keywords": [
     "catppuccin",
     "color",
