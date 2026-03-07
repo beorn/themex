@@ -1,16 +1,39 @@
-# swatch
+# Swatch
 
-Universal color themes for any platform -- terminal, web, native. Zero dependencies.
+Universal color themes for any platform &mdash; terminal, web, native. Zero dependencies.
 
-## Overview
+## Why Swatch?
 
-swatch is a two-layer theme system:
+Most theming systems are tied to a specific platform. Terminal themes define 22 colors. CSS design systems define semantic tokens. Neither talks to the other, so every app reinvents the mapping, and theme authors maintain separate configs for each platform.
 
-1. **ColorPalette** (Layer 1) -- 22 terminal colors (16 ANSI + 6 special) that serve as a universal pivot format. Every modern terminal emulator uses this exact format (Ghostty, Kitty, Alacritty, iTerm2, WezTerm).
+Swatch bridges this gap with a two-layer architecture and a single derivation pipeline.
 
-2. **Theme** (Layer 2) -- 33 semantic tokens derived automatically via `deriveTheme()`. These are what UI components consume: `$primary`, `$surface`, `$error`, `$border`, etc.
+### Why not just use 22 palette colors directly?
 
-All inputs flow through the same pipeline: **Source -> ColorPalette -> `deriveTheme()` -> Theme**.
+Raw palette colors don't carry meaning. A UI component shouldn't say "use ANSI color 5" &mdash; it should say "use `$error`". Semantic tokens decouple *what a color means* from *what a color looks like*, so themes can change without touching component code. This idea comes from the [W3C Design Tokens Community Group](https://www.w3.org/community/design-tokens/), which defines a standard for expressing design decisions as platform-agnostic data. Design systems like Material Design, Tailwind, and shadcn/ui all use this approach.
+
+### Why not hardcode the 33 semantic tokens per theme?
+
+Because manually specifying 33 values per theme is tedious and error-prone. Most of those values can be *derived* from a handful of base colors with good defaults &mdash; surface colors from background, foreground pairs for contrast, status colors from ANSI slots. With `deriveTheme()`, a theme author only defines 22 palette colors (or as few as 1&ndash;3 via `fromColors`), and the semantic layer is generated automatically with correct contrast ratios.
+
+### Why overrides?
+
+Because derivation gives you 80% of the way there, and the last 20% is taste. You might love Nord's palette but want a warmer primary. Or you might need `$border` slightly lighter for your specific UI density. Overrides let you start from any preset and tweak individual tokens without rebuilding the whole theme from scratch.
+
+### Inspiration
+
+- **Terminal emulators** (Ghostty, Kitty, Alacritty, iTerm2, WezTerm) &mdash; the 22-color format is an existing universal standard
+- **shadcn/ui** &mdash; the `$name` / `$name-fg` pairing convention, where every background token has a matching foreground for guaranteed contrast
+- **Base16** &mdash; the idea of a compact palette that generates full themes, plus the import/export ecosystem
+- **Catppuccin, Nord, Dracula, etc.** &mdash; the community of theme authors who maintain palettes across dozens of apps
+
+## How It Works
+
+1. **ColorPalette** (Layer 1) &mdash; 22 terminal colors (16 ANSI + 6 special) that serve as a universal pivot format.
+
+2. **Theme** (Layer 2) &mdash; 33 semantic tokens derived automatically via `deriveTheme()`. These are what UI components consume: `$primary`, `$surface`, `$error`, `$border`, etc.
+
+All inputs flow through the same pipeline: **Source &rarr; ColorPalette &rarr; `deriveTheme()` &rarr; Theme**.
 
 Ships with **45 built-in palettes** from 20 theme families including Catppuccin, Nord, Dracula, Solarized, Tokyo Night, Gruvbox, Rose Pine, Kanagawa, and more.
 
