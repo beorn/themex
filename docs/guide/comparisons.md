@@ -2,172 +2,74 @@
 
 swatch learned from theme systems across many languages and platforms. Textual is Python, Lipgloss is Go, M3 is for mobile/web -- these aren't competitors but teachers. Each solved a piece of the theming puzzle, and swatch synthesizes the best ideas into a TypeScript-native, terminal-first, platform-agnostic package.
 
-This page documents what each system does well and what swatch learned from it.
-
 ## Textual
 
-[Textual](https://textual.textualize.io/guide/design/) is a Python TUI framework with an integrated CSS-based theme system. It was the single biggest influence on swatch's design.
+[Textual](https://textual.textualize.io/guide/design/) is a Python TUI framework with an integrated CSS-based theme system. The single biggest influence on swatch.
 
-| Aspect                 | Textual                              | swatch                                               |
-| ---------------------- | ------------------------------------ | ---------------------------------------------------- |
-| **Language**           | Python                               | TypeScript                                           |
-| **Palette size**       | 11 base colors                       | 14 raw colors (6 surface + 8 hues)                   |
-| **Semantic tokens**    | ~77 (11 x 7 shades)                  | 35 (19 semantic + 16 palette)                        |
-| **Shade generation**   | 3 lighter + 3 darker per color (RGB) | OKLCH `brighten()`/`darken()` (perceptually uniform) |
-| **Minimal input**      | `Theme(primary=...)`                 | `createTheme().primary('#EBCB8B').build()`           |
-| **Terminal detection** | None                                 | OSC 4/10/11 auto-detection                           |
-| **Styling**            | CSS engine (tightly coupled)         | `$token` strings (framework-agnostic)                |
-
-**Textual's strengths**: CSS variable system makes token consumption trivially easy -- every widget/style rule can use `$primary` directly. Command palette for theme switching is excellent UX. Derived text variants (`$text-muted`, `$text-disabled`) reduce decision fatigue. The minimal authoring path -- `Theme(primary=...)` auto-generates everything -- is the gold standard for onboarding.
-
-**swatch's strengths**: Terminal auto-detection means apps _belong_ in the terminal. OKLCH shade generation preserves hue and produces uniform steps. Cross-ecosystem import (Base16, iTerm2, Catppuccin). 8 named accent hues enable a content palette.
+Adopted: minimal authoring path (`Theme(primary=...)` -> full theme), automatic shade generation (we use OKLCH instead of RGB), semantic token categories (`$primary`, `$surface`, `$error`). Diverged: Textual doesn't detect terminal colors (assumes full truecolor control), uses a CSS engine (we use framework-agnostic `$token` strings), and lacks the 16 ANSI accent spectrum.
 
 **What we learned**: One color in, full theme out. The minimal authoring path is essential.
 
 ## Charm / Lipgloss + BubbleTea
 
-[Lipgloss](https://github.com/charmbracelet/lipgloss) is a Go styling library for terminal apps, often used with [BubbleTea](https://github.com/charmbracelet/bubbletea). [BubbleTint](https://github.com/lrstanley/bubbletint) adds theme registry support.
+[Lipgloss](https://github.com/charmbracelet/lipgloss) is a Go styling library for terminal apps. [BubbleTint](https://github.com/lrstanley/bubbletint) adds theme registry support.
 
-| Aspect          | Lipgloss/BubbleTea                                      | swatch                                                       |
-| --------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
-| **Language**    | Go                                                      | TypeScript                                                   |
-| **Theming**     | Per-component styling                                   | Central palette -> theme derivation                          |
-| **Color spec**  | `lipgloss.Color("5")` (ANSI or hex)                     | `$token` strings or hex                                      |
-| **Adaptive**    | `CompleteAdaptiveColor` (dark/light x truecolor/256/16) | `generateTheme()` for ANSI 16, `deriveTheme()` for truecolor |
-| **Detection**   | Color profile (truecolor/256/16)                        | Actual palette hex values via OSC                            |
-| **Color utils** | `Darken()`, `Lighten()`, `Alpha()`                      | `blend()`, `brighten()`, `darken()`, `contrastFg()`          |
+Adopted: color manipulation utilities as first-class API (`blend()`, `brighten()`, `darken()`, `contrastFg()`). The `CompleteAdaptiveColor` pattern (dark/light x truecolor/256/16) validates our ANSI 16 fallback approach. Using ANSI palette indices as "semantic slots" inspired our terminal color detection.
 
-**Charm's strengths**: Lipgloss's `CompleteAdaptiveColor` elegantly handles dark/light x color tier. The styling API is beautifully ergonomic. BubbleTea's Model/Update/View pattern is proven and influential. Using ANSI color indices (`lipgloss.Color("5")`) lets apps piggyback on whatever the terminal's magenta is.
-
-**swatch's strengths**: Semantic derivation -- `deriveTheme()` computes contrast pairs, chrome inversion, text hierarchy automatically. Querying actual hex values (not just "what tier?"). `$token` system is declarative -- components say _what_ they need.
-
-**What we learned**: Color utilities should be first-class API. The ANSI palette as "semantic slots" is a powerful idea -- we extend it by querying the actual hex values.
+**What we learned**: Color utilities should be first-class API. The ANSI palette as "semantic slots" is a powerful idea.
 
 ## Catppuccin
 
 [Catppuccin](https://catppuccin.com/) is a community-driven color scheme with 26 named colors and ports for 300+ apps.
 
-| Aspect              | Catppuccin                                | swatch                       |
-| ------------------- | ----------------------------------------- | ---------------------------- |
-| **Palette**         | 26 colors per flavor                      | 14 raw colors                |
-| **Flavors**         | 4 fixed (Mocha, Frappe, Macchiato, Latte) | Any (user-defined or preset) |
-| **Surface ramp**    | 12 levels                                 | 6 levels                     |
-| **Accent hues**     | 14 distinct                               | 8 (ANSI-standard)            |
-| **Semantic tokens** | None (apps map ad hoc)                    | 19 derived with clear roles  |
-| **Ecosystem**       | 300+ app ports (manual)                   | `deriveTheme()` (automatic)  |
+Adopted: OKLCH bright variant formula for perceptually correct derivation. The 4 built-in Catppuccin palettes are among swatch's most popular presets. Diverged: 26 colors and 300+ manual per-app ports -- swatch's `deriveTheme()` eliminates manual porting.
 
-**Catppuccin's strengths**: Unmatched community ecosystem -- 300+ app ports. 14 accent hues provide fine color distinctions (rosewater, flamingo, pink, mauve are four distinct warm hues). Surface ramp (12 levels) offers granularity for complex UIs. OKLCH bright variant formula.
-
-**swatch's strengths**: Semantic derivation eliminates per-app manual porting. User-chosen primary accent drives consistent app-wide styling. 8 hues sufficient for TUI use.
-
-**What we learned**: Surface ramp naming (crust/base/surface/overlay/subtext/text) is self-explanatory and widely recognized. OKLCH for derivation. The 4 built-in Catppuccin palettes are among our most popular presets.
+**What we learned**: OKLCH for derivation. Community-loved palettes are worth shipping built-in.
 
 ## Base16 / tinted-theming
 
 [Base16](https://github.com/tinted-theming/home) defines 16-color themes with a template system for generating app configs.
 
-| Aspect         | Base16                                | swatch                               |
-| -------------- | ------------------------------------- | ------------------------------------ |
-| **Palette**    | 16 opaque slots (base00-base0F)       | 14 named colors                      |
-| **Naming**     | Opaque (base08 = "usually red")       | Semantic (red, surface, text)        |
-| **Config gen** | Mustache templates for dozens of apps | `deriveTheme()` + platform exporters |
-| **Schemes**    | ~230                                  | 45 built-in + `importBase16()`       |
-| **Runtime**    | None (build-time only)                | Full API (resolve, derive, detect)   |
+Adopted: `importBase16()`/`exportBase16()` bridges the 230+ scheme ecosystem. The 16-slot palette maps directly to terminal ANSI colors. Diverged: Base16 uses opaque slot names (`base08` = "usually red") -- swatch uses semantic names. Base16 is build-time only; swatch has a full runtime API.
 
-**Base16's strengths**: Template system generates configs for dozens of apps from one scheme file. Largest scheme ecosystem (230+). 16 slots map directly to terminal ANSI colors.
-
-**swatch's strengths**: Semantic names instead of opaque slots. Runtime library. Semantic derivation. Terminal detection. Round-trip `importBase16()`/`exportBase16()` bridges the ecosystems.
-
-**What we learned**: The 16-slot palette is the universal terminal baseline. Our content palette (`$color0`-`$color15`) maps directly to these slots.
+**What we learned**: The 16-slot palette is the universal terminal baseline.
 
 ## Material Design 3
 
-[Material Design 3](https://m3.material.io/styles/color/system/how-the-system-works) is Google's design system with HCT (Hue-Chroma-Tone) color science.
+[M3](https://m3.material.io/styles/color/system/how-the-system-works) uses HCT (Hue-Chroma-Tone) color science to derive themes from a single seed color.
 
-| Aspect              | M3                                                        | swatch                                |
-| ------------------- | --------------------------------------------------------- | ------------------------------------- |
-| **Color space**     | HCT (Hue-Chroma-Tone)                                     | OKLCH (similar perceptual uniformity) |
-| **Seed input**      | One seed color                                            | 1-14 colors (builder API)             |
-| **Accent families** | 3 (primary, secondary = desaturated, tertiary = +60° hue) | 1 primary + content palette           |
-| **Tonal palettes**  | 13 tones per family                                       | 6 surface ramp + shade utilities      |
-| **Semantic roles**  | ~25                                                       | 19 semantic tokens                    |
-| **Derivation**      | Hue rotation for secondary/tertiary                       | Warm/cool complement for selection    |
+Adopted: perceptually uniform color spaces (HCT/OKLCH) for derivation. The `onPrimary` concept (contrast text for colored backgrounds) maps to our `$primaryfg`/`$selectionfg` pattern. Rejected: secondary/tertiary accent families -- over-engineered for TUIs.
 
-**M3's strengths**: HCT color science is state-of-the-art for perceptual uniformity. 13-tone palette per family provides fine-grained surface elevation. Battle-tested across billions of Android devices. The `onPrimary` concept (contrast text for colored backgrounds) is essential.
-
-**swatch's strengths**: Content palette provides multi-color variety without secondary/tertiary overhead. Terminal detection. 14-color palette is directly authorable (M3 generates everything from one seed, which can feel generic).
-
-**What we learned**: Perceptually uniform color spaces (HCT/OKLCH) produce better derivation than RGB/HSL. M3's `onPrimary` maps to our `$selectedfg`. Warm/cool complementary selection is inspired by M3's tertiary hue rotation.
+**What we learned**: Perceptual color science produces better derivation than RGB/HSL.
 
 ## Omarchy (DHH)
 
-[Omarchy](https://github.com/basecamp/omarchy) is DHH's terminal setup -- one `colors.toml` generates configs for Neovim, tmux, bat, lazygit, and more.
+[Omarchy](https://github.com/basecamp/omarchy) -- one `colors.toml` generates configs for Neovim, tmux, bat, lazygit.
 
-| Aspect         | Omarchy                                      | swatch                     |
-| -------------- | -------------------------------------------- | -------------------------- |
-| **Palette**    | 22 tokens in TOML                            | 14 raw colors              |
-| **Config gen** | Shell scripts for Neovim, tmux, bat, lazygit | Future direction           |
-| **Runtime**    | None (static configs)                        | Full API                   |
-| **Derivation** | None (all hand-specified)                    | `deriveTheme()` fills gaps |
-| **Themes**     | 1 (Omarchy's own)                            | 45 presets                 |
+Adopted: the "one source, many configs" philosophy. Our ColorPalette -> `deriveTheme()` is the same idea. Diverged: Omarchy requires all 22 values hand-specified with no derivation; swatch generates from minimal input.
 
-**Omarchy's strengths**: "One source, many configs" is elegant and practical -- change `colors.toml` and all tools update. DHH's taste-level curation produces a coherent, opinionated result. The pipeline concept (palette -> Neovim + tmux + bat + lazygit) is a killer feature.
-
-**swatch's strengths**: Derivation from minimal input (Omarchy requires all 22 values). Runtime API. Built-in theme library. Terminal detection.
-
-**What we learned**: Cross-tool config generation is a high-value future direction. Generate Ghostty theme, Neovim colorscheme, tmux status line from one ThemePalette.
+**What we learned**: Cross-tool config generation from a single palette is a high-value future direction.
 
 ## Apple HIG
 
-[Apple's Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/color) define system-wide color principles.
+[Apple's HIG](https://developer.apple.com/design/human-interface-guidelines/color) -- system-wide color principles.
 
-| Aspect             | Apple HIG                       | swatch                         |
-| ------------------ | ------------------------------- | ------------------------------ |
-| **Accent**         | ONE system accent (user-chosen) | ONE primary (user-chosen)      |
-| **Text hierarchy** | 4 levels via opacity            | 4 levels (`$text`-`$text4`)    |
-| **Surfaces**       | Background + grouped + elevated | `$bg`, `$surface`, `$chromebg` |
+Adopted: text hierarchy via opacity cascade (primary -> muted -> disabled). ONE user-chosen accent color prevents the "rainbow problem."
 
-**Apple HIG's strengths**: System-level integration (dark mode toggle, Dynamic Type, accessibility). Vibrancy and transparency create depth. The constraint of ONE accent color produces clean, focused UIs. Text hierarchy via opacity is elegant -- same color at different intensities always looks harmonious.
-
-**What we learned**: Text hierarchy via opacity cascade. ONE accent color prevents the "rainbow problem." Both adopted directly.
+**What we learned**: Text hierarchy via opacity. ONE accent color produces clean, focused UIs.
 
 ## oh-my-pi
 
-[oh-my-pi](https://github.com/can1357/oh-my-pi) is a terminal AI coding agent with a 66-token, 3-layer theme system.
+[oh-my-pi](https://github.com/can1357/oh-my-pi) -- terminal AI coding agent with a 66-token, 3-layer theme system.
 
-| Aspect            | oh-my-pi                               | swatch                               |
-| ----------------- | -------------------------------------- | ------------------------------------ |
-| **Architecture**  | 3 layers: vars -> colors -> interfaces | 2 layers: palette -> theme           |
-| **Tokens**        | 66 (component-specific)                | 19 (UI-agnostic) + 16 palette        |
-| **Accessibility** | Color-blind mode with symbols          | Contrast checking via `contrastFg()` |
+Adopted: the two-layer indirection pattern (raw palette -> semantic tokens) validates our architecture. Color-blind mode with symbol differentiation is a genuine accessibility innovation. Rejected: 66 component-specific tokens (e.g., `breadcrumb_active_fg`) -- couples theme interface to UI implementation details.
 
-**oh-my-pi's strengths**: Color-blind mode with symbol differentiation is a genuine accessibility innovation. Component interfaces (components declare their color needs) enforce consistency. 3-layer indirection provides fine-grained control.
-
-**swatch's strengths**: 19 UI-agnostic tokens vs 66 component-specific ones -- simpler to author and maintain. 2-layer architecture is easier to understand.
-
-**What we learned**: The two-layer indirection pattern (raw palette -> semantic tokens) is the core architectural insight that validates our approach.
+**What we learned**: Two-layer indirection is the core architectural insight. Keep tokens UI-agnostic.
 
 ## Zed Editor
 
 [Zed](https://zed.dev/) uses 150+ theme tokens with per-state variants (hover/active/disabled per token).
 
-**Zed's strengths**: Pixel-perfect control over every UI state. 24 terminal color slots cover every edge case.
+Rejected: too granular for TUIs -- `input_border_active_hover` belongs in CSS, not a theme interface. TUI components have fewer states than a desktop editor.
 
-**swatch's strengths**: 35 tokens vs 150+ -- much easier to author. State variants belong in component logic, not the theme interface. TUI components have fewer states than a desktop editor.
-
-**What we learned**: The right abstraction level depends on the platform. 150+ is appropriate for a desktop editor; 35 for a terminal/web theme system.
-
-## Summary
-
-| System             | Palette | Tokens | Detection    | Derivation      | Runtime | Key Strength                     |
-| ------------------ | ------- | ------ | ------------ | --------------- | ------- | -------------------------------- |
-| **swatch**         | 14      | 35     | OSC 4/10/11  | `deriveTheme()` | TS      | Terminal detection + derivation  |
-| **Textual**        | 11      | ~77    | --           | Shade gen       | Python  | CSS variables, minimal authoring |
-| **Charm/lipgloss** | --      | --     | Profile only | --              | Go      | Ergonomic styling API            |
-| **Catppuccin**     | 26      | 26     | --           | --              | Data    | 300+ app ports, community        |
-| **Base16**         | 16      | 16     | --           | --              | Build   | 230+ schemes, templates          |
-| **M3**             | 1 seed  | ~25    | --           | HCT             | Any     | Color science, scale             |
-| **Omarchy**        | 22      | 22     | --           | --              | --      | Cross-tool config gen            |
-| **Apple HIG**      | 1       | ~20    | System       | System          | System  | System integration               |
-| **oh-my-pi**       | ~20     | 66     | --           | 3-layer         | TS      | Color-blind mode                 |
-| **Zed**            | ~50     | 150+   | --           | --              | Rust    | Pixel-perfect control            |
+**What we learned**: The right abstraction level depends on the platform. 49 tokens (33 semantic + 16 palette) is right for terminal/web; 150+ is right for a desktop editor.

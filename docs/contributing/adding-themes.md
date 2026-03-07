@@ -11,30 +11,38 @@ Create a new file in `src/palettes/` named after the theme (e.g., `src/palettes/
  * My Theme palette — brief description.
  */
 
-import type { ThemePalette } from "../types.js"
+import type { ColorPalette } from "../types.js"
 
 /** My Theme — one-line description. */
-export const myTheme: ThemePalette = {
+export const myTheme: ColorPalette = {
   name: "my-theme",
   dark: true,
 
-  // Surface ramp (ordered by depth: deepest -> most prominent)
-  crust: "#111111", // Deepest background (status bars, gutters)
-  base: "#1A1A1A", // Primary background
-  surface: "#2A2A2A", // Raised surfaces (cards, dialogs)
-  overlay: "#555555", // Borders, dividers, subtle chrome
-  subtext: "#AAAAAA", // Muted/secondary text
-  text: "#DDDDDD", // Primary text
-
-  // Accent hues (8 universal hue names)
+  // 16 ANSI colors
+  black: "#111111",
   red: "#FF5555",
-  orange: "#FFB86C",
-  yellow: "#F1FA8C",
   green: "#50FA7B",
-  teal: "#8BE9FD",
+  yellow: "#F1FA8C",
   blue: "#6272A4",
-  purple: "#BD93F9",
-  pink: "#FF79C6",
+  magenta: "#BD93F9",
+  cyan: "#8BE9FD",
+  white: "#AAAAAA",
+  brightBlack: "#2A2A2A",
+  brightRed: "#FFB86C",
+  brightGreen: "#69FF94",
+  brightYellow: "#FFFFA5",
+  brightBlue: "#D6ACFF",
+  brightMagenta: "#FF92DF",
+  brightCyan: "#A4FFFF",
+  brightWhite: "#DDDDDD",
+
+  // 6 special colors
+  foreground: "#DDDDDD",
+  background: "#1A1A1A",
+  cursorColor: "#DDDDDD",
+  cursorText: "#1A1A1A",
+  selectionBackground: "#555555",
+  selectionForeground: "#DDDDDD",
 }
 ```
 
@@ -42,8 +50,8 @@ export const myTheme: ThemePalette = {
 
 - **`name`**: Lowercase, hyphenated (e.g., `"my-theme"`, `"my-theme-light"`)
 - **`dark`**: Set to `true` for dark themes, `false` for light themes
-- **Surface ramp**: 6 hex colors ordered from deepest to brightest (dark themes) or brightest to deepest (light themes)
-- **Accent hues**: 8 hex colors. Use the theme's actual hand-tuned colors -- do not generate via hue rotation
+- **16 ANSI colors**: 8 normal + 8 bright hex colors
+- **6 special colors**: foreground, background, cursorColor, cursorText, selectionBackground, selectionForeground
 - **All colors must be valid 6-digit hex strings** (e.g., `"#2E3440"`, not `"2E3440"` or `"#2E3"`)
 
 ### Theme Variants
@@ -51,13 +59,13 @@ export const myTheme: ThemePalette = {
 If your theme has multiple variants (e.g., dark/light, warm/cool), put them in the same file:
 
 ```typescript
-export const myThemeDark: ThemePalette = {
+export const myThemeDark: ColorPalette = {
   name: "my-theme-dark",
   dark: true,
   // ...
 }
 
-export const myThemeLight: ThemePalette = {
+export const myThemeLight: ColorPalette = {
   name: "my-theme-light",
   dark: false,
   // ...
@@ -73,7 +81,7 @@ When porting an existing theme, find the canonical color values from the theme's
 - **Dracula**: https://draculatheme.com/contribute -- `dracula.yml`
 - **Base16 schemes**: https://github.com/tinted-theming/schemes -- YAML files
 
-Map the theme's colors to swatch's 14 fields. If the theme has more than 6 neutral stops, pick the 6 most representative. If it has fewer than 8 accent hues, reuse the closest available hue (e.g., Nord uses the same color for `purple` and `pink`).
+Map the theme's colors to swatch's 22 fields. Most terminal themes already define these exact fields. For themes with fewer colors, derive bright variants by brightening the normal colors.
 
 ## Step 2: Register in the Palette Index
 
@@ -94,7 +102,7 @@ import { myThemeDark, myThemeLight } from "./my-theme.js"
 3. Add entries to the `builtinPalettes` registry:
 
 ```typescript
-export const builtinPalettes: Record<string, ThemePalette> = {
+export const builtinPalettes: Record<string, ColorPalette> = {
   // ... existing entries ...
   // My Theme
   "my-theme-dark": myThemeDark,
@@ -109,17 +117,17 @@ The registry key must match the palette's `name` field exactly.
 ### Run Validation
 
 ```typescript
-import { validatePalette } from "swatch"
+import { validateColorPalette } from "swatch"
 import { myThemeDark } from "./src/palettes/my-theme.js"
 
-const result = validatePalette(myThemeDark)
+const result = validateColorPalette(myThemeDark)
 console.log(result)
 // { valid: true, errors: [], warnings: [] }
 ```
 
 The validator checks:
 
-- All 14 color fields are present and non-empty
+- All 22 color fields are present and non-empty
 - `name` and `dark` are set
 - Text/background contrast is sufficient (warns on low contrast)
 
@@ -132,10 +140,10 @@ import { myThemeDark } from "./src/palettes/my-theme.js"
 const theme = deriveTheme(myThemeDark)
 console.log(theme)
 // Inspect that semantic tokens look correct:
-// - primary should be a visible accent on the bg
-// - text/text2/text3/text4 should form a readable hierarchy
-// - chromebg/chromefg should be inverted from the main content
-// - error/warning/success should be distinct and recognizable
+// - $primary should be a visible accent on $bg
+// - $fg/$mutedfg should form a readable hierarchy
+// - $inverse/$inversefg should be inverted from the main content
+// - $error/$warning/$success should be distinct and recognizable
 ```
 
 ### Run the Test Suite
@@ -182,11 +190,11 @@ const exported = exportBase16(palette)
 Before submitting a new theme:
 
 - [ ] Palette file created in `src/palettes/` with proper TypeScript types
-- [ ] All 14 color fields use valid 6-digit hex strings
+- [ ] All 22 color fields use valid 6-digit hex strings
 - [ ] `name` is lowercase, hyphenated, matches the registry key
 - [ ] `dark` is set correctly
 - [ ] Exported from `src/palettes/index.ts` (both re-export and registry)
-- [ ] `validatePalette()` returns `{ valid: true }`
+- [ ] `validateColorPalette()` returns `{ valid: true }`
 - [ ] `deriveTheme()` produces visually correct tokens
 - [ ] All tests pass
 - [ ] Visual inspection confirms the theme looks right

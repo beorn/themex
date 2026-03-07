@@ -14,7 +14,7 @@ bunx swatch <command>
 
 ### `list`
 
-List all 45 built-in themes with accent color swatches.
+List all 43 built-in themes with accent color swatches.
 
 ```bash
 bunx swatch list
@@ -68,7 +68,7 @@ bunx swatch generate "#EBCB8B"
 
 ### `import <file>`
 
-Import a Base16 YAML file and display the resulting ThemePalette as JSON.
+Import a Base16 YAML file and display the resulting ColorPalette as JSON.
 
 ```bash
 bunx swatch import ocean.yaml
@@ -105,7 +105,7 @@ bunx swatch -h
 
 ## Available Theme Names
 
-All 45 built-in themes:
+All 43 built-in themes:
 
 | Family      | Themes                                                                              |
 | ----------- | ----------------------------------------------------------------------------------- |

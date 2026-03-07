@@ -1,42 +1,18 @@
 # Web Usage
 
-swatch themes are platform-agnostic. While the built-in `resolveThemeColor()` function is designed for terminal rendering, the same `ThemePalette` + `deriveTheme()` pipeline produces a `Theme` object that maps naturally to CSS custom properties, React context, or any web framework.
+swatch themes are platform-agnostic. While the built-in `resolveThemeColor()` function is designed for terminal rendering, the same `ColorPalette` + `deriveTheme()` pipeline produces a `Theme` object that maps naturally to CSS custom properties, React context, or any web framework.
 
 ## CSS Custom Properties
 
-Convert a Theme to CSS custom properties for use in any web project:
+Convert a Theme to CSS custom properties using the built-in `themeToCSSVars`:
 
 ```typescript
-import { presetTheme } from "swatch"
-import type { Theme } from "swatch"
+import { presetTheme, themeToCSSVars } from "swatch"
 
-function themeToCssVars(theme: Theme): Record<string, string> {
-  return {
-    "--theme-primary": theme.primary,
-    "--theme-link": theme.link,
-    "--theme-control": theme.control,
-    "--theme-selected": theme.selected,
-    "--theme-selectedfg": theme.selectedfg,
-    "--theme-focusring": theme.focusring,
-    "--theme-text": theme.text,
-    "--theme-text2": theme.text2,
-    "--theme-text3": theme.text3,
-    "--theme-text4": theme.text4,
-    "--theme-bg": theme.bg,
-    "--theme-surface": theme.surface,
-    "--theme-separator": theme.separator,
-    "--theme-chromebg": theme.chromebg,
-    "--theme-chromefg": theme.chromefg,
-    "--theme-error": theme.error,
-    "--theme-warning": theme.warning,
-    "--theme-success": theme.success,
-    ...Object.fromEntries(theme.palette.map((color, i) => [`--theme-color${i}`, color])),
-  }
-}
+const theme = presetTheme("catppuccin-mocha")
+const vars = themeToCSSVars(theme)
 
 // Apply to :root
-const theme = presetTheme("catppuccin-mocha")
-const vars = themeToCssVars(theme)
 for (const [key, value] of Object.entries(vars)) {
   document.documentElement.style.setProperty(key, value)
 }
@@ -46,19 +22,18 @@ Then use the variables in CSS:
 
 ```css
 :root {
-  /* Set by themeToCssVars() */
+  /* Set by themeToCSSVars() — all 33 tokens + 22 palette colors */
   --theme-primary: #f9e2af;
-  --theme-text: #cdd6f4;
+  --theme-fg: #cdd6f4;
   --theme-bg: #1e1e2e;
   --theme-surface: #313244;
-  --theme-separator: #6c7086;
+  --theme-border: #6c7086;
   --theme-error: #f38ba8;
-  /* ... all 19 tokens + 16 palette colors */
 }
 
 body {
   background-color: var(--theme-bg);
-  color: var(--theme-text);
+  color: var(--theme-fg);
 }
 
 a {
@@ -67,7 +42,7 @@ a {
 
 .card {
   background-color: var(--theme-surface);
-  border: 1px solid var(--theme-separator);
+  border: 1px solid var(--theme-border);
 }
 
 .error {
@@ -76,7 +51,7 @@ a {
 
 .badge {
   background-color: var(--theme-primary);
-  color: var(--theme-chromefg);
+  color: var(--theme-primaryfg);
 }
 ```
 
@@ -86,8 +61,8 @@ Wrap your app in a theme provider that makes the Theme object available via cont
 
 ```tsx
 import { createContext, useContext, useMemo, useState } from "react"
-import { presetTheme, deriveTheme } from "swatch"
-import type { Theme, ThemePalette } from "swatch"
+import { presetTheme, deriveTheme, themeToCSSVars } from "swatch"
+import type { Theme, ColorPalette } from "swatch"
 
 // ── Context ────────────────────────────────────────────────────
 
@@ -103,7 +78,7 @@ export function useTheme(): Theme {
 
 interface ThemeProviderProps {
   preset?: string
-  palette?: ThemePalette
+  palette?: ColorPalette
   children: React.ReactNode
 }
 
@@ -115,16 +90,11 @@ export function ThemeProvider({ preset, palette, children }: ThemeProviderProps)
 
   // Apply CSS custom properties to document root
   useMemo(() => {
+    const vars = themeToCSSVars(theme)
     const root = document.documentElement.style
-    root.setProperty("--theme-primary", theme.primary)
-    root.setProperty("--theme-text", theme.text)
-    root.setProperty("--theme-bg", theme.bg)
-    root.setProperty("--theme-surface", theme.surface)
-    root.setProperty("--theme-separator", theme.separator)
-    root.setProperty("--theme-error", theme.error)
-    root.setProperty("--theme-warning", theme.warning)
-    root.setProperty("--theme-success", theme.success)
-    // ... remaining tokens
+    for (const [key, value] of Object.entries(vars)) {
+      root.setProperty(key, value)
+    }
   }, [theme])
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
@@ -176,35 +146,4 @@ function App() {
 
 ## Native Platforms
 
-The same pattern extends to native platforms:
-
-**Swift / SwiftUI:**
-
-```swift
-extension Color {
-  init(theme token: String, from theme: Theme) {
-    // Map theme fields to SwiftUI Color
-    self.init(hex: theme[token])
-  }
-}
-
-Text("Hello")
-  .foregroundColor(Color(theme: "primary", from: theme))
-```
-
-**Kotlin / Jetpack Compose:**
-
-```kotlin
-@Composable
-fun ThemeProvider(theme: Theme, content: @Composable () -> Unit) {
-    val colors = MaterialTheme.colorScheme.copy(
-        primary = Color.parse(theme.primary),
-        error = Color.parse(theme.error),
-        background = Color.parse(theme.bg),
-        surface = Color.parse(theme.surface),
-    )
-    MaterialTheme(colorScheme = colors, content = content)
-}
-```
-
-The key insight is that `deriveTheme()` produces platform-agnostic hex colors. The binding layer (CSS vars, React context, SwiftUI, Compose) is a thin wrapper specific to each platform.
+The `deriveTheme()` pipeline produces platform-agnostic hex colors. The same hex values work in any platform — CSS, SwiftUI, Jetpack Compose, or anything else that accepts `#RRGGBB`.

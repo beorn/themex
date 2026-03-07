@@ -1,74 +1,86 @@
 # Semantic Tokens
 
-The `Theme` interface contains 19 semantic tokens organized into 5 categories. These are the colors your UI components consume.
+The `Theme` interface contains 33 semantic tokens organized by category. Every background token has a matching `*fg` foreground for guaranteed contrast (shadcn-style `$name`/`$namefg` pairing).
 
 ## Token Reference
 
-### Brand Tokens
+### Default
 
-| Token      | Purpose                               | Derivation                                |
-| ---------- | ------------------------------------- | ----------------------------------------- |
-| `$primary` | Primary brand tint, active indicators | Palette accent hue (default: yellow/blue) |
-| `$link`    | Hyperlinks, references                | `palette.blue`                            |
-| `$control` | Interactive chrome, input borders     | `blend(primary, overlay, 0.3)`            |
+| Token | Purpose |
+| ----- | ------- |
+| `$bg` | Default background |
+| `$fg` | Default text |
 
-### Selection Tokens
+### Surface
 
-| Token         | Purpose                        | Derivation                                 |
-| ------------- | ------------------------------ | ------------------------------------------ |
-| `$selected`   | Selection highlight background | Contrasting hue (warm->teal, cool->yellow) |
-| `$selectedfg` | Text on selected background    | `crust` (dark) or `text` (light)           |
-| `$focusring`  | Keyboard focus outline         | Always `palette.blue` (accessibility)      |
+| Token | Purpose |
+| ----- | ------- |
+| `$surface` / `$surfacefg` | Elevated content (cards, dialogs) |
+| `$popover` / `$popoverfg` | Floating content (dropdowns, tooltips) |
 
-### Text Tokens
+### Muted
 
-| Token    | Purpose                                 | Derivation                     |
-| -------- | --------------------------------------- | ------------------------------ |
-| `$text`  | Primary text (headings, body)           | `palette.text`                 |
-| `$text2` | Secondary text (descriptions, metadata) | `palette.subtext`              |
-| `$text3` | Tertiary text (timestamps, hints)       | `blend(subtext, overlay, 0.5)` |
-| `$text4` | Ghost text (watermarks, barely visible) | `blend(overlay, base, 0.5)`    |
+| Token | Purpose |
+| ----- | ------- |
+| `$muted` / `$mutedfg` | De-emphasized area / secondary text (~70% contrast) |
 
-### Surface Tokens
+### Brand
 
-| Token        | Purpose                               | Derivation                       |
-| ------------ | ------------------------------------- | -------------------------------- |
-| `$bg`        | Default background                    | `palette.base`                   |
-| `$surface`   | Elevated surfaces (dialogs, cards)    | `palette.surface`                |
-| `$separator` | Dividers, borders, rules              | `palette.overlay`                |
-| `$chromebg`  | Chrome background (title/status bars) | `text` (dark) or `crust` (light) |
-| `$chromefg`  | Chrome foreground text                | `crust` (dark) or `text` (light) |
+| Token | Purpose |
+| ----- | ------- |
+| `$primary` / `$primaryfg` | Brand accent, active indicators |
+| `$secondary` / `$secondaryfg` | Alternate accent (desaturated primary) |
 
-### Status Tokens
+### Accent
 
-| Token      | Purpose                                 | Derivation       |
-| ---------- | --------------------------------------- | ---------------- |
-| `$error`   | Error, destructive (validation, delete) | `palette.red`    |
-| `$warning` | Warning, caution (unsaved changes)      | `palette.orange` |
-| `$success` | Success, positive (saved, passing)      | `palette.green`  |
+| Token | Purpose |
+| ----- | ------- |
+| `$accent` / `$accentfg` | Attention/pop accent (complement of primary) |
 
-### Palette Colors
+### Status
 
-In addition to the 19 semantic tokens, each theme includes a 16-color indexed palette accessible as `$color0` through `$color15`:
+| Token | Purpose |
+| ----- | ------- |
+| `$error` / `$errorfg` | Error, destructive actions |
+| `$warning` / `$warningfg` | Warning, caution |
+| `$success` / `$successfg` | Success, positive |
+| `$info` / `$infofg` | Neutral information |
 
-| Token      | Source (Dark Theme) |
-| ---------- | ------------------- |
-| `$color0`  | crust               |
-| `$color1`  | red                 |
-| `$color2`  | green               |
-| `$color3`  | yellow              |
-| `$color4`  | blue                |
-| `$color5`  | purple              |
-| `$color6`  | teal                |
-| `$color7`  | subtext             |
-| `$color8`  | overlay             |
-| `$color9`  | orange              |
-| `$color10` | green               |
-| `$color11` | yellow              |
-| `$color12` | blue                |
-| `$color13` | purple              |
-| `$color14` | teal                |
-| `$color15` | text                |
+### Selection
+
+| Token | Purpose |
+| ----- | ------- |
+| `$selection` / `$selectionfg` | Selected items highlight |
+
+### Chrome
+
+| Token | Purpose |
+| ----- | ------- |
+| `$inverse` / `$inversefg` | Chrome area (status/title bars) |
+
+### Cursor
+
+| Token | Purpose |
+| ----- | ------- |
+| `$cursor` / `$cursorfg` | Terminal cursor |
+
+### Standalone
+
+| Token | Purpose |
+| ----- | ------- |
+| `$border` | Structural dividers |
+| `$inputborder` | Interactive control borders |
+| `$focusborder` | Focus outline (always blue) |
+| `$link` | Hyperlinks |
+| `$disabledfg` | Disabled/placeholder text (~50% contrast) |
+
+### Palette
+
+16 ANSI colors accessible as `$color0` through `$color15`. Direct passthrough from the `ColorPalette` input (black, red, green, yellow, blue, magenta, cyan, white, then bright variants).
+
+## The `$name`/`$namefg` Convention
+
+Every area token (background) is paired with a `*fg` (foreground) token guaranteeing readable contrast. Use `$primary` as a background and `$primaryfg` for text on it. The `*fg` values are derived via `contrastFg()` (WCAG luminance check returning black or white) or palette passthrough.
 
 ## Resolution
 
@@ -83,54 +95,35 @@ resolveThemeColor("#FF0000", theme) // -> "#FF0000" (pass-through)
 resolveThemeColor(undefined, theme) // -> undefined
 ```
 
-## Backward-Compatible Aliases
-
-Old token names are still supported:
-
-| Old Token     | Resolves To  |
-| ------------- | ------------ |
-| `$accent`     | `$primary`   |
-| `$muted`      | `$text2`     |
-| `$raisedbg`   | `$surface`   |
-| `$background` | `$bg`        |
-| `$border`     | `$separator` |
+Hyphenated forms are supported: `$surface-fg` resolves identically to `$surfacefg`.
 
 ## Theme Interface
 
 ```typescript
 interface Theme {
   name: string
-  dark: boolean
 
-  // Brand
-  primary: string
-  link: string
-  control: string
+  // 14 pairs (area + text-on-area)
+  bg: string; fg: string
+  surface: string; surfacefg: string
+  popover: string; popoverfg: string
+  muted: string; mutedfg: string
+  primary: string; primaryfg: string
+  secondary: string; secondaryfg: string
+  accent: string; accentfg: string
+  error: string; errorfg: string
+  warning: string; warningfg: string
+  success: string; successfg: string
+  info: string; infofg: string
+  selection: string; selectionfg: string
+  inverse: string; inversefg: string
+  cursor: string; cursorfg: string
 
-  // Selection
-  selected: string
-  selectedfg: string
-  focusring: string
+  // 5 standalone tokens
+  border: string; inputborder: string; focusborder: string
+  link: string; disabledfg: string
 
-  // Text
-  text: string
-  text2: string
-  text3: string
-  text4: string
-
-  // Surface
-  bg: string
-  surface: string
-  separator: string
-  chromebg: string
-  chromefg: string
-
-  // Status
-  error: string
-  warning: string
-  success: string
-
-  // Content palette (16 indexed colors)
+  // 16 palette passthrough
   palette: string[]
 }
 ```

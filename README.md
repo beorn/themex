@@ -5,6 +5,7 @@ Easily theme any app with modern design tokens. Easily create themes from just a
 Powerfully derived &mdash; 33 semantic tokens like `$primary`, `$error`, and `$surface` with guaranteed contrast and dark/light mode support. Create themes from one color, a popular palette like Catppuccin or Nord, your system theme, or fully custom values. 43 built-in palettes. Terminal, web, native. Zero dependencies.
 
 <p align="center"><img src="./docs/swatch-overview.svg" alt="Swatch theme tokens derived from Catppuccin Mocha" width="680"></p>
+<p align="center"><em>Catppuccin Mocha — 22 palette colors derive 33 semantic tokens</em></p>
 
 ## Quick Start
 
@@ -50,18 +51,18 @@ const theme = createTheme()
 ```
   ┌─────────────────────┐
   │   1-3 colors        │
-  │   or preset name    │──────┐
-  │   or Base16 YAML    │      │
-  └─────────────────────┘      ▼
-                         ┌───────────┐     ┌──────────────────────────────────┐
-                         │ 22-color  │────▶│ 33 semantic design tokens        │
-                         │ palette   │     │ $primary $error $surface $border │
-                         └───────────┘     └──────────────┬───────────────────┘
-                                                          ▼
-                                           ┌──────────────────────────────┐
-                                           │ Apps that look great across  │
-                                           │ themes, platforms, and modes │
-                                           └──────────────────────────────┘
+  │   or Base16 YAML    │──────┐
+  └─────────────────────┘      │
+                               ▼
+  ┌─────────────────────┐  ┌───────────┐  ┌──────────────────────────────────┐
+  │  43 built-in themes │─▶│ 22-color  │─▶│ 33 semantic design tokens        │
+  │  Nord, Catppuccin,  │  │ palette   │  │ $primary $error $surface $border │
+  │  Dracula, ...       │  └───────────┘  └──────────────┬───────────────────┘
+  └─────────────────────┘                                ▼
+                                          ┌──────────────────────────────┐
+                                          │ Apps that look great across  │
+                                          │ themes, platforms, and modes │
+                                          └──────────────────────────────┘
 ```
 
 Terminal palettes define 22 colors &mdash; a compact, universal format that every theme author already knows. But modern UIs need more: surfaces, borders, status colors, focus rings, selection highlights. Swatch *derives* 33 semantic tokens from those 22 base colors using blending, contrast calculations, and sensible defaults.
@@ -70,16 +71,8 @@ Theme authors define what they know. Swatch produces what components need.
 
 ## Why Swatch?
 
-- **Easy to specify** &mdash; provide 1&ndash;3 colors, pick a well-known palette, or import Base16. Swatch derives all 33 tokens automatically with correct contrast ratios.
+- **Easy to specify** &mdash; provide 1&ndash;3 colors, pick a well-known palette, or import Base16. Swatch derives all 33 tokens automatically with correct contrast ratios. Override individual tokens when you want fine control.
 - **Easy to use** &mdash; components consume `$primary`, `$error`, `$surface` instead of raw colors. Every background token has a matching foreground. Themes change without touching code.
-- **Fine-tuning** &mdash; derivation gets you 80%. Override individual tokens for the last 20%: a warmer primary, a lighter border, a different accent.
-
-### Inspiration
-
-- **Terminal emulators** (Ghostty, Kitty, Alacritty, iTerm2, WezTerm) &mdash; the 22-color palette as a universal pivot format
-- **shadcn/ui** &mdash; `$name` / `$name-fg` pairing for guaranteed contrast
-- **Base16** &mdash; compact palettes that generate full themes, plus import/export
-- **Catppuccin, Nord, Dracula** &mdash; community palettes maintained across dozens of apps
 
 ## API
 
@@ -155,6 +148,10 @@ Every background token has a matching `*fg` foreground for guaranteed contrast.
 ## Built-in Palettes (43)
 
 Catppuccin (Mocha, Frappe, Macchiato, Latte), Nord, Dracula, Solarized (Dark, Light), Tokyo Night (Night, Storm, Day), One Dark, Gruvbox (Dark, Light), Rose Pine (Main, Moon, Dawn), Kanagawa (Wave, Dragon, Lotus), Everforest (Dark, Light), Monokai (Classic, Pro), Snazzy, Material (Dark, Light), Palenight, Ayu (Dark, Mirage, Light), Nightfox, Dawnfox, Horizon, Moonfly, Nightfly, Oxocarbon (Dark, Light), Sonokai, Edge (Dark, Light), Modus (Vivendi, Operandi).
+
+## Inspiration
+
+Terminal emulators (Ghostty, Kitty, Alacritty), shadcn/ui, Base16, Catppuccin/Nord/Dracula.
 
 ## License
 

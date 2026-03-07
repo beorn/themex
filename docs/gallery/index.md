@@ -5,7 +5,7 @@
 
 # Theme Gallery
 
-All 45 built-in themes organized by family. Each theme shows its surface ramp and accent hues.
+All 43 built-in themes organized by family. Each theme shows its surface ramp and accent hues.
 
 Use `presetTheme("name")` to load any of these in code:
 

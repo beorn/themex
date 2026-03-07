@@ -4,7 +4,7 @@ layout: home
 hero:
   name: swatch
   text: Universal Color Themes
-  tagline: 45 built-in themes for any platform — terminal, web, native. Zero dependencies.
+  tagline: 43 built-in themes for any platform — terminal, web, native. Zero dependencies.
   actions:
     - theme: brand
       text: Get Started
@@ -15,11 +15,11 @@ hero:
 
 features:
   - title: Two-Layer Architecture
-    details: Define 14 palette colors. Get 19 semantic tokens + a 16-color content palette via deriveTheme(). Clean separation between theme authoring and UI consumption.
-  - title: 45 Built-in Themes
-    details: Catppuccin, Nord, Dracula, Solarized, Tokyo Night, Gruvbox, Rose Pine, Kanagawa, and many more. Each hand-tuned for the ThemePalette format.
+    details: Define a 22-color terminal palette. Get 33 semantic tokens via deriveTheme(). Clean separation between palette authoring and UI consumption.
+  - title: 43 Built-in Themes
+    details: Catppuccin, Nord, Dracula, Solarized, Tokyo Night, Gruvbox, Rose Pine, Kanagawa, and many more. Each defined as a ColorPalette.
   - title: Builder API
-    details: Create themes from as little as one color. The builder generates surface ramps, accent hues, and semantic tokens automatically.
+    details: Create themes from as little as one color. The builder derives all 33 semantic tokens automatically with correct contrast ratios.
   - title: Base16 Compatible
     details: Import any of the 600+ community Base16 schemes. Export your themes back to Base16 YAML for use in terminals, editors, and shells.
   - title: CLI Included

@@ -65,14 +65,14 @@ const theme3 = presetTheme("nord")
 
 ## Using Tokens in UI
 
-The `Theme` object contains 19 semantic tokens that your UI components reference with a `$` prefix:
+The `Theme` object contains 33 semantic tokens that your UI components reference with a `$` prefix:
 
 ```typescript
 import { resolveThemeColor } from "swatch"
 
 function applyTheme(theme: Theme) {
   const bg = resolveThemeColor("$bg", theme)
-  const text = resolveThemeColor("$text", theme)
+  const text = resolveThemeColor("$fg", theme)
   const primary = resolveThemeColor("$primary", theme)
 
   // Apply to your UI framework
@@ -94,7 +94,7 @@ resolveThemeColor("red", theme) // passed through as-is
 swatch includes a CLI for exploring themes:
 
 ```bash
-bunx swatch list                    # List all 45 built-in themes
+bunx swatch list                    # List all 43 built-in themes
 bunx swatch show catppuccin-mocha   # Show theme details with swatches
 bunx swatch generate yellow         # Generate ANSI 16 theme
 bunx swatch export nord             # Export as Base16 YAML
@@ -105,5 +105,5 @@ See the [CLI Reference](/reference/cli) for all commands.
 ## Next Steps
 
 - [Creating Themes](/guide/creating-themes) -- Define custom palettes and use the builder API
-- [Semantic Tokens](/reference/semantic-tokens) -- Understand all 19 tokens and when to use each
-- [Theme Gallery](/gallery/) -- Browse all 45 built-in themes with color swatches
+- [Semantic Tokens](/reference/semantic-tokens) -- Understand all 33 tokens and when to use each
+- [Theme Gallery](/gallery/) -- Browse all 43 built-in themes with color swatches

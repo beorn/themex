@@ -34,28 +34,28 @@ const palette = importBase16(yaml)
 const theme = deriveTheme(palette)
 ```
 
-### Base16 to ThemePalette Mapping
+### Base16 to ColorPalette Mapping
 
-| Base16 | ThemePalette | Role                     |
-| ------ | ------------ | ------------------------ |
-| base00 | `base`       | Primary background       |
-| base01 | `surface`    | Raised surfaces          |
-| base02 | `overlay`    | Borders, chrome          |
-| base03 | `subtext`    | Muted text               |
-| base04 | _(skipped)_  | Between subtext and text |
-| base05 | `text`       | Primary text             |
-| base06 | _(skipped)_  | Light foreground         |
-| base07 | _(skipped)_  | Lightest background      |
-| base08 | `red`        | Error                    |
-| base09 | `orange`     | Warning                  |
-| base0A | `yellow`     | Primary accent           |
-| base0B | `green`      | Success                  |
-| base0C | `teal`       | Cool accent              |
-| base0D | `blue`       | Links, focus             |
-| base0E | `purple`     | Decorative               |
-| base0F | `pink`       | Warm accent              |
+| Base16 | ColorPalette           | Role                     |
+| ------ | ---------------------- | ------------------------ |
+| base00 | `background`           | Primary background       |
+| base01 | `brightBlack`          | Dark UI surfaces         |
+| base02 | `selectionBackground`  | Selection, borders       |
+| base03 | `white`                | Muted foreground         |
+| base04 | _(skipped)_            | Between muted and fg     |
+| base05 | `foreground`           | Primary text             |
+| base06 | _(skipped)_            | Light foreground         |
+| base07 | _(skipped)_            | Lightest background      |
+| base08 | `red`                  | Error                    |
+| base09 | `brightRed`            | Warning / orange         |
+| base0A | `yellow`               | Primary accent           |
+| base0B | `green`                | Success                  |
+| base0C | `cyan`                 | Cool accent              |
+| base0D | `blue`                 | Links, focus             |
+| base0E | `magenta`              | Decorative               |
+| base0F | `brightMagenta`        | Warm accent              |
 
-The `crust` field (not present in Base16) is derived by darkening `base00` for dark themes or brightening it for light themes. Dark/light is inferred from the luminance of `base00`.
+The `black` field (not present in Base16) is derived by darkening `background` for dark themes or brightening it for light themes. Bright color variants (brightGreen, brightYellow, etc.) are derived by brightening their normal counterparts.
 
 ### Import from File (CLI)
 
@@ -98,13 +98,13 @@ base0F: "F5C2E7"
 
 ### Interpolated Values
 
-ThemePalette has 14 colors but Base16 has 16. The three extra Base16 slots are interpolated on export:
+ColorPalette has 22 colors but Base16 has 16. The three extra Base16 slots (base04, base06, base07) are interpolated on export:
 
-| Base16 | Derivation                                                      |
-| ------ | --------------------------------------------------------------- |
-| base04 | `blend(subtext, text, 0.33)` -- between comments and foreground |
-| base06 | `blend(text, white/black, 0.15)` -- lighter/darker foreground   |
-| base07 | `crust` -- the deepest background inverse                       |
+| Base16 | Derivation                                                     |
+| ------ | -------------------------------------------------------------- |
+| base04 | `blend(white, foreground, 0.33)` -- between muted and fg      |
+| base06 | `blend(foreground, #FFF/#000, 0.15)` -- lighter/darker fg     |
+| base07 | `black` -- the deepest background extreme                      |
 
 ### Export from CLI
 
@@ -114,7 +114,7 @@ bunx swatch export catppuccin-mocha > catppuccin-mocha.yaml
 
 ## Round-Trip Fidelity
 
-Import and export preserve the 13 directly-mapped fields exactly. Only `crust` (derived on import) and base04/base06/base07 (interpolated on export) may differ from the original Base16 scheme.
+Import and export preserve the 13 directly-mapped fields exactly. Only `black` (derived on import) and base04/base06/base07 (interpolated on export) may differ from the original Base16 scheme.
 
 ```typescript
 import { importBase16, exportBase16 } from "swatch"
@@ -123,5 +123,5 @@ const palette = importBase16(originalYaml)
 const roundTripped = exportBase16(palette)
 // base00-base03, base05, base08-base0F: identical
 // base04, base06, base07: may differ (interpolated)
-// crust: derived, not in Base16
+// black, bright variants: derived, not in Base16
 ```

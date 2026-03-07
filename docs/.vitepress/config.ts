@@ -9,7 +9,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
-      { text: "Reference", link: "/reference/theme-palette" },
+      { text: "Reference", link: "/reference/color-palette" },
       { text: "Gallery", link: "/gallery/" },
     ],
 
@@ -28,7 +28,7 @@ export default defineConfig({
       {
         text: "Reference",
         items: [
-          { text: "ThemePalette", link: "/reference/theme-palette" },
+          { text: "ColorPalette", link: "/reference/color-palette" },
           { text: "Semantic Tokens", link: "/reference/semantic-tokens" },
           { text: "Derivation Rules", link: "/reference/derivation-rules" },
           { text: "Color Utilities", link: "/reference/color-utilities" },
