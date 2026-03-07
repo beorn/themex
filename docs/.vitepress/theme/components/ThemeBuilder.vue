@@ -27,7 +27,8 @@ const currentPalette = ref<ColorPalette | null>(builtinPalettes['nord'] ?? null)
 
 // ── Palette list ───────────────────────────────────────────────────
 const paletteEntries = computed(() => {
-  const entries = Object.entries(builtinPalettes)
+  let entries = Object.entries(builtinPalettes)
+  entries = entries.filter(([, palette]) => isDark.value ? palette.dark !== false : palette.dark === false)
   if (!presetFilter.value) return entries
   const q = presetFilter.value.toLowerCase()
   return entries.filter(([name]) => name.toLowerCase().includes(q))
@@ -155,15 +156,38 @@ onMounted(() => {
 })
 
 watch([currentTheme, selectedPreset, baseColor, isDark], saveState, { deep: true })
+
+watch(isDark, () => {
+  if (selectedPreset.value) {
+    const pal = builtinPalettes[selectedPreset.value]
+    if ((pal?.dark !== false) !== isDark.value) {
+      const first = paletteEntries.value[0]
+      if (first) selectPreset(first[0])
+      else { selectedPreset.value = null; generateFromColor() }
+    }
+  }
+})
 </script>
 
 <template>
   <div class="tb">
     <!-- Left panel: Controls -->
     <div class="tb-controls">
-      <!-- Browse Presets -->
+      <!-- Mode toggle -->
+      <div class="tb-mode-toggle">
+        <button :class="{ active: isDark }" @click="isDark = true">Dark</button>
+        <button :class="{ active: !isDark }" @click="isDark = false">Light</button>
+      </div>
+
+      <!-- Themes -->
       <section class="tb-section">
-        <h3>Browse Presets</h3>
+        <h3>Themes</h3>
+        <div class="tb-gen-row">
+          <input type="color" v-model="baseColor" class="tb-color-input" />
+          <span class="tb-hex">{{ baseColor }}</span>
+          <button class="tb-btn" @click="generateFromColor">Generate</button>
+          <button class="tb-btn tb-btn-alt" @click="randomColor">Random</button>
+        </div>
         <input v-model="presetFilter" class="tb-search" placeholder="Filter palettes..." />
         <div class="tb-presets">
           <button
@@ -177,23 +201,6 @@ watch([currentTheme, selectedPreset, baseColor, isDark], saveState, { deep: true
                 class="tb-preset-dot" :style="{ background: c }" />
             </span>
           </button>
-        </div>
-      </section>
-
-      <!-- Generate from Color -->
-      <section class="tb-section">
-        <h3>Generate from Color</h3>
-        <div class="tb-gen-row">
-          <input type="color" v-model="baseColor" class="tb-color-input" />
-          <span class="tb-hex">{{ baseColor }}</span>
-          <label class="tb-toggle">
-            <input type="checkbox" v-model="isDark" />
-            <span>{{ isDark ? 'Dark' : 'Light' }}</span>
-          </label>
-        </div>
-        <div class="tb-gen-actions">
-          <button class="tb-btn" @click="generateFromColor">Generate</button>
-          <button class="tb-btn tb-btn-alt" @click="randomColor">Random</button>
         </div>
       </section>
 
@@ -322,6 +329,11 @@ watch([currentTheme, selectedPreset, baseColor, isDark], saveState, { deep: true
 .tb-section h3 { margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #cdd6f4; text-transform: uppercase; letter-spacing: 0.5px; }
 .tb-section h4 { margin: 8px 0 4px; font-size: 12px; color: #a6adc8; text-transform: uppercase; letter-spacing: 0.5px; }
 
+/* ── Mode toggle ─────────────────────────────────────────────────── */
+.tb-mode-toggle { display: flex; background: #313244; border-radius: 6px; overflow: hidden; }
+.tb-mode-toggle button { flex: 1; padding: 6px 16px; border: none; background: transparent; color: #6c7086; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.tb-mode-toggle button.active { background: #89b4fa; color: #1e1e2e; }
+
 /* ── Search ───────────────────────────────────────────────────────── */
 .tb-search { width: 100%; padding: 6px 10px; background: #313244; border: 1px solid #45475a; border-radius: 6px; color: #cdd6f4; font-size: 13px; outline: none; box-sizing: border-box; }
 .tb-search:focus { border-color: #89b4fa; }
@@ -340,8 +352,6 @@ watch([currentTheme, selectedPreset, baseColor, isDark], saveState, { deep: true
 .tb-gen-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .tb-color-input { width: 40px; height: 32px; padding: 0; border: 1px solid #45475a; border-radius: 6px; cursor: pointer; background: transparent; }
 .tb-hex { font-family: monospace; font-size: 13px; color: #a6adc8; }
-.tb-toggle { display: flex; align-items: center; gap: 4px; margin-left: auto; font-size: 13px; color: #bac2de; cursor: pointer; }
-.tb-toggle input { accent-color: #89b4fa; }
 .tb-gen-actions { display: flex; gap: 8px; }
 .tb-btn { padding: 6px 16px; background: #89b4fa; color: #1e1e2e; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .tb-btn:hover { opacity: 0.9; }

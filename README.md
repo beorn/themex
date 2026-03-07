@@ -1,8 +1,6 @@
 # Swatch
 
-Easily theme any app with modern design tokens. Easily create themes from just a few colors.
-
-Give it **one hex color**, choose from **43 built-in palettes** like Catppuccin or Nord, use your system theme, or fully custom values — swatch derives **33 semantic tokens** like `$primary`, `$error`, and `$surface` with guaranteed contrast and dark/light mode support. Terminal, web, native. Zero dependencies.
+Generate complete color themes from minimal input. Give it **one hex color** or choose from **43 built-in palettes** — swatch derives **33 semantic tokens** with guaranteed contrast and automatic dark/light adaptation. Detects the environment (terminal palette via OSC, `prefers-color-scheme` on web) so themes match what the user already chose. Terminal, web, native. Zero dependencies.
 
 <p align="center"><img src="./docs/swatch-overview.svg" alt="Swatch theme tokens derived from Catppuccin Mocha" width="680"></p>
 <p align="center"><em>Catppuccin Mocha — 22 palette colors derive 33 semantic tokens</em></p>
@@ -86,6 +84,20 @@ npx swatch generate "#4caf50" --light    # generate a theme from one color
 npx swatch import base16-scheme.yaml     # import a Base16 scheme
 ```
 
+## Auto-Detection
+
+swatch detects the user's color scheme and adapts automatically:
+
+- **Terminal** — reads the actual palette via OSC 4/10/11 (Ghostty, Kitty, WezTerm, iTerm2, Alacritty)
+- **Web** — `prefers-color-scheme` to pick dark or light presets at runtime
+
+```typescript
+import { detectTheme } from "swatch"
+
+// Terminal: auto-detect palette → full theme
+const theme = await detectTheme()
+```
+
 ## API
 
 ```typescript
@@ -116,12 +128,13 @@ See the [full token reference](https://beorn.codes/swatch/reference/semantic-tok
 
 Popular themes including **Catppuccin** (all 4 flavors), **Nord**, **Dracula**, **Solarized**, **Tokyo Night**, **Gruvbox**, **Rose Pine**, **Kanagawa**, and many more. Import any of the **600+ Base16 community schemes** too.
 
-[Browse the theme gallery](https://beorn.codes/swatch/gallery/) to preview all palettes.
+[Browse the theme gallery](https://beorn.codes/swatch/themes) to preview all palettes.
 
 ## Documentation
 
 - **[Getting Started](https://beorn.codes/swatch/guide/getting-started)** — tutorial with examples
-- **[Theme Gallery](https://beorn.codes/swatch/gallery/)** — preview all 43 built-in themes
+- **[Theme Gallery](https://beorn.codes/swatch/themes)** — preview all 43 built-in themes
+- **[Theme Builder](https://beorn.codes/swatch/themes)** — browse, customize, and export themes interactively
 - [Creating Themes](https://beorn.codes/swatch/guide/creating-themes) — builder API, custom palettes
 - [Web Usage](https://beorn.codes/swatch/guide/web-usage) — CSS variables, React integration
 - [Design Philosophy](https://beorn.codes/swatch/guide/design-philosophy) — why two layers, why 22 colors

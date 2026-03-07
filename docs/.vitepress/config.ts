@@ -10,14 +10,14 @@ export default defineConfig({
     nav: [
       { text: "Guide", link: "/guide/getting-started" },
       { text: "Reference", link: "/reference/color-palette" },
-      { text: "Gallery", link: "/gallery/" },
-      { text: "Theme Builder", link: "/builder" },
+      { text: "Themes", link: "/themes" },
     ],
 
     sidebar: [
       {
         text: "Guide",
         items: [
+          { text: "Theme Builder", link: "/themes" },
           { text: "Getting Started", link: "/guide/getting-started" },
           { text: "Creating Themes", link: "/guide/creating-themes" },
           { text: "Importing Themes", link: "/guide/importing-themes" },
@@ -36,14 +36,6 @@ export default defineConfig({
           { text: "Builder API", link: "/reference/builder-api" },
           { text: "CLI", link: "/reference/cli" },
         ],
-      },
-      {
-        text: "Gallery",
-        items: [{ text: "Theme Gallery", link: "/gallery/" }],
-      },
-      {
-        text: "Playground",
-        items: [{ text: "Theme Builder", link: "/builder" }],
       },
       {
         text: "Contributing",

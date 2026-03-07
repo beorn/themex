@@ -106,4 +106,4 @@ See the [CLI Reference](/reference/cli) for all commands.
 
 - [Creating Themes](/guide/creating-themes) -- Define custom palettes and use the builder API
 - [Semantic Tokens](/reference/semantic-tokens) -- Understand all 33 tokens and when to use each
-- [Theme Gallery](/gallery/) -- Browse all 43 built-in themes with color swatches
+- [Themes](/themes) -- Browse, customize, and export all 43 built-in themes
