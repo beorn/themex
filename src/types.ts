@@ -1,5 +1,5 @@
 /**
- * Core type definitions for the themex theme system.
+ * Core type definitions for the swatch theme system.
  *
  * Two-layer architecture:
  *   Layer 1: ColorPalette — 22 terminal colors (what palette generators produce)

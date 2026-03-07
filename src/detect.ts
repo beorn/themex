@@ -22,7 +22,7 @@ import { catppuccinLatte } from "./palettes/catppuccin.js"
 // standalone consumers that don't have hightea installed.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _hightea: any = null
-async function getInkx() {
+async function getHightea() {
   if (!_hightea) {
     try {
       const mod = "@hightea/term"
@@ -115,7 +115,7 @@ export async function detectTerminalPalette(timeoutMs = 150): Promise<DetectedPa
         stdin.on("data", check)
       })
 
-    const hightea = await getInkx()
+    const hightea = await getHightea()
 
     // Query bg and fg first
     const bg = await hightea.queryBackgroundColor(write, read, timeoutMs)

@@ -1,6 +1,6 @@
 # Color Utilities
 
-Low-level color manipulation functions exported from themex. All functions operate on `#RRGGBB` hex strings.
+Low-level color manipulation functions exported from swatch. All functions operate on `#RRGGBB` hex strings.
 
 ## Functions
 
@@ -9,7 +9,7 @@ Low-level color manipulation functions exported from themex. All functions opera
 Blend two hex colors. `t=0` returns `a`, `t=1` returns `b`.
 
 ```typescript
-import { blend } from "themex"
+import { blend } from "swatch"
 
 blend("#000000", "#FFFFFF", 0.5) // -> "#808080"
 blend("#FF0000", "#0000FF", 0.3) // -> "#B30049" (30% toward blue)
@@ -29,7 +29,7 @@ function blend(a: string, b: string, t: number): string
 Brighten a hex color by blending toward white. `amount=0.1` adds 10% lightness.
 
 ```typescript
-import { brighten } from "themex"
+import { brighten } from "swatch"
 
 brighten("#2E3440", 0.1) // -> "#3F4452" (slightly brighter)
 brighten("#2E3440", 0.5) // -> "#979AA0" (50% toward white)
@@ -49,7 +49,7 @@ function brighten(color: string, amount: number): string
 Darken a hex color by blending toward black. `amount=0.1` adds 10% darkness.
 
 ```typescript
-import { darken } from "themex"
+import { darken } from "swatch"
 
 darken("#ECEFF4", 0.1) // -> "#D4D7DC" (slightly darker)
 darken("#ECEFF4", 0.5) // -> "#76787A" (50% toward black)
@@ -69,7 +69,7 @@ function darken(color: string, amount: number): string
 Pick black or white text for readability on the given background. Uses relative luminance per WCAG 2.0.
 
 ```typescript
-import { contrastFg } from "themex"
+import { contrastFg } from "swatch"
 
 contrastFg("#2E3440") // -> "#FFFFFF" (white text on dark bg)
 contrastFg("#ECEFF4") // -> "#000000" (black text on light bg)
@@ -87,7 +87,7 @@ function contrastFg(bg: string): "#000000" | "#FFFFFF"
 Parse a hex color string to an `[r, g, b]` tuple (0-255). Returns `null` for non-hex input.
 
 ```typescript
-import { hexToRgb } from "themex"
+import { hexToRgb } from "swatch"
 
 hexToRgb("#2E3440") // -> [46, 52, 64]
 hexToRgb("#FF0000") // -> [255, 0, 0]
@@ -105,7 +105,7 @@ function hexToRgb(hex: string): [number, number, number] | null
 Convert `[r, g, b]` values (0-255) to a hex string. Values are clamped and rounded.
 
 ```typescript
-import { rgbToHex } from "themex"
+import { rgbToHex } from "swatch"
 
 rgbToHex(46, 52, 64) // -> "#2E3440"
 rgbToHex(255, 0, 0) // -> "#FF0000"

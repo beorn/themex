@@ -1,13 +1,13 @@
 # CLI Reference
 
-themex includes a command-line tool for exploring, generating, and converting themes.
+swatch includes a command-line tool for exploring, generating, and converting themes.
 
 ## Installation
 
-The CLI is available as `themex` when installed globally, or via `bunx`/`npx`:
+The CLI is available as `swatch` when installed globally, or via `bunx`/`npx`:
 
 ```bash
-bunx themex <command>
+bunx swatch <command>
 ```
 
 ## Commands
@@ -17,7 +17,7 @@ bunx themex <command>
 List all 45 built-in themes with accent color swatches.
 
 ```bash
-bunx themex list
+bunx swatch list
 ```
 
 Aliases: `ls`
@@ -29,9 +29,9 @@ Output groups themes by family (catppuccin, nord, dracula, etc.) and shows dark/
 Show detailed information about a theme including surface ramp, accent hues, derived semantic tokens, and the 16-color palette.
 
 ```bash
-bunx themex show catppuccin-mocha
-bunx themex show nord
-bunx themex show tokyo-night
+bunx swatch show catppuccin-mocha
+bunx swatch show nord
+bunx swatch show tokyo-night
 ```
 
 Aliases: `info`
@@ -39,7 +39,7 @@ Aliases: `info`
 You can also pass a theme name directly without the `show` command:
 
 ```bash
-bunx themex catppuccin-mocha
+bunx swatch catppuccin-mocha
 ```
 
 ### `generate <primary>`
@@ -47,9 +47,9 @@ bunx themex catppuccin-mocha
 Generate an ANSI 16 theme from a primary color.
 
 ```bash
-bunx themex generate yellow
-bunx themex generate cyan --light
-bunx themex generate blue
+bunx swatch generate yellow
+bunx swatch generate cyan --light
+bunx swatch generate blue
 ```
 
 Aliases: `gen`
@@ -63,7 +63,7 @@ Options:
 You can also pass a hex color to generate a truecolor theme via the builder:
 
 ```bash
-bunx themex generate "#EBCB8B"
+bunx swatch generate "#EBCB8B"
 ```
 
 ### `import <file>`
@@ -71,8 +71,8 @@ bunx themex generate "#EBCB8B"
 Import a Base16 YAML file and display the resulting ThemePalette as JSON.
 
 ```bash
-bunx themex import ocean.yaml
-bunx themex import ~/themes/custom.yaml
+bunx swatch import ocean.yaml
+bunx swatch import ~/themes/custom.yaml
 ```
 
 ### `export <name>`
@@ -80,8 +80,8 @@ bunx themex import ~/themes/custom.yaml
 Export a built-in palette as Base16 YAML.
 
 ```bash
-bunx themex export catppuccin-mocha
-bunx themex export nord > nord-base16.yaml
+bunx swatch export catppuccin-mocha
+bunx swatch export nord > nord-base16.yaml
 ```
 
 ### `validate <name>`
@@ -89,8 +89,8 @@ bunx themex export nord > nord-base16.yaml
 Validate a built-in palette, checking for missing fields and low-contrast warnings.
 
 ```bash
-bunx themex validate catppuccin-mocha
-bunx themex validate nord
+bunx swatch validate catppuccin-mocha
+bunx swatch validate nord
 ```
 
 ### `help`
@@ -98,9 +98,9 @@ bunx themex validate nord
 Show usage information.
 
 ```bash
-bunx themex help
-bunx themex --help
-bunx themex -h
+bunx swatch help
+bunx swatch --help
+bunx swatch -h
 ```
 
 ## Available Theme Names

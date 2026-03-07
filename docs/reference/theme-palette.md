@@ -1,6 +1,6 @@
 # ThemePalette
 
-The `ThemePalette` interface defines the 14 raw colors that theme authors provide. It is the universal input format for all theme creation in themex.
+The `ThemePalette` interface defines the 14 raw colors that theme authors provide. It is the universal input format for all theme creation in swatch.
 
 ## Architecture: Three Layers
 
@@ -128,8 +128,8 @@ Primary color options for `generateTheme()`, which creates ANSI 16 themes using 
 ## Usage
 
 ```typescript
-import { deriveTheme } from "themex"
-import type { ThemePalette } from "themex"
+import { deriveTheme } from "swatch"
+import type { ThemePalette } from "swatch"
 
 const palette: ThemePalette = {
   name: "my-custom-theme",
@@ -155,7 +155,7 @@ const theme = deriveTheme(palette)
 
 ## How Popular Themes Map to ThemePalette
 
-Every major theme can be expressed as a ThemePalette. Here is how their raw color values map to themex's 14 fields:
+Every major theme can be expressed as a ThemePalette. Here is how their raw color values map to swatch's 14 fields:
 
 ### Surface Ramp
 
@@ -179,14 +179,14 @@ Dracula             #FF5555  #FFB86C  #F1FA8C  #50FA7B  #8BE9FD  #BD93F9  #BD93F
 Solarized           #DC322F  #CB4B16  #B58900  #859900  #2AA198  #268BD2  #6C71C4  #D33682
 ```
 
-This demonstrates that themex's 14-field structure is universal -- every theme's color values can be mapped directly, preserving the theme author's hand-tuned choices.
+This demonstrates that swatch's 14-field structure is universal -- every theme's color values can be mapped directly, preserving the theme author's hand-tuned choices.
 
 ## Validation
 
 Use `validatePalette()` to check a palette before deriving:
 
 ```typescript
-import { validatePalette } from "themex"
+import { validatePalette } from "swatch"
 
 const result = validatePalette(palette)
 // { valid: boolean, errors: string[], warnings: string[] }

@@ -1,4 +1,4 @@
-# themex - Universal Color Themes
+# swatch - Universal Color Themes
 
 Universal color themes for any platform — terminal, web, native. Zero dependencies.
 
@@ -14,7 +14,7 @@ All inputs → ColorPalette → `deriveTheme()` → Theme. No shortcuts.
 ## Quick Start
 
 ```typescript
-import { createTheme, presetTheme, resolveThemeColor, fromColors } from "themex"
+import { createTheme, presetTheme, resolveThemeColor, fromColors } from "swatch"
 
 // From a preset
 const theme = presetTheme("catppuccin-mocha")
@@ -27,7 +27,7 @@ const palette = fromColors({ background: "#2E3440", primary: "#EBCB8B" })
 const theme = deriveTheme(palette)
 
 // Import from Base16
-import { importBase16 } from "themex"
+import { importBase16 } from "swatch"
 const palette = importBase16(yamlString)
 ```
 
@@ -104,7 +104,7 @@ src/
 ### Validation
 
 ```typescript
-import { validateTheme, THEME_TOKEN_KEYS } from "themex"
+import { validateTheme, THEME_TOKEN_KEYS } from "swatch"
 
 const result = validateTheme(myTheme)
 // { valid: boolean, missing: string[], extra: string[] }
@@ -113,7 +113,7 @@ const result = validateTheme(myTheme)
 ### WCAG Contrast Checking
 
 ```typescript
-import { checkContrast } from "themex"
+import { checkContrast } from "swatch"
 
 const result = checkContrast("#ffffff", "#000000")
 // { ratio: 21, aa: true, aaa: true }
@@ -122,7 +122,7 @@ const result = checkContrast("#ffffff", "#000000")
 ### Token Aliasing
 
 ```typescript
-import { resolveAliases } from "themex"
+import { resolveAliases } from "swatch"
 
 // Values starting with $ reference other tokens
 const resolved = resolveAliases({
@@ -135,7 +135,7 @@ const resolved = resolveAliases({
 ### CSS Variable Export
 
 ```typescript
-import { themeToCSSVars } from "themex"
+import { themeToCSSVars } from "swatch"
 
 const css = themeToCSSVars(theme)
 // "--bg: #1e1e2e;\n--fg: #cdd6f4;\n..."
@@ -144,7 +144,7 @@ const css = themeToCSSVars(theme)
 ### Auto-Generate Theme from Primary Color
 
 ```typescript
-import { autoGenerateTheme } from "themex"
+import { autoGenerateTheme } from "swatch"
 
 const theme = autoGenerateTheme("#A3BE8C", "dark")
 // Generates a full theme with all 33 tokens derived from the primary color

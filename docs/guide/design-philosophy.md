@@ -2,7 +2,7 @@
 
 ## Why 14 Colors?
 
-Most theme systems either have too few colors (forcing derivation of everything) or too many (making theme authoring tedious). themex's ThemePalette sits at a sweet spot: **14 colors** that capture the essence of any theme.
+Most theme systems either have too few colors (forcing derivation of everything) or too many (making theme authoring tedious). swatch's ThemePalette sits at a sweet spot: **14 colors** that capture the essence of any theme.
 
 ### The Surface Ramp (6 colors)
 
@@ -60,11 +60,11 @@ This means theme authors never need to think about selection contrast ratios or 
 
 Some theme systems generate everything from a single hue. This produces technically harmonious but visually bland themes. Real themes like Nord, Catppuccin, and Dracula have carefully hand-picked accent colors that don't follow simple hue rotations.
 
-themex respects this: the palette stores **actual colors** from the theme author. The builder API can generate colors via hue rotation when you want convenience, but built-in themes use hand-tuned values from their original sources.
+swatch respects this: the palette stores **actual colors** from the theme author. The builder API can generate colors via hue rotation when you want convenience, but built-in themes use hand-tuned values from their original sources.
 
 ## Why Built-in Themes?
 
-Rather than depending on an external theme registry, themex ships 45 palettes from 15 theme families. Benefits:
+Rather than depending on an external theme registry, swatch ships 45 palettes from 15 theme families. Benefits:
 
 - Zero network requests
 - Guaranteed to work (validated at build time)
@@ -75,7 +75,7 @@ For themes not included, use `importBase16()` to bring in any Base16 scheme, or 
 
 ## ANSI 16 vs Truecolor
 
-themex supports two rendering modes:
+swatch supports two rendering modes:
 
 - **Truecolor themes** use hex colors (`#2E3440`) and work in terminals and UIs that support 24-bit color
 - **ANSI 16 themes** use color names (`"yellow"`, `"blueBright"`) and work in every terminal
@@ -97,7 +97,7 @@ Backward-compatible aliases (`$accent` -> `$primary`, `$muted` -> `$text2`, etc.
 
 ## Design Influences
 
-Research on existing theme systems informed themex's architecture. We studied TUI frameworks (Textual, BubbleTea/Lipgloss, Ratatui), desktop/web design systems (Apple HIG, M3), terminal theme ecosystems (Catppuccin, Base16, Omarchy), and TUI tools with strong theming (oh-my-pi, oh-my-posh, Zed). This section documents what we studied, what we adopted, and what we rejected.
+Research on existing theme systems informed swatch's architecture. We studied TUI frameworks (Textual, BubbleTea/Lipgloss, Ratatui), desktop/web design systems (Apple HIG, M3), terminal theme ecosystems (Catppuccin, Base16, Omarchy), and TUI tools with strong theming (oh-my-pi, oh-my-posh, Zed). This section documents what we studied, what we adopted, and what we rejected.
 
 ### Systems Compared
 
@@ -168,7 +168,7 @@ How existing theme systems structure their palettes:
 | **Solarized**   | 8 (symmetric base03--base3)                          | 8 (YORGMVBC)              | 0 (informal)              | 16    | No (equals)         |
 | **Tokyo Night** | ~15 (7 bg + 5 fg + neutrals)                         | ~16 (7 blues + 9 others)  | 4 (error/warn/info/hint)  | ~55   | Yes (blue)          |
 | **One Dark**    | 5 (bg + 3 mono + accent)                             | 8 (hue-1 through hue-6-2) | 0 (informal)              | ~13   | Yes (syntax-accent) |
-| **themex**      | 6 (crust/base/surface/overlay/subtext/text)          | 8 (R/O/Y/G/T/B/Pu/Pk)     | 3 (error/warning/success) | 14    | Yes (user-chosen)   |
+| **swatch**      | 6 (crust/base/surface/overlay/subtext/text)          | 8 (R/O/Y/G/T/B/Pu/Pk)     | 3 (error/warning/success) | 14    | Yes (user-chosen)   |
 
 ## Key Insights
 
@@ -185,9 +185,9 @@ Eight observations that emerged from studying every major theme system:
 
 ## M3 Mapping Summary
 
-How themex tokens relate to Material Design 3 color roles:
+How swatch tokens relate to Material Design 3 color roles:
 
-| M3 Role    | themex Token               | Notes                                                                     |
+| M3 Role    | swatch Token               | Notes                                                                     |
 | ---------- | -------------------------- | ------------------------------------------------------------------------- |
 | Primary    | `$primary`                 | Same concept -- the brand accent                                          |
 | On Primary | `$selectedfg`              | Text on primary-colored backgrounds                                       |

@@ -1,6 +1,6 @@
 # Adding Themes
 
-This guide walks through adding a new built-in theme to themex.
+This guide walks through adding a new built-in theme to swatch.
 
 ## Step 1: Create the Palette File
 
@@ -73,7 +73,7 @@ When porting an existing theme, find the canonical color values from the theme's
 - **Dracula**: https://draculatheme.com/contribute -- `dracula.yml`
 - **Base16 schemes**: https://github.com/tinted-theming/schemes -- YAML files
 
-Map the theme's colors to themex's 14 fields. If the theme has more than 6 neutral stops, pick the 6 most representative. If it has fewer than 8 accent hues, reuse the closest available hue (e.g., Nord uses the same color for `purple` and `pink`).
+Map the theme's colors to swatch's 14 fields. If the theme has more than 6 neutral stops, pick the 6 most representative. If it has fewer than 8 accent hues, reuse the closest available hue (e.g., Nord uses the same color for `purple` and `pink`).
 
 ## Step 2: Register in the Palette Index
 
@@ -109,7 +109,7 @@ The registry key must match the palette's `name` field exactly.
 ### Run Validation
 
 ```typescript
-import { validatePalette } from "themex"
+import { validatePalette } from "swatch"
 import { myThemeDark } from "./src/palettes/my-theme.js"
 
 const result = validatePalette(myThemeDark)
@@ -126,7 +126,7 @@ The validator checks:
 ### Derive and Inspect
 
 ```typescript
-import { deriveTheme } from "themex"
+import { deriveTheme } from "swatch"
 import { myThemeDark } from "./src/palettes/my-theme.js"
 
 const theme = deriveTheme(myThemeDark)
@@ -151,13 +151,13 @@ The existing tests include validation of all registered palettes. Adding your pa
 Use the CLI to preview your theme:
 
 ```bash
-bunx themex show my-theme-dark
+bunx swatch show my-theme-dark
 ```
 
 Or use the interactive viewer:
 
 ```bash
-bunx themex view
+bunx swatch view
 ```
 
 ## Step 4: Base16 Round-Trip (Optional)
@@ -165,7 +165,7 @@ bunx themex view
 If your theme originated from a Base16 scheme, verify round-trip fidelity:
 
 ```typescript
-import { importBase16, exportBase16, deriveTheme } from "themex"
+import { importBase16, exportBase16, deriveTheme } from "swatch"
 
 // Import from Base16
 const palette = importBase16(yamlString)

@@ -2,12 +2,12 @@
 
 ## Base16 Format
 
-[Base16](https://github.com/chriskempson/base16) is a theme specification with 600+ community-created color schemes. themex can import and export Base16 YAML, giving you access to the entire Base16 ecosystem.
+[Base16](https://github.com/chriskempson/base16) is a theme specification with 600+ community-created color schemes. swatch can import and export Base16 YAML, giving you access to the entire Base16 ecosystem.
 
 ## Importing Base16 Schemes
 
 ```typescript
-import { importBase16, deriveTheme } from "themex"
+import { importBase16, deriveTheme } from "swatch"
 
 const yaml = `
 scheme: "Ocean"
@@ -60,14 +60,14 @@ The `crust` field (not present in Base16) is derived by darkening `base00` for d
 ### Import from File (CLI)
 
 ```bash
-bunx themex import scheme.yaml
+bunx swatch import scheme.yaml
 ```
 
 ## Exporting to Base16
 
 ```typescript
-import { exportBase16 } from "themex"
-import { catppuccinMocha } from "themex"
+import { exportBase16 } from "swatch"
+import { catppuccinMocha } from "swatch"
 
 const yaml = exportBase16(catppuccinMocha)
 console.log(yaml)
@@ -109,7 +109,7 @@ ThemePalette has 14 colors but Base16 has 16. The three extra Base16 slots are i
 ### Export from CLI
 
 ```bash
-bunx themex export catppuccin-mocha > catppuccin-mocha.yaml
+bunx swatch export catppuccin-mocha > catppuccin-mocha.yaml
 ```
 
 ## Round-Trip Fidelity
@@ -117,7 +117,7 @@ bunx themex export catppuccin-mocha > catppuccin-mocha.yaml
 Import and export preserve the 13 directly-mapped fields exactly. Only `crust` (derived on import) and base04/base06/base07 (interpolated on export) may differ from the original Base16 scheme.
 
 ```typescript
-import { importBase16, exportBase16 } from "themex"
+import { importBase16, exportBase16 } from "swatch"
 
 const palette = importBase16(originalYaml)
 const roundTripped = exportBase16(palette)

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * themex view — Interactive fullscreen theme browser + generator.
+ * swatch view — Interactive fullscreen theme browser + generator.
  *
  * Layout:
  *   Top:    themes list | 22 palette colors | 33 design tokens

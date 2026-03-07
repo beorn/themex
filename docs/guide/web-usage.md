@@ -1,14 +1,14 @@
 # Web Usage
 
-themex themes are platform-agnostic. While the built-in `resolveThemeColor()` function is designed for terminal rendering, the same `ThemePalette` + `deriveTheme()` pipeline produces a `Theme` object that maps naturally to CSS custom properties, React context, or any web framework.
+swatch themes are platform-agnostic. While the built-in `resolveThemeColor()` function is designed for terminal rendering, the same `ThemePalette` + `deriveTheme()` pipeline produces a `Theme` object that maps naturally to CSS custom properties, React context, or any web framework.
 
 ## CSS Custom Properties
 
 Convert a Theme to CSS custom properties for use in any web project:
 
 ```typescript
-import { presetTheme } from "themex"
-import type { Theme } from "themex"
+import { presetTheme } from "swatch"
+import type { Theme } from "swatch"
 
 function themeToCssVars(theme: Theme): Record<string, string> {
   return {
@@ -86,8 +86,8 @@ Wrap your app in a theme provider that makes the Theme object available via cont
 
 ```tsx
 import { createContext, useContext, useMemo, useState } from "react"
-import { presetTheme, deriveTheme } from "themex"
-import type { Theme, ThemePalette } from "themex"
+import { presetTheme, deriveTheme } from "swatch"
+import type { Theme, ThemePalette } from "swatch"
 
 // ── Context ────────────────────────────────────────────────────
 
@@ -152,7 +152,7 @@ Combine the provider with state for runtime theme switching:
 
 ```tsx
 import { useState } from "react"
-import { presetTheme } from "themex"
+import { presetTheme } from "swatch"
 
 const themeNames = ["catppuccin-mocha", "nord", "dracula", "catppuccin-latte", "solarized-light"] as const
 

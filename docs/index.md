@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: themex
+  name: swatch
   text: Universal Color Themes
   tagline: 45 built-in themes for any platform — terminal, web, native. Zero dependencies.
   actions:

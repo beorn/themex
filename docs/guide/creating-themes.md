@@ -2,7 +2,7 @@
 
 ## The Two-Layer System
 
-themex uses a two-layer architecture:
+swatch uses a two-layer architecture:
 
 1. **ThemePalette** (Layer 1) -- 14 raw colors that you define
 2. **Theme** (Layer 2) -- 19 semantic tokens derived via `deriveTheme()`
@@ -44,8 +44,8 @@ Standard hue names used across all theme systems:
 ### Full Example
 
 ```typescript
-import type { ThemePalette } from "themex"
-import { deriveTheme } from "themex"
+import type { ThemePalette } from "swatch"
+import { deriveTheme } from "swatch"
 
 const myPalette: ThemePalette = {
   name: "my-theme",
@@ -80,7 +80,7 @@ The builder lets you create themes from minimal input. It fills in missing value
 ### From Just a Background Color
 
 ```typescript
-import { createTheme } from "themex"
+import { createTheme } from "swatch"
 
 const theme = createTheme().bg("#2E3440").build()
 ```
@@ -147,7 +147,7 @@ The accent choice also affects selection colors. Warm accents (red, orange, yell
 Check that a palette has all required fields and reasonable contrast:
 
 ```typescript
-import { validatePalette } from "themex"
+import { validatePalette } from "swatch"
 
 const result = validatePalette(myPalette)
 
@@ -167,10 +167,10 @@ The validator checks:
 
 ## Global Theme State
 
-For render pipelines where React context is not accessible, themex provides optional global state:
+For render pipelines where React context is not accessible, swatch provides optional global state:
 
 ```typescript
-import { setActiveTheme, getActiveTheme } from "themex"
+import { setActiveTheme, getActiveTheme } from "swatch"
 
 // Set during render setup
 setActiveTheme(theme)
@@ -182,7 +182,7 @@ const current = getActiveTheme()
 For per-subtree overrides (like CSS custom properties cascading):
 
 ```typescript
-import { pushContextTheme, popContextTheme } from "themex"
+import { pushContextTheme, popContextTheme } from "swatch"
 
 pushContextTheme(dialogTheme) // children see dialogTheme
 // ... render children ...

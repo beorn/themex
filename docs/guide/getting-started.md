@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [bun]
-bun add themex
+bun add swatch
 ```
 
 ```bash [npm]
-npm install themex
+npm install swatch
 ```
 
 ```bash [pnpm]
-pnpm add themex
+pnpm add swatch
 ```
 
 :::
@@ -23,7 +23,7 @@ pnpm add themex
 ### Use a Built-in Theme
 
 ```typescript
-import { presetTheme, resolveThemeColor } from "themex"
+import { presetTheme, resolveThemeColor } from "swatch"
 
 const theme = presetTheme("catppuccin-mocha")
 
@@ -36,7 +36,7 @@ const error = resolveThemeColor("$error", theme) // "#F38BA8"
 ### Create a Theme from Scratch
 
 ```typescript
-import { createTheme } from "themex"
+import { createTheme } from "swatch"
 
 // Just a background color — everything else is derived
 const theme = createTheme().bg("#2E3440").build()
@@ -51,7 +51,7 @@ const theme3 = createTheme().bg("#2E3440").fg("#ECEFF4").primary("#EBCB8B").dark
 ### One-liner Shortcuts
 
 ```typescript
-import { quickTheme, presetTheme } from "themex"
+import { quickTheme, presetTheme } from "swatch"
 
 // From a hex color
 const theme = quickTheme("#EBCB8B", "dark")
@@ -68,7 +68,7 @@ const theme3 = presetTheme("nord")
 The `Theme` object contains 19 semantic tokens that your UI components reference with a `$` prefix:
 
 ```typescript
-import { resolveThemeColor } from "themex"
+import { resolveThemeColor } from "swatch"
 
 function applyTheme(theme: Theme) {
   const bg = resolveThemeColor("$bg", theme)
@@ -91,13 +91,13 @@ resolveThemeColor("red", theme) // passed through as-is
 
 ## CLI
 
-themex includes a CLI for exploring themes:
+swatch includes a CLI for exploring themes:
 
 ```bash
-bunx themex list                    # List all 45 built-in themes
-bunx themex show catppuccin-mocha   # Show theme details with swatches
-bunx themex generate yellow         # Generate ANSI 16 theme
-bunx themex export nord             # Export as Base16 YAML
+bunx swatch list                    # List all 45 built-in themes
+bunx swatch show catppuccin-mocha   # Show theme details with swatches
+bunx swatch generate yellow         # Generate ANSI 16 theme
+bunx swatch export nord             # Export as Base16 YAML
 ```
 
 See the [CLI Reference](/reference/cli) for all commands.

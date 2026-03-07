@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * themex CLI -- Theme exploration and generation tool.
+ * swatch CLI -- Theme exploration and generation tool.
  *
  * Usage:
  *   bun cli                          # Show help
@@ -114,7 +114,7 @@ function boxHeader(title: string, width: number): string {
 function listThemes() {
   const names = Object.keys(builtinPalettes)
   console.log()
-  console.log(bold("  themex") + dim(` -- ${names.length} built-in palettes`))
+  console.log(bold("  swatch") + dim(` -- ${names.length} built-in palettes`))
   console.log()
 
   const families = new Map<string, string[]>()

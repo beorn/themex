@@ -1,6 +1,6 @@
 # Derivation Rules
 
-themex derives all 19 semantic tokens + a 16-color content palette from a ThemePalette (14 colors). This page documents the exact algorithms used by `deriveTheme()` and `generateTheme()`.
+swatch derives all 19 semantic tokens + a 16-color content palette from a ThemePalette (14 colors). This page documents the exact algorithms used by `deriveTheme()` and `generateTheme()`.
 
 ## Truecolor Derivation (`deriveTheme()`)
 
@@ -110,7 +110,7 @@ This is used for text hierarchy (text3, text4) and control muting. For non-hex i
 Given the Nord palette:
 
 ```typescript
-import { deriveTheme } from "themex"
+import { deriveTheme } from "swatch"
 
 const nord: ThemePalette = {
   name: "nord",

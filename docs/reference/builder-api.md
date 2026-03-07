@@ -7,7 +7,7 @@ The builder API lets you create themes from minimal input. Missing values are ge
 Returns a chainable `ThemeBuilder` that accumulates configuration and produces a `Theme` via `.build()`.
 
 ```typescript
-import { createTheme } from "themex"
+import { createTheme } from "swatch"
 
 const theme = createTheme().bg("#2E3440").primary("#EBCB8B").build()
 ```
@@ -91,7 +91,7 @@ const theme = createTheme().bg("#3A3A3A").light().build()
 ### Full Palette
 
 ```typescript
-import type { ThemePalette } from "themex"
+import type { ThemePalette } from "swatch"
 
 const myPalette: ThemePalette = {
   name: "custom",
@@ -122,7 +122,7 @@ const theme = createTheme().palette(myPalette).build()
 One-liner theme creation from a primary color.
 
 ```typescript
-import { quickTheme } from "themex"
+import { quickTheme } from "swatch"
 
 // From hex
 const theme = quickTheme("#EBCB8B", "dark")
@@ -145,7 +145,7 @@ function quickTheme(primaryOrHex: string, mode?: "dark" | "light"): Theme
 One-liner theme creation from a built-in preset.
 
 ```typescript
-import { presetTheme } from "themex"
+import { presetTheme } from "swatch"
 
 const theme = presetTheme("catppuccin-mocha")
 const theme2 = presetTheme("nord")
@@ -165,7 +165,7 @@ function presetTheme(name: string): Theme
 Generate an ANSI 16 theme from a primary color name. These themes use ANSI color names (not hex values) and work in any terminal.
 
 ```typescript
-import { generateTheme } from "themex"
+import { generateTheme } from "swatch"
 
 const theme = generateTheme("yellow", true) // dark theme, yellow primary
 const theme2 = generateTheme("cyan", false) // light theme, cyan primary

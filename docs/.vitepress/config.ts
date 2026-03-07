@@ -3,8 +3,8 @@ import { defineConfig } from "vitepress"
 export default defineConfig({
   title: "swatch",
   description: "Universal color themes for any platform — terminal, web, native",
-  base: "/themex/",
-  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/themex/favicon.svg" }]],
+  base: "/swatch/",
+  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/swatch/favicon.svg" }]],
 
   themeConfig: {
     nav: [

@@ -10,7 +10,7 @@ All 45 built-in themes organized by family. Each theme shows its surface ramp an
 Use `presetTheme("name")` to load any of these in code:
 
 ```typescript
-import { presetTheme } from "themex"
+import { presetTheme } from "swatch"
 const theme = presetTheme("catppuccin-mocha")
 ```
 

@@ -1,5 +1,5 @@
 /**
- * themex — Universal color themes for any platform.
+ * swatch — Universal color themes for any platform.
  *
  * Two-layer architecture:
  *   Layer 1: ColorPalette (22 terminal colors — universal pivot format)

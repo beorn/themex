@@ -19,14 +19,14 @@ for (let row = 0; row < 42; row++) {
   const region = term.row(row)
   lines.push(region.text.trimEnd())
 }
-writeFileSync("/tmp/themex-text.txt", lines.join("\n"))
+writeFileSync("/tmp/swatch-text.txt", lines.join("\n"))
 
 // Also save SVG with explicit size
 const svg = term.screenshotSvg()
-writeFileSync("/tmp/themex-view.svg", svg)
+writeFileSync("/tmp/swatch-view.svg", svg)
 const { execSync } = await import("node:child_process")
 try {
-  execSync("rsvg-convert -w 1680 /tmp/themex-view.svg -o /tmp/themex-view.png")
+  execSync("rsvg-convert -w 1680 /tmp/swatch-view.svg -o /tmp/swatch-view.png")
 } catch {}
 
 proc.kill()

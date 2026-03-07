@@ -75,7 +75,7 @@ In addition to the 19 semantic tokens, each theme includes a 16-color indexed pa
 Use `resolveThemeColor()` to resolve `$token` strings against a theme:
 
 ```typescript
-import { resolveThemeColor } from "themex"
+import { resolveThemeColor } from "swatch"
 
 resolveThemeColor("$primary", theme) // -> "#F9E2AF"
 resolveThemeColor("$color3", theme) // -> "#F9E2AF" (yellow from palette)
