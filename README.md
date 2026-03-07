@@ -35,12 +35,12 @@ Because derivation gives you 80% of the way there, and the last 20% is taste. Yo
 
 All inputs flow through the same pipeline: **Source &rarr; ColorPalette &rarr; `deriveTheme()` &rarr; Theme**.
 
-Ships with **45 built-in palettes** from 20 theme families including Catppuccin, Nord, Dracula, Solarized, Tokyo Night, Gruvbox, Rose Pine, Kanagawa, and more.
+Ships with **43 built-in palettes** across theme families including Catppuccin, Nord, Dracula, Solarized, Tokyo Night, Gruvbox, Rose Pine, Kanagawa, and more.
 
 ## Install
 
 ```bash
-bun add swatch
+bun add swatch    # or npm i swatch / pnpm add swatch / yarn add swatch
 ```
 
 ## Quick Start
@@ -124,7 +124,7 @@ const theme = createTheme()
 
 | Function | Description |
 |----------|-------------|
-| `themeToCSSVars(theme)` | Convert theme to CSS custom properties (`--bg`, `--primary`, etc.) |
+| `themeToCSSVars(theme)` | Convert theme to a `Record<string, string>` of CSS custom properties (`{ "--bg": "#1e1e2e", ... }`) |
 | `exportBase16(palette)` | Export a `ColorPalette` as Base16 YAML |
 
 ### Terminal Detection
@@ -167,7 +167,7 @@ Every background token has a matching `*fg` foreground token for guaranteed cont
 | Standalone | `$border`, `$inputborder`, `$focusborder`, `$link`, `$disabledfg` |
 | Palette | `$color0` through `$color15` (ANSI 16 passthrough) |
 
-## Built-in Palettes (45)
+## Built-in Palettes (43)
 
 Catppuccin (Mocha, Frappe, Macchiato, Latte), Nord, Dracula, Solarized (Dark, Light), Tokyo Night (Night, Storm, Day), One Dark, Gruvbox (Dark, Light), Rose Pine (Main, Moon, Dawn), Kanagawa (Wave, Dragon, Lotus), Everforest (Dark, Light), Monokai (Classic, Pro), Snazzy, Material (Dark, Light), Palenight, Ayu (Dark, Mirage, Light), Nightfox, Dawnfox, Horizon, Moonfly, Nightfly, Oxocarbon (Dark, Light), Sonokai, Edge (Dark, Light), Modus (Vivendi, Operandi).
 
