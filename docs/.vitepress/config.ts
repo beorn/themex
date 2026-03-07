@@ -11,6 +11,7 @@ export default defineConfig({
       { text: "Guide", link: "/guide/getting-started" },
       { text: "Reference", link: "/reference/color-palette" },
       { text: "Gallery", link: "/gallery/" },
+      { text: "Theme Builder", link: "/builder" },
     ],
 
     sidebar: [
@@ -39,6 +40,10 @@ export default defineConfig({
       {
         text: "Gallery",
         items: [{ text: "Theme Gallery", link: "/gallery/" }],
+      },
+      {
+        text: "Playground",
+        items: [{ text: "Theme Builder", link: "/builder" }],
       },
       {
         text: "Contributing",
