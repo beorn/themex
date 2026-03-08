@@ -171,16 +171,16 @@ watch(isDark, () => {
 
 <template>
   <div class="tb">
-    <!-- Left panel: Controls -->
-    <div class="tb-controls">
-      <!-- Mode toggle -->
-      <div class="tb-mode-toggle">
-        <button :class="{ active: isDark }" @click="isDark = true">Dark</button>
-        <button :class="{ active: !isDark }" @click="isDark = false">Light</button>
-      </div>
+    <!-- Top: mode toggle -->
+    <div class="tb-mode-toggle">
+      <button :class="{ active: isDark }" @click="isDark = true">Dark</button>
+      <button :class="{ active: !isDark }" @click="isDark = false">Light</button>
+    </div>
 
-      <!-- Themes -->
-      <section class="tb-section">
+    <!-- Top row: Themes + Tokens side-by-side -->
+    <div class="tb-columns">
+      <!-- Themes column -->
+      <section class="tb-section tb-col-themes">
         <h3>Themes</h3>
         <div class="tb-gen-row">
           <input type="color" v-model="baseColor" class="tb-color-input" />
@@ -204,8 +204,8 @@ watch(isDark, () => {
         </div>
       </section>
 
-      <!-- Customize Tokens -->
-      <section class="tb-section">
+      <!-- Tokens column -->
+      <section class="tb-section tb-col-tokens">
         <h3>Customize Tokens</h3>
         <div v-for="group in tokenGroups" :key="group.label" class="tb-token-group">
           <h4>{{ group.label }}</h4>
@@ -230,56 +230,52 @@ watch(isDark, () => {
       </section>
     </div>
 
-    <!-- Right panel: Preview + Export -->
-    <div class="tb-preview-panel">
-      <!-- Preview tabs -->
-      <div class="tb-tabs">
-        <button :class="{ active: activePreviewTab === 'app' }" @click="activePreviewTab = 'app'">App UI</button>
-        <button :class="{ active: activePreviewTab === 'code' }" @click="activePreviewTab = 'code'">Code</button>
-      </div>
+    <!-- Bottom: Preview (full width) -->
+    <div class="tb-tabs">
+      <button :class="{ active: activePreviewTab === 'app' }" @click="activePreviewTab = 'app'">App UI</button>
+      <button :class="{ active: activePreviewTab === 'code' }" @click="activePreviewTab = 'code'">Code</button>
+    </div>
+    <div class="tb-preview" :style="previewVars">
+      <!-- App UI mockup -->
+      <template v-if="activePreviewTab === 'app'">
+        <div class="p-nav">
+          <span class="p-nav-title">Dashboard</span>
+          <span class="p-nav-link">Settings</span>
+        </div>
+        <div class="p-card">
+          <h4 class="p-card-title">Welcome back</h4>
+          <p class="p-card-body">This is body text on a surface. <a class="p-link" href="javascript:void(0)">Learn more</a></p>
+          <div class="p-buttons">
+            <button class="p-btn-primary">Primary</button>
+            <button class="p-btn-secondary">Secondary</button>
+          </div>
+          <div class="p-input-wrap">
+            <input class="p-input" placeholder="Type something..." readonly />
+          </div>
+          <div class="p-badges">
+            <span class="p-badge p-badge-error">Error</span>
+            <span class="p-badge p-badge-warning">Warning</span>
+            <span class="p-badge p-badge-success">Success</span>
+            <span class="p-badge p-badge-info">Info</span>
+          </div>
+          <p class="p-muted-text">Muted helper text goes here</p>
+          <p class="p-selected-text">Selected text example</p>
+          <p class="p-disabled-text">Disabled placeholder</p>
+        </div>
+        <div class="p-contrast-grid">
+          <span class="p-contrast-item" v-for="[label, fg, bg] in [
+            ['fg/bg', currentTheme.fg, currentTheme.bg],
+            ['primary', currentTheme.primaryfg, currentTheme.primary],
+            ['surface', currentTheme.surfacefg, currentTheme.surface],
+          ]" :key="label">
+            {{ label }}: {{ contrastLabel(fg, bg) }}
+          </span>
+        </div>
+      </template>
 
-      <!-- Preview area -->
-      <div class="tb-preview" :style="previewVars">
-        <!-- App UI mockup -->
-        <template v-if="activePreviewTab === 'app'">
-          <div class="p-nav">
-            <span class="p-nav-title">Dashboard</span>
-            <span class="p-nav-link">Settings</span>
-          </div>
-          <div class="p-card">
-            <h4 class="p-card-title">Welcome back</h4>
-            <p class="p-card-body">This is body text on a surface. <a class="p-link" href="javascript:void(0)">Learn more</a></p>
-            <div class="p-buttons">
-              <button class="p-btn-primary">Primary</button>
-              <button class="p-btn-secondary">Secondary</button>
-            </div>
-            <div class="p-input-wrap">
-              <input class="p-input" placeholder="Type something..." readonly />
-            </div>
-            <div class="p-badges">
-              <span class="p-badge p-badge-error">Error</span>
-              <span class="p-badge p-badge-warning">Warning</span>
-              <span class="p-badge p-badge-success">Success</span>
-              <span class="p-badge p-badge-info">Info</span>
-            </div>
-            <p class="p-muted-text">Muted helper text goes here</p>
-            <p class="p-selected-text">Selected text example</p>
-            <p class="p-disabled-text">Disabled placeholder</p>
-          </div>
-          <div class="p-contrast-grid">
-            <span class="p-contrast-item" v-for="[label, fg, bg] in [
-              ['fg/bg', currentTheme.fg, currentTheme.bg],
-              ['primary', currentTheme.primaryfg, currentTheme.primary],
-              ['surface', currentTheme.surfacefg, currentTheme.surface],
-            ]" :key="label">
-              {{ label }}: {{ contrastLabel(fg, bg) }}
-            </span>
-          </div>
-        </template>
-
-        <!-- Code Editor mockup -->
-        <template v-else>
-          <pre class="p-code"><code><span class="p-comment">// Theme: {{ currentTheme.name }}</span>
+      <!-- Code Editor mockup -->
+      <template v-else>
+        <pre class="p-code"><code><span class="p-comment">// Theme: {{ currentTheme.name }}</span>
 <span class="p-keyword">import</span> { <span class="p-func">createTheme</span> } <span class="p-keyword">from</span> <span class="p-string">"swatch"</span>
 
 <span class="p-keyword">const</span> theme = <span class="p-func">createTheme</span>()
@@ -296,32 +292,32 @@ watch(isDark, () => {
 }
 
 <span class="p-keyword">export default</span> colors</code></pre>
-        </template>
-      </div>
+      </template>
+    </div>
 
-      <!-- Export -->
-      <div class="tb-export">
-        <div class="tb-tabs">
-          <button :class="{ active: activeExportTab === 'code' }" @click="activeExportTab = 'code'">Code</button>
-          <button :class="{ active: activeExportTab === 'css' }" @click="activeExportTab = 'css'">CSS</button>
-          <button :class="{ active: activeExportTab === 'base16' }" @click="activeExportTab = 'base16'">Base16</button>
-          <button class="tb-copy" @click="copyExport">{{ copied ? 'Copied!' : 'Copy' }}</button>
-        </div>
-        <pre class="tb-export-code"><code>{{ activeExportTab === 'code' ? exportCode : activeExportTab === 'css' ? exportCSS : exportBase16Yaml }}</code></pre>
+    <!-- Export -->
+    <div class="tb-export">
+      <div class="tb-tabs">
+        <button :class="{ active: activeExportTab === 'code' }" @click="activeExportTab = 'code'">Code</button>
+        <button :class="{ active: activeExportTab === 'css' }" @click="activeExportTab = 'css'">CSS</button>
+        <button :class="{ active: activeExportTab === 'base16' }" @click="activeExportTab = 'base16'">Base16</button>
+        <button class="tb-copy" @click="copyExport">{{ copied ? 'Copied!' : 'Copy' }}</button>
       </div>
+      <pre class="tb-export-code"><code>{{ activeExportTab === 'code' ? exportCode : activeExportTab === 'css' ? exportCSS : exportBase16Yaml }}</code></pre>
     </div>
   </div>
 </template>
 
 <style scoped>
 /* ── Layout ───────────────────────────────────────────────────────── */
-.tb { display: flex; gap: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-.tb-controls { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
-.tb-preview-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.tb { display: flex; flex-direction: column; gap: 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.tb-columns { display: flex; gap: 16px; align-items: stretch; }
+.tb-col-themes { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tb-col-tokens { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.tb-col-themes .tb-presets { flex: 1; max-height: none; }
 
 @media (max-width: 768px) {
-  .tb { flex-direction: column; }
-  .tb-controls { width: 100%; }
+  .tb-columns { flex-direction: column; }
 }
 
 /* ── Section ──────────────────────────────────────────────────────── */
@@ -375,7 +371,7 @@ watch(isDark, () => {
 .tb-copy:hover { background: #585b70 !important; }
 
 /* ── Preview ──────────────────────────────────────────────────────── */
-.tb-preview { background: var(--bg); color: var(--fg); border-radius: 0 0 8px 8px; padding: 16px; min-height: 300px; transition: background 0.15s, color 0.15s; border: 1px solid #313244; }
+.tb-preview { background: var(--bg); color: var(--fg); border-radius: 0 0 8px 8px; padding: 16px; min-height: 200px; transition: background 0.15s, color 0.15s; border: 1px solid #313244; }
 
 /* App mockup */
 .p-nav { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--inverse); color: var(--inversefg); border-radius: 6px; margin-bottom: 12px; transition: all 0.15s; }
